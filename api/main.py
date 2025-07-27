@@ -36,6 +36,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from interviewer.agent import create_agent
+from api import documents
 
 
 load_dotenv()
@@ -188,6 +189,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     print(f"Client #{user_id} disconnected")
 
 
+app.include_router(documents.router)
 app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 

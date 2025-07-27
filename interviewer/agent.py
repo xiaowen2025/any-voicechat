@@ -3,9 +3,10 @@ from google.adk.agents import Agent
 
 from interviewer.tools import tool_take_notes
 from interviewer.prompt import instruction_template
-from interviewer.settings import settings
+from interviewer.settings import load_settings
 
 def create_agent():
+    settings = load_settings()
     final_instruction = instruction_template.format(
         role_description=settings.role_description,
         job_description=settings.job_description,

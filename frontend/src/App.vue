@@ -17,9 +17,11 @@
       <!-- You can add navigation links here later -->
       <v-list-item title="Settings" subtitle="Click to update"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item link title="CV"></v-list-item>
-      <v-list-item link title="Job Description"></v-list-item>
-      <v-list-item link title="Interviewer Style"></v-list-item>
+      <v-expansion-panels>
+        <document-viewer doc-name="cv" title="CV"></document-viewer>
+        <document-viewer doc-name="job_description" title="Job Description"></document-viewer>
+        <document-viewer doc-name="role_description" title="Interviewer Style"></document-viewer>
+      </v-expansion-panels>
     </v-navigation-drawer>
 
     <v-main>
@@ -53,12 +55,14 @@ import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
 import ChatWindow from './components/ChatWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
+import DocumentViewer from './components/DocumentViewer.vue';
 
 export default {
   components: {
     AgentProfile,
     ChatWindow,
     ControlButtons,
+    DocumentViewer,
   },
   setup() {
     const theme = useTheme();
