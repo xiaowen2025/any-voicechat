@@ -34,12 +34,3 @@
 * Developed the theory of Brownian motion.
 * Made significant contributions to quantum theory and statistical mechanics.
 * Advocated for peace and disarmament.
-
-### Selected Publications
-
-* "On the Electrodynamics of Moving Bodies" (1905)
-* "Does the Inertia of a Body Depend Upon Its Energy-Content?" (1905)
-* "On a Heuristic Point of View Concerning the Production and Transformation of Light" (1905)
-* "Investigations on the Theory of Brownian Movement" (1905)
-* "The Foundation of the General Theory of Relativity" (1916)
-* "Relativity: The Special and the General Theory" (1916)

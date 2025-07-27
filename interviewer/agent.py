@@ -15,6 +15,7 @@ def create_agent():
 
     root_agent = Agent(
         name="interview_agent",
+        # model="gemini-2.5-flash-preview-native-audio-dialog",
         model="gemini-live-2.5-flash-preview",  # Replace with the latest supported model ID
         description="Interviewer",
         instruction=final_instruction,

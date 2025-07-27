@@ -9,13 +9,12 @@ NOTES_FILE = f"{DATA_PATH}interview_note.md"
 
 async def tool_take_notes(question_and_answer: str) -> str:
     """
-    Update or create the interview_note.md file with a new Q&A pair.
+    Update the interview_note.md file with a new Q&A pair.
 
     Args:
-        question_and_answer (str): The interview question and answer.
-
+        question_and_answer (str): The interview question and the candidate's answer formatted as a string.
     Returns:
-        str: Updated contents of the interview note.
+        None
     """
     # Ensure notes are loaded or initialized
     if not os.path.exists(NOTES_FILE):

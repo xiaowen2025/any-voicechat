@@ -56,7 +56,8 @@ import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
 import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
-import DocumentViewer from './components/DocumentViewer.vue';
+
+import DocumentViewer from './components/DocumentViewer.vue'; // Adjust path
 import InterviewNotesWindow from './components/InterviewNotesWindow.vue';
 
 export default {

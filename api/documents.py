@@ -5,26 +5,6 @@ from interviewer.settings import DATA_PATH
 
 router = APIRouter()
 
-@router.get("/api/interview-note")
-async def get_interview_note():
-    file_path = os.path.join(DATA_PATH, "interview-note.md")
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return JSONResponse(content={"content": content})
-    except FileNotFoundError:
-        return JSONResponse(content={"error": "Interview note not found."}, status_code=404)
-
-@router.post("/api/interview-note/reset")
-async def reset_interview_note():
-    file_path = os.path.join(DATA_PATH, "interview-note.md")
-    try:
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write("# Interview Notes")
-        return JSONResponse(content={"message": "Interview note reset successfully."})
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
-
 @router.get("/api/documents/{doc_name}")
 async def get_document(doc_name: str):
     file_path = os.path.join(DATA_PATH, f"{doc_name}.md")
