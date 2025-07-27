@@ -1,30 +1,55 @@
 <template>
   <v-app>
-    <v-container>
-      <v-card class="mx-auto" max-width="800">
-        <v-card-title class="text-h5 text-center">
-          Welcome
-        </v-card-title>
-        <v-card-text>
-          <div class="d-flex flex-no-wrap justify-space-between">
+    <v-app-bar app>
+      <v-app-bar-title>Interviewer</v-app-bar-title>
+      <v-spacer></v-spacer>
+      <v-switch
+        v-model="isDarkTheme"
+        hide-details
+        inset
+        label="Dark Mode"
+        @change="toggleTheme"
+      ></v-switch>
+    </v-app-bar>
+
+    <v-navigation-drawer app :width="drawerWidth" class="resizable-drawer">
+      <div class="drag-handle" @mousedown="startResize"></div>
+      <!-- You can add navigation links here later -->
+      <v-list-item title="Settings" subtitle="Click to update"></v-list-item>
+      <v-divider></v-divider>
+      <v-list-item link title="CV"></v-list-item>
+      <v-list-item link title="Job Description"></v-list-item>
+      <v-list-item link title="Interviewer Style"></v-list-item>
+    </v-navigation-drawer>
+
+    <v-main>
+      <v-container fluid class="fill-height pa-4">
+        <v-card class="flex-grow-1 d-flex flex-column">
+          <v-card-title class="text-h5 text-center">
+            Welcome
+          </v-card-title>
+          <v-card-text class="flex-grow-1 d-flex flex-column">
             <agent-profile
               :analyser-node="analyserNode"
               :interview-started="interviewStarted"
             />
-            <chat-window :messages="messages" />
-          </div>
-        </v-card-text>
-        <control-buttons
-          :interview-started="interviewStarted"
-          :is-connecting="isConnecting"
-          @toggle-interview="toggleInterview"
-        />
-      </v-card>
-    </v-container>
+            <chat-window :messages="messages" class="flex-grow-1" />
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <control-buttons
+              :interview-started="interviewStarted"
+              :is-connecting="isConnecting"
+              @toggle-interview="toggleInterview"
+            />
+          </v-card-actions>
+        </v-card>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
 <script>
+import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
 import ChatWindow from './components/ChatWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
@@ -35,8 +60,22 @@ export default {
     ChatWindow,
     ControlButtons,
   },
+  setup() {
+    const theme = useTheme();
+    const isDarkTheme = theme.global.current.value.dark;
+
+    const toggleTheme = () => {
+      theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark';
+    };
+
+    return {
+      isDarkTheme,
+      toggleTheme,
+    };
+  },
   data() {
     return {
+      drawerWidth: 256, // Default width
       messages: [],
       interviewStarted: false,
       isConnecting: false,
@@ -60,6 +99,18 @@ export default {
     };
   },
   methods: {
+    startResize(event) {
+      event.preventDefault();
+      document.addEventListener('mousemove', this.doResize);
+      document.addEventListener('mouseup', this.stopResize);
+    },
+    doResize(event) {
+      this.drawerWidth = event.clientX;
+    },
+    stopResize() {
+      document.removeEventListener('mousemove', this.doResize);
+      document.removeEventListener('mouseup', this.stopResize);
+    },
     async toggleInterview() {
       if (this.interviewStarted) {
         this.stopInterview();
@@ -266,6 +317,20 @@ export default {
 </script>
 
 <style>
+.resizable-drawer {
+  position: relative;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0;
+  right: -5px;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 10;
+}
+
 pre {
   white-space: pre-wrap;
   font-family: inherit;
