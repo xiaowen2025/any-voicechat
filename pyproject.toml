@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "interviewer"
+version = "0.1.0"
+scripts = {interviewer = "api.main:main"}
+
+dependencies = [
+    "google-genai",
+    "google-adk==1.8.0",
+    "aiofiles",
+    "pytest",
+    "pytest-asyncio",
+    "fastapi",
+    "uvicorn",
+    "python-dotenv",
+    "websockets"
+]
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["interviewer*", "api*"]
+namespaces = false
