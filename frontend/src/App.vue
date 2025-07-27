@@ -7,36 +7,34 @@
         </v-card-title>
         <v-card-text>
           <div class="d-flex flex-no-wrap justify-space-between">
-            <div class="d-flex flex-column align-center justify-center pa-3">
-              <v-avatar class="mb-4" size="125" rounded="lg">
-                <v-img :src="agentAvatar"></v-img>
-              </v-avatar>
-              <canvas ref="visualizer" width="125" height="50"></canvas>
-            </div>
-            <div class="flex-grow-1">
-              <div class="notes-container" ref="notesContainer">
-                <div v-for="message in messages" :key="message.id" :class="`message ${message.sender}`">
-                  <pre>{{ message.text }}</pre>
-                </div>
-              </div>
-            </div>
+            <agent-profile
+              :analyser-node="analyserNode"
+              :interview-started="interviewStarted"
+            />
+            <chat-window :messages="messages" />
           </div>
         </v-card-text>
-        <v-card-actions class="justify-center">
-          <v-btn @click="toggleInterview" :color="interviewStarted ? 'red' : 'primary'" :disabled="isConnecting">
-            <v-progress-circular indeterminate v-if="isConnecting" size="20" class="mr-2"></v-progress-circular>
-            {{ interviewStarted ? 'Stop Interview' : 'Start Mock Interview' }}
-          </v-btn>
-        </v-card-actions>
+        <control-buttons
+          :interview-started="interviewStarted"
+          :is-connecting="isConnecting"
+          @toggle-interview="toggleInterview"
+        />
       </v-card>
     </v-container>
   </v-app>
 </template>
 
 <script>
-import agentAvatar from './assets/agent-avatar.svg';
+import AgentProfile from './components/AgentProfile.vue';
+import ChatWindow from './components/ChatWindow.vue';
+import ControlButtons from './components/ControlButtons.vue';
 
 export default {
+  components: {
+    AgentProfile,
+    ChatWindow,
+    ControlButtons,
+  },
   data() {
     return {
       messages: [],
@@ -57,9 +55,7 @@ export default {
 
       // Visualizer
       analyserNode: null,
-      visualizerAnimationId: null,
       
-      agentAvatar,
       currentMessageId: null,
     };
   },
@@ -121,11 +117,6 @@ export default {
               }
             }
           }
-
-          this.$nextTick(() => {
-            const container = this.$refs.notesContainer;
-            if (container) container.scrollTop = container.scrollHeight;
-          });
         };
 
         this.websocket.onclose = () => {
@@ -176,7 +167,6 @@ export default {
       this.analyserNode = this.audioRecorderContext.createAnalyser();
       this.analyserNode.fftSize = 256;
       source.connect(this.analyserNode);
-      this.drawVisualizer();
     },
 
     sendBufferedAudio() {
@@ -203,40 +193,7 @@ export default {
       this.audioBuffer = [];
     },
 
-    drawVisualizer() {
-      const canvas = this.$refs.visualizer;
-      if (!canvas || !this.analyserNode) return;
-      const canvasCtx = canvas.getContext('2d');
-      const bufferLength = this.analyserNode.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-
-      const draw = () => {
-        if (!this.interviewStarted) {
-          canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-          return;
-        }
-        this.visualizerAnimationId = requestAnimationFrame(draw);
-        this.analyserNode.getByteFrequencyData(dataArray);
-        canvasCtx.fillStyle = 'rgb(240, 240, 240)';
-        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-        const barWidth = (canvas.width / bufferLength) * 2.5;
-        let barHeight;
-        let x = 0;
-        for (let i = 0; i < bufferLength; i++) {
-          barHeight = dataArray[i] / 2;
-          canvasCtx.fillStyle = `rgb(66, 165, 245)`;
-          canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-          x += barWidth + 1;
-        }
-      };
-      draw();
-    },
-
     stopInterview(closeWebSocket = true) {
-      if (this.visualizerAnimationId) {
-        cancelAnimationFrame(this.visualizerAnimationId);
-        this.visualizerAnimationId = null;
-      }
       if (this.bufferTimer) {
         clearInterval(this.bufferTimer);
         this.bufferTimer = null;
@@ -309,44 +266,6 @@ export default {
 </script>
 
 <style>
-.notes-container {
-  width: 100%;
-  margin: 0 auto;
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
-  height: 400px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.message {
-  padding: 8px 12px;
-  border-radius: 8px;
-  max-width: 80%;
-  word-wrap: break-word;
-}
-
-.message.user {
-  align-self: flex-end;
-  background-color: #dcf8c6;
-  color: #000;
-}
-
-.message.agent {
-  align-self: flex-start;
-  background-color: #f1f0f0;
-  color: #000;
-}
-
-.message.system {
-  align-self: center;
-  color: gray;
-  font-style: italic;
-}
-
 pre {
   white-space: pre-wrap;
   font-family: inherit;
