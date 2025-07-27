@@ -35,14 +35,15 @@
               :analyser-node="analyserNode"
               :interview-started="interviewStarted"
             />
-            <chat-window :messages="messages" class="flex-grow-1" />
+            <interview-notes-window />
           </v-card-text>
-          <v-card-actions class="justify-center">
+          <v-card-actions class="d-flex flex-column align-center justify-center">
             <control-buttons
               :interview-started="interviewStarted"
               :is-connecting="isConnecting"
               @toggle-interview="toggleInterview"
             />
+            <status-window :messages="messages" class="flex-grow-1" />
           </v-card-actions>
         </v-card>
       </v-container>
@@ -53,16 +54,18 @@
 <script>
 import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
-import ChatWindow from './components/ChatWindow.vue';
+import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import DocumentViewer from './components/DocumentViewer.vue';
+import InterviewNotesWindow from './components/InterviewNotesWindow.vue';
 
 export default {
   components: {
     AgentProfile,
-    ChatWindow,
+    StatusWindow,
     ControlButtons,
     DocumentViewer,
+    InterviewNotesWindow,
   },
   setup() {
     const theme = useTheme();

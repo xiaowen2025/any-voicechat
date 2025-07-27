@@ -5,11 +5,11 @@ import aiofiles
 
 from interviewer.settings import DATA_PATH
 
-NOTES_FILE = f"{DATA_PATH}interview-note.md"
+NOTES_FILE = f"{DATA_PATH}interview_note.md"
 
 async def tool_take_notes(question_and_answer: str) -> str:
     """
-    Update or create the interview-note.md file with a new Q&A pair.
+    Update or create the interview_note.md file with a new Q&A pair.
 
     Args:
         question_and_answer (str): The interview question and answer.
@@ -19,7 +19,7 @@ async def tool_take_notes(question_and_answer: str) -> str:
     """
     # Ensure notes are loaded or initialized
     if not os.path.exists(NOTES_FILE):
-        notes = "# Interview Notes\n\n"
+        notes = ""
     else:
         async with aiofiles.open(NOTES_FILE, "r", encoding="utf-8") as f:
             notes = await f.read()

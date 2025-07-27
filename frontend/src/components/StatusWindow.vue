@@ -10,6 +10,7 @@
 
 <script>
 export default {
+  name: 'StatusWindow',
   props: {
     messages: {
       type: Array,
@@ -37,7 +38,7 @@ export default {
   border: 1px solid #ccc;
   padding: 10px;
   text-align: left;
-  height: 400px;
+  height: 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
