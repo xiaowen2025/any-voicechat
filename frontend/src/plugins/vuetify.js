@@ -29,6 +29,12 @@ export default createVuetify({
           success: '#4CAF50',
           warning: '#FFC107',
         },
+        typography: {
+          fontFamily: 'Roboto, sans-serif', // Example font family
+          'body-1': {
+            fontSize: '1.1rem', // Increase default body font size
+          },
+        },
       },
       dark: {
         colors: {
@@ -39,6 +45,12 @@ export default createVuetify({
           info: '#2196F3',
           success: '#4CAF50',
           warning: '#FFC107',
+        },
+        typography: {
+          fontFamily: 'Roboto, sans-serif', // Example font family
+          'body-1': {
+            fontSize: '1.1rem', // Increase default body font size
+          },
         },
       },
     },

@@ -1,8 +1,24 @@
 <template>
-  <v-card-actions class="justify-center">
-    <v-btn @click="$emit('toggle-interview')" :color="interviewStarted ? 'red' : 'primary'" :disabled="isConnecting">
-      <v-progress-circular indeterminate v-if="isConnecting" size="20" class="mr-2"></v-progress-circular>
-      {{ interviewStarted ? 'Stop Interview' : 'Start Mock Interview' }}
+  <v-card-actions class="pa-4 justify-center">
+    <v-btn
+      @click="$emit('toggle-interview')"
+      :color="interviewStarted ? 'red' : 'primary'"
+      :disabled="isConnecting"
+      :loading="isConnecting"
+      variant="tonal"
+      size="large"
+      rounded="lg"
+      class="font-weight-bold"
+    >
+      <template v-slot:prepend>
+        <v-icon>{{ interviewStarted ? 'mdi-stop-circle-outline' : 'mdi-play-circle-outline' }}</v-icon>
+      </template>
+      
+      <template v-slot:loader>
+        <v-progress-circular indeterminate size="24" width="2"></v-progress-circular>
+      </template>
+
+      {{ interviewStarted ? 'Stop Interview' : 'Start' }}
     </v-btn>
   </v-card-actions>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column align-center justify-center pa-3">
-    <v-avatar class="mb-4" size="125" rounded="lg" @click="triggerAvatarUpload" style="cursor: pointer;">
+    <v-avatar class="mb-4" size="300" rounded="lg" @click="triggerAvatarUpload" style="cursor: pointer;">
       <v-img :src="currentAvatar"></v-img>
     </v-avatar>
     <input type="file" ref="avatarUploader" @change="handleAvatarChange" accept="image/*" style="display: none;" />

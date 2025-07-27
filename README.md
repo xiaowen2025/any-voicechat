@@ -1,19 +1,25 @@
-# interviewer
-Real-Time Voice Interview Simulation Using Gemini Live API
+# Mock Interview Simulator
+Real-Time Voice Interview Simulation Using Gemini Live API.
 
-## Folder Structure
+## Get Started
+Create a file named .env in the project's root directory. Add your Gemini API key to this file:
+```bash
+GEMINI_API_KEY="YOUR_API_KEY_HERE".  
+```
+Make the script executable, build and launch the FastAPI application.
+```bash
+chmod +x run.sh
+./run.sh
+```
 
-```
-.
-├── api/                  # Backend FastAPI application
-├── frontend/             # Frontend Vue.js application
-├── interviewer/          # Core Python package for the interview agent
-├── example/              # Example files for setting up an interview
-├── tests/                # Tests for the application
-├── .gitignore            # Git ignore file
-├── GEMINI.md             # Gemini CLI context
-├── LICENSE               # Project license
-├── pyproject.toml        # Python project configuration
-├── README.md             # This file
-└── uv.lock               # uv lock file
-```
+You can then access the application in your web browser at `http://localhost:8000`.
+
+## Key Features
+
+- **Realistic Voice Interaction:** Engage in natural, real-time conversations with an AI interviewer.
+    
+- **Dynamic Feedback:** Receive detailed notes on your responses.
+    
+- **Personalized Scenarios:** Customize the interview by providing your own resume (CV), a specific job description, and choosing an interview style (e.g., behavioral, technical, friendly).
+    
+![Mock Interview Demo](docs/demo.png)

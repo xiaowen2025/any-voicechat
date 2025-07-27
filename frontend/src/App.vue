@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app>
-      <v-app-bar-title>Interviewer</v-app-bar-title>
+      <v-app-bar-title>Mock Interview</v-app-bar-title>
       <v-spacer></v-spacer>
       <v-switch
         v-model="isDarkTheme"
