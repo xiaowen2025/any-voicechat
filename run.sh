@@ -7,6 +7,10 @@ set -e
 echo "Building frontend..."
 (cd frontend && npm install && npm run build)
 
-# Run backend
+# Build backend image
+echo "Building backend image..."
+docker build -t interviewer-backend .
+
+# Run backend container
 echo "Launching backend..."
-uv run interviewer
+docker run --rm -p 8000:8000 -v "$(pwd)/default_settings":/app/default_settings interviewer-backend

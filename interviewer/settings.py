@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-DATA_PATH = "example/"  # Default path for data storage
+DATA_PATH = "default_settings/"  # Default path for data storage
 
 class Settings(BaseModel):
     """Configuration for the interviewer agent."""
