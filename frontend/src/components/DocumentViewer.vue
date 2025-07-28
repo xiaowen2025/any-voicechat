@@ -1,10 +1,9 @@
 <template>
   <v-expansion-panel>
-    <v-expansion-panel-title>{{ title }}</v-expansion-panel-title>
+    <v-expansion-panel-title class="font-weight-bold">{{ title }}</v-expansion-panel-title>
     <v-expansion-panel-text>
-      <div v-if="!editing">
+      <div v-if="!editing" @click="editing = true" class="editable-content">
         <div v-html="renderedMarkdown"></div>
-        <v-btn @click="editing = true" class="mt-2">Edit</v-btn>
       </div>
       <div v-else>
         <v-textarea v-model="editableContent" rows="10"></v-textarea>
@@ -89,3 +88,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.editable-content {
+  cursor: pointer;
+}
+</style>

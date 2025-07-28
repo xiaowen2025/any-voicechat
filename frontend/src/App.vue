@@ -1,33 +1,14 @@
 <template>
   <v-app>
-    <v-app-bar app>
-      <v-app-bar-title>Mock Interview</v-app-bar-title>
-      <v-spacer></v-spacer>
-      <v-switch
-        v-model="isDarkTheme"
-        hide-details
-        inset
-        label="Dark Mode"
-        @change="toggleTheme"
-      ></v-switch>
-    </v-app-bar>
-
-    <v-navigation-drawer app :width="drawerWidth" class="resizable-drawer">
-      <div class="drag-handle" @mousedown="startResize"></div>
-      <!-- You can add navigation links here later -->
-      <v-list-item title="Settings" subtitle="Click to update"></v-list-item>
-      <v-divider></v-divider>
-      <v-expansion-panels>
-        <document-viewer doc-name="cv" title="CV"></document-viewer>
-        <document-viewer doc-name="job_description" title="Job Description"></document-viewer>
-        <document-viewer doc-name="role_description" title="Interviewer Style"></document-viewer>
-      </v-expansion-panels>
-    </v-navigation-drawer>
+    <settings-sidebar
+      :is-dark-theme="isDarkTheme"
+      @toggle-theme="toggleTheme"
+    />
 
     <v-main>
       <v-container fluid class="fill-height pa-4">
         <v-card class="flex-grow-1 d-flex flex-column">
-          <v-card-title class="text-h5 text-center">
+          <v-card-title class="text-h5 text-center font-weight-bold">
             Welcome
           </v-card-title>
           <v-card-text class="flex-grow-1 d-flex flex-column">
@@ -56,8 +37,7 @@ import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
 import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
-
-import DocumentViewer from './components/DocumentViewer.vue'; // Adjust path
+import SettingsSidebar from './components/SettingsSidebar.vue';
 import InterviewNotesWindow from './components/InterviewNotesWindow.vue';
 
 export default {
@@ -65,7 +45,7 @@ export default {
     AgentProfile,
     StatusWindow,
     ControlButtons,
-    DocumentViewer,
+    SettingsSidebar,
     InterviewNotesWindow,
   },
   setup() {
@@ -83,7 +63,6 @@ export default {
   },
   data() {
     return {
-      drawerWidth: 256, // Default width
       messages: [],
       interviewStarted: false,
       isConnecting: false,
@@ -107,18 +86,6 @@ export default {
     };
   },
   methods: {
-    startResize(event) {
-      event.preventDefault();
-      document.addEventListener('mousemove', this.doResize);
-      document.addEventListener('mouseup', this.stopResize);
-    },
-    doResize(event) {
-      this.drawerWidth = event.clientX;
-    },
-    stopResize() {
-      document.removeEventListener('mousemove', this.doResize);
-      document.removeEventListener('mouseup', this.stopResize);
-    },
     async toggleInterview() {
       if (this.interviewStarted) {
         this.stopInterview();
@@ -325,18 +292,12 @@ export default {
 </script>
 
 <style>
-.resizable-drawer {
-  position: relative;
+body {
+  font-family: 'Inter', sans-serif;
 }
 
-.drag-handle {
-  position: absolute;
-  top: 0;
-  right: -5px;
-  width: 10px;
-  height: 100%;
-  cursor: col-resize;
-  z-index: 10;
+.v-app-bar-title {
+  font-weight: 600;
 }
 
 pre {

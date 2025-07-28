@@ -3,7 +3,6 @@
 ### Personal Details
 
 * **Born:** March 14, 1879, Ulm, Germany
-* **Died:** April 18, 1955, Princeton, New Jersey, USA
 * **Nationality:** German (by birth), Swiss (1901), Austrian (1911), American (1940)
 
 ### Education

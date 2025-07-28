@@ -1,10 +1,18 @@
 <template>
   <div class="interview-notes-window">
     <v-card>
-      <v-card-title>Interview Notes</v-card-title>
+      <v-card-title class="font-weight-bold">
+        Interview Notes
+      </v-card-title>
       <v-card-text>
         <div v-html="renderedMarkdown"></div>
       </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="resetNotes">
+          <v-icon>mdi-restore</v-icon>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </div>
 </template>
@@ -40,6 +48,23 @@ export default {
         console.error('Error fetching interview notes:', error);
         this.notes = '# Error loading notes.';
       }
+    },
+    async saveNotes() {
+      try {
+        await fetch('/api/documents/interview_note', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ content: this.notes }),
+        });
+      } catch (error) {
+        console.error('Error saving interview notes:', error);
+      }
+    },
+    async resetNotes() {
+      this.notes = '';
+      await this.saveNotes();
     },
   },
   created() {

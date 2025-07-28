@@ -35,10 +35,10 @@ export default {
 .notes-container {
   width: 100%;
   margin: 0 auto;
-  border: 1px solid #ccc;
-  padding: 10px;
+  border: none;
+  padding: 0;
   text-align: left;
-  height: 20px;
+  height: 100px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
