@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column align-center justify-center pa-3">
     <v-avatar class="mb-4" rounded="lg" @click="triggerAvatarUpload" style="cursor: pointer; width: 400px; height: 300px;">
-      <v-img :src="currentAvatar"></v-img>
+      <v-img :src="currentAvatar" contain></v-img>
     </v-avatar>
     <input type="file" ref="avatarUploader" @change="handleAvatarChange" accept="image/*" style="display: none;" />
     <canvas ref="visualizer" width="125" height="50"></canvas>

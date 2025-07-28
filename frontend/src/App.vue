@@ -3,14 +3,12 @@
     <settings-sidebar
       :is-dark-theme="isDarkTheme"
       @toggle-theme="toggleTheme"
+      @api-key-updated="updateApiKeyStatus"
     />
 
     <v-main>
       <v-container fluid class="fill-height pa-4">
         <v-card class="flex-grow-1 d-flex flex-column">
-          <v-card-title class="text-h5 text-center font-weight-bold">
-            Welcome
-          </v-card-title>
           <v-card-text class="flex-grow-1 d-flex flex-column">
             <agent-profile
               :analyser-node="analyserNode"
@@ -22,6 +20,7 @@
             <control-buttons
               :interview-started="interviewStarted"
               :is-connecting="isConnecting"
+              :is-api-key-set="isApiKeySet"
               @toggle-interview="toggleInterview"
             />
             <status-window :messages="messages" class="flex-grow-1" />
@@ -66,6 +65,7 @@ export default {
       messages: [],
       interviewStarted: false,
       isConnecting: false,
+      isApiKeySet: false,
       websocket: null,
       
       // Audio Player
@@ -86,6 +86,9 @@ export default {
     };
   },
   methods: {
+    updateApiKeyStatus(isSet) {
+      this.isApiKeySet = isSet;
+    },
     async toggleInterview() {
       if (this.interviewStarted) {
         this.stopInterview();
@@ -284,6 +287,9 @@ export default {
       }
       return pcm16.buffer;
     }
+  },
+  mounted() {
+    this.isApiKeySet = !!localStorage.getItem("geminiApiKey");
   },
   beforeUnmount() {
     this.stopInterview();

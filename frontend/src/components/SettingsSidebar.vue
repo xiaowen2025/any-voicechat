@@ -14,6 +14,25 @@
       </template>
     </v-list-item>
     <v-divider></v-divider>
+    <v-container>
+      <v-text-field
+        v-model="geminiApiKey"
+        :type="showGeminiApiKey ? 'text' : 'password'"
+        label="Gemini API Key"
+        outlined
+        dense
+        class="mb-2"
+        @focus="apiKeyEdited = true"
+      >
+        <template v-slot:append>
+          <v-icon @click="showGeminiApiKey = !showGeminiApiKey">
+            {{ showGeminiApiKey ? 'mdi-eye-off' : 'mdi-eye' }}
+          </v-icon>
+        </template>
+      </v-text-field>
+      <v-btn v-if="apiKeyEdited" @click="saveGeminiApiKey" class="mb-4 fancy-btn" size="large" rounded="lg">Save API Key</v-btn>
+    </v-container>
+    <v-divider></v-divider>
     <v-expansion-panels v-model="panel">
       <document-viewer doc-name="cv" title="CV"></document-viewer>
       <document-viewer
@@ -36,7 +55,7 @@ export default {
   props: {
     isDarkTheme: Boolean,
   },
-  emits: ["toggle-theme"],
+  emits: ["toggle-theme", "api-key-updated"],
   components: {
     DocumentViewer,
   },
@@ -44,6 +63,9 @@ export default {
     return {
       drawerWidth: 500, // Default width
       panel: 0, // Default open panel
+      geminiApiKey: "",
+      showGeminiApiKey: false,
+      apiKeyEdited: false,
     };
   },
   methods: {
@@ -59,6 +81,35 @@ export default {
       document.removeEventListener("mousemove", this.doResize);
       document.removeEventListener("mouseup", this.stopResize);
     },
+    async saveGeminiApiKey() {
+      try {
+        const response = await fetch('/api/verify_api_key', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ key: this.geminiApiKey }),
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          localStorage.setItem('geminiApiKey', this.geminiApiKey);
+          this.$emit('api-key-updated', !!this.geminiApiKey);
+          this.apiKeyEdited = false;
+          alert('API Key saved successfully!');
+        } else {
+          this.geminiApiKey = '';
+          localStorage.removeItem('geminiApiKey');
+          this.$emit('api-key-updated', false);
+          alert(`API Key is invalid: ${result.message}`);
+        }
+      } catch (error) {
+        alert(`Error verifying API key: ${error}`);
+      }
+    },
+  },
+  mounted() {
+    this.geminiApiKey = localStorage.getItem("geminiApiKey") || "";
+    this.apiKeyEdited = !this.geminiApiKey;
   },
 };
 </script>
@@ -77,4 +128,11 @@ export default {
   cursor: col-resize;
   z-index: 10;
 }
+
+.fancy-btn {
+  background: linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%);
+  color: white;
+  box-shadow: 0 3px 5px 2px rgba(255, 105, 135, .3);
+}
 </style>
+

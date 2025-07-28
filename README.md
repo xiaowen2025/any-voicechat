@@ -1,12 +1,8 @@
-# Mock Interview Simulator
+# Interview Simulator
 Real-Time Voice Interview Simulation Using Gemini Live API.
 
 ## Get Started
-Create a file named .env in the project's root directory. Add your Gemini API key to this file:
-```bash
-GEMINI_API_KEY="YOUR_API_KEY_HERE".  
-```
-Make the script executable, build and launch the FastAPI application.
+Make the script executable, build and launch the application.
 ```bash
 chmod +x run.sh
 ./run.sh

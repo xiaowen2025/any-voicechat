@@ -37,6 +37,8 @@ from fastapi.responses import FileResponse
 
 from interviewer.agent import create_agent
 from api import documents
+from api import verify_api_key
+
 
 
 load_dotenv()
@@ -149,14 +151,15 @@ app = FastAPI()
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     """Client websocket endpoint"""
-
     # Wait for client connection
     await websocket.accept()
     print(f"Client #{user_id} connected, audio mode: {is_audio}")
 
     # Start agent session
     user_id_str = str(user_id)
-    live_events, live_request_queue = await start_agent_session(user_id_str, is_audio == "true")
+    live_events, live_request_queue = await start_agent_session(
+        user_id_str, is_audio == "true"
+    )
 
     # Start tasks
     agent_to_client_task = asyncio.create_task(
@@ -190,6 +193,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
 
 
 app.include_router(documents.router)
+app.include_router(verify_api_key.router)
 app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 

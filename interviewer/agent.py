@@ -5,7 +5,9 @@ from interviewer.tools import tool_take_notes
 from interviewer.prompt import instruction_template
 from interviewer.settings import load_settings
 
-def create_agent():
+def create_agent() -> Agent:
+    """Creates and returns an interviewer agent."""
+
     settings = load_settings()
     final_instruction = instruction_template.format(
         role_description=settings.role_description,
