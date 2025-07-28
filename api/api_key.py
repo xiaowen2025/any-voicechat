@@ -36,3 +36,11 @@ async def verify_api_key(api_key: ApiKey):
         return {"status": "success", "message": "API Key verified and set."}
     except HTTPException as e:
         return {"status": "error", "message": str(e.detail)}
+
+
+@router.post("/api/set_api_key")
+async def set_api_key(api_key: ApiKey):
+    """Endpoint to set the provided Gemini API key."""
+    os.environ["GEMINI_API_KEY"] = api_key.key
+    return {"status": "success", "message": "API Key set."}
+

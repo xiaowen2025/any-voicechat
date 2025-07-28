@@ -37,7 +37,7 @@ from fastapi.responses import FileResponse
 
 from interviewer.agent import create_agent
 from api import documents
-from api import verify_api_key
+from api import api_key
 
 
 
@@ -193,7 +193,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
 
 
 app.include_router(documents.router)
-app.include_router(verify_api_key.router)
+app.include_router(api_key.router)
 app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 

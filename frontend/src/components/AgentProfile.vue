@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import defaultAvatar from '../assets/agent-avatar.svg';
+import defaultAvatar from '../assets/agent-avatar.png';
 import imageCompression from 'browser-image-compression';
 
 export default {
