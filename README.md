@@ -1,6 +1,8 @@
 # Interview Simulator
 Real-Time Voice Interview Simulation Using Gemini Live API.
 
+![main](docs/imgs/1-init.png)
+
 ## Get Started
 Make the script executable, build and launch the application.
 ```bash
@@ -20,4 +22,3 @@ You can then access the application in your web browser at `http://localhost:800
 
 - **Post-Interview Analysis:** Get a comprehensive analysis of your performance after the interview, presented in a clear markdown format.
     
-![Mock Interview Demo](docs/demo.png)

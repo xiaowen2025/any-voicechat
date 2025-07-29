@@ -1,6 +1,13 @@
-# Interview Simulator
 
-The Interview Simulator is packed with features to provide a realistic and helpful interview experience.
+## Key Features
+
+- **Realistic Voice Interaction:** Engage in natural, real-time conversations with an AI interviewer.
+    
+- **Dynamic Feedback:** Receive detailed notes on your responses.
+    
+- **Personalized Scenarios:** Customize the interview by providing your own resume (CV), a specific job description, and choosing an interview style (e.g., behavioral, technical, friendly).
+
+- **Post-Interview Analysis:** Get a comprehensive analysis of your performance after the interview, presented in a clear markdown format.
 
 ### 1. Initial View
 
@@ -10,13 +17,14 @@ When you first launch the application, you will see the main interface.
 
 ### 2. Edit Context
 
-You can customize the interview by editing the context. This includes providing your CV, the job description, and the role you are interviewing for. Click on the editable sections to modify them.
+You can customize the interview by editing the context. This includes providing your CV, the job description, and the interview style.
 
 ![Edit Context](imgs/2-edit-context.png)
 
 ### 3. Save API Key
 
-To use the application, you need to provide a Gemini API key. You can save your API key in the settings sidebar.
+To use the application, you need to provide a Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey).  
+Free usage is available daily.
 
 ![Save API Key](imgs/3-save-api-key.png)
 
