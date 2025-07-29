@@ -16,6 +16,9 @@ RUN uv sync
 # Copy the rest of the application code.
 COPY . .
 
+# Install the project in editable mode
+RUN uv pip install -e . --system
+
 # Expose the port that the API will run on.
 EXPOSE 8000
 

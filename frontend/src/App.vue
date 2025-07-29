@@ -8,24 +8,31 @@
 
     <v-main>
       <v-container fluid class="fill-height pa-4">
-        <v-card class="flex-grow-1 d-flex flex-column">
-          <v-card-text class="flex-grow-1 d-flex flex-column">
-            <agent-profile
-              :analyser-node="analyserNode"
-              :interview-started="interviewStarted"
-            />
-            <interview-notes-window />
-          </v-card-text>
-          <v-card-actions class="d-flex flex-column align-center justify-center">
-            <control-buttons
-              :interview-started="interviewStarted"
-              :is-connecting="isConnecting"
-              :is-api-key-set="isApiKeySet"
-              @toggle-interview="toggleInterview"
-            />
-            <status-window :messages="messages" class="flex-grow-1" />
-          </v-card-actions>
-        </v-card>
+        <v-row class="fill-height">
+          <v-col cols="6" class="d-flex flex-column">
+            <v-card class="flex-grow-1 d-flex flex-column">
+              <v-card-text class="flex-grow-1 d-flex flex-column">
+                <agent-profile
+                  :analyser-node="analyserNode"
+                  :interview-started="interviewStarted"
+                />
+                <interview-notes-window ref="interviewNotes" />
+              </v-card-text>
+              <v-card-actions class="d-flex flex-column align-center justify-center">
+                <control-buttons
+                  :interview-started="interviewStarted"
+                  :interview-finished="interviewFinished"
+                  :is-connecting="isConnecting"
+                  :is-analysing="isAnalysing"
+                  :is-api-key-set="isApiKeySet"
+                  @toggle-interview="toggleInterview"
+                  @analyse="analyseInterview"
+                />
+                <status-window :messages="messages" class="flex-grow-1" />
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-app>
@@ -38,6 +45,7 @@ import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import InterviewNotesWindow from './components/InterviewNotesWindow.vue';
+import DocumentViewer from './components/DocumentViewer.vue';
 
 export default {
   components: {
@@ -46,6 +54,7 @@ export default {
     ControlButtons,
     SettingsSidebar,
     InterviewNotesWindow,
+    DocumentViewer,
   },
   setup() {
     const theme = useTheme();
@@ -67,6 +76,8 @@ export default {
       isConnecting: false,
       isApiKeySet: false,
       websocket: null,
+      interviewFinished: false,
+      isAnalysing: false,
       
       // Audio Player
       audioPlayerNode: null,
@@ -86,6 +97,26 @@ export default {
     };
   },
   methods: {
+    onAnalysisComplete() {
+      // Note: The ref "analysisViewer" does not exist in the template.
+      // this.$refs.analysisViewer.fetchDocument();
+    },
+    async analyseInterview() {
+      this.isAnalysing = true;
+      try {
+        const response = await fetch('/api/analyse', { method: 'POST' });
+        if (response.ok) {
+          this.onAnalysisComplete();
+        } else {
+          console.error('Error analysing interview:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error analysing interview:', error);
+      } finally {
+        this.isAnalysing = false;
+        this.interviewFinished = false; // Ready for a new interview
+      }
+    },
     updateApiKeyStatus() {
       this.setApiKey();
     },
@@ -98,6 +129,7 @@ export default {
     },
     async startInterview() {
       this.isConnecting = true;
+      this.interviewFinished = false;
       try {
         // First, get user media permission and set up audio processing
         await this.startAudio();
@@ -259,6 +291,9 @@ export default {
       }
       this.interviewStarted = false;
       this.isConnecting = false;
+      if (closeWebSocket) {
+        this.interviewFinished = true;
+      }
     },
 
     // Helper functions

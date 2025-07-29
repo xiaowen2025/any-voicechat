@@ -3,7 +3,7 @@ from datetime import datetime
 import aiofiles
 
 
-from interviewer.settings import DATA_PATH
+from core.interviewer.context import DATA_PATH
 
 NOTES_FILE = f"{DATA_PATH}interview_note.md"
 
@@ -31,7 +31,7 @@ async def tool_take_notes(question_and_answer: str) -> str:
     
 if __name__ == "__main__":
     # Example usage
-    # uv run python -m interviewer.tools
+    # uv run python -m core.interviewer.tools
     import asyncio
     question_and_answer = "Q: What is your name?\nA: John Doe."
     updated_notes = asyncio.run(tool_take_notes(question_and_answer))

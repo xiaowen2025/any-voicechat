@@ -19,3 +19,8 @@ You can then access the application in your web browser at `http://localhost:800
 - **Personalized Scenarios:** Customize the interview by providing your own resume (CV), a specific job description, and choosing an interview style (e.g., behavioral, technical, friendly).
     
 ![Mock Interview Demo](docs/demo.png)
+
+
+# Plan
+
+- Add interview analysis

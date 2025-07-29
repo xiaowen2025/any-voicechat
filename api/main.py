@@ -35,10 +35,11 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from interviewer.agent import create_agent
+from core.interviewer.agent import create_agent
+from core.analyser.analyse_interview import analyse_interview, save_analysis
+from core.interviewer.context import load_interviewer_context
 from api import documents
 from api import api_key
-
 
 
 load_dotenv()
@@ -146,6 +147,15 @@ async def client_to_agent_messaging(websocket, live_request_queue):
             raise ValueError(f"Mime type not supported: {mime_type}")
 
 app = FastAPI()
+
+
+@app.post("/api/analyse")
+async def analyse():
+    """Triggers the interview analysis."""
+    context = load_interviewer_context()
+    analysis_result = analyse_interview(context)
+    save_analysis(analysis_result)
+    return {"message": "Analysis complete", "analysis": analysis_result}
 
 
 @app.websocket("/ws/{user_id}")

@@ -1,18 +1,18 @@
 import asyncio
 from google.adk.agents import Agent
 
-from interviewer.tools import tool_take_notes
-from interviewer.prompt import instruction_template
-from interviewer.settings import load_settings
+from core.interviewer.tools import tool_take_notes
+from core.interviewer.prompt import instruction_template
+from core.interviewer.context import load_interviewer_context
 
 def create_agent() -> Agent:
     """Creates and returns an interviewer agent."""
 
-    settings = load_settings()
+    interviewer_context = load_interviewer_context()
     final_instruction = instruction_template.format(
-        role_description=settings.role_description,
-        job_description=settings.job_description,
-        resume=settings.resume
+        role_description=interviewer_context.role_description,
+        job_description=interviewer_context.job_description,
+        resume=interviewer_context.resume
     )
 
     root_agent = Agent(
