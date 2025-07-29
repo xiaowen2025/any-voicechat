@@ -9,7 +9,7 @@
     <v-main>
       <v-container fluid class="fill-height pa-4">
         <v-row class="fill-height">
-          <v-col cols="6" class="d-flex flex-column">
+          <v-col :cols="analysisCompleted ? 6 : 12" class="d-flex flex-column">
             <v-card class="flex-grow-1 d-flex flex-column">
               <v-card-text class="flex-grow-1 d-flex flex-column">
                 <agent-profile
@@ -32,6 +32,9 @@
               </v-card-actions>
             </v-card>
           </v-col>
+          <v-col v-if="analysisCompleted" cols="6" class="d-flex flex-column">
+            <interview-analysis-viewer :content="analysisContent" />
+          </v-col>
         </v-row>
       </v-container>
     </v-main>
@@ -45,7 +48,7 @@ import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import InterviewNotesWindow from './components/InterviewNotesWindow.vue';
-import DocumentViewer from './components/DocumentViewer.vue';
+import InterviewAnalysisViewer from "./components/InterviewAnalysisViewer.vue";
 
 export default {
   components: {
@@ -54,7 +57,7 @@ export default {
     ControlButtons,
     SettingsSidebar,
     InterviewNotesWindow,
-    DocumentViewer,
+    InterviewAnalysisViewer,
   },
   setup() {
     const theme = useTheme();
@@ -78,6 +81,8 @@ export default {
       websocket: null,
       interviewFinished: false,
       isAnalysing: false,
+      analysisCompleted: false,
+      analysisContent: '',
       
       // Audio Player
       audioPlayerNode: null,
@@ -97,16 +102,17 @@ export default {
     };
   },
   methods: {
-    onAnalysisComplete() {
-      // Note: The ref "analysisViewer" does not exist in the template.
-      // this.$refs.analysisViewer.fetchDocument();
+    onAnalysisComplete(analysis) {
+      this.analysisContent = analysis;
+      this.analysisCompleted = true;
     },
     async analyseInterview() {
       this.isAnalysing = true;
       try {
         const response = await fetch('/api/analyse', { method: 'POST' });
         if (response.ok) {
-          this.onAnalysisComplete();
+          const data = await response.json();
+          this.onAnalysisComplete(data.analysis);
         } else {
           console.error('Error analysing interview:', response.statusText);
         }
@@ -130,6 +136,8 @@ export default {
     async startInterview() {
       this.isConnecting = true;
       this.interviewFinished = false;
+      this.analysisCompleted = false;
+      this.analysisContent = '';
       try {
         // First, get user media permission and set up audio processing
         await this.startAudio();

@@ -29,11 +29,14 @@ export default {
       type: String,
       required: true,
     },
+    content: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
-      content: '',
-      editableContent: '',
+      editableContent: this.content,
       editing: false,
     };
   },
@@ -42,25 +45,12 @@ export default {
       return md.render(this.content);
     },
   },
-  async created() {
-    await this.fetchDocument();
+  watch: {
+    content(newContent) {
+      this.editableContent = newContent;
+    },
   },
   methods: {
-    async fetchDocument() {
-      try {
-        const response = await fetch(`/api/documents/${this.docName}`);
-        const data = await response.json();
-        if (response.ok) {
-          this.content = data.content;
-          this.editableContent = data.content;
-        } else {
-          this.content = `Error: ${data.error}`;
-        }
-      } catch (error) {
-        this.content = 'Error fetching document.';
-        console.error(error);
-      }
-    },
     async save() {
       try {
         const response = await fetch(`/api/documents/${this.docName}`, {
@@ -71,7 +61,7 @@ export default {
           body: JSON.stringify({ content: this.editableContent }),
         });
         if (response.ok) {
-          this.content = this.editableContent;
+          this.$emit('update:content', this.editableContent);
           this.editing = false;
         } else {
           const data = await response.json();

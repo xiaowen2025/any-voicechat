@@ -34,14 +34,23 @@
     </v-container>
     <v-divider></v-divider>
     <v-expansion-panels v-model="panel">
-      <document-viewer doc-name="cv" title="CV"></document-viewer>
+      <document-viewer
+        doc-name="cv"
+        title="CV"
+        :content="cvContent"
+        @update:content="cvContent = $event"
+      ></document-viewer>
       <document-viewer
         doc-name="job_description"
         title="Job Description"
+        :content="jobDescriptionContent"
+        @update:content="jobDescriptionContent = $event"
       ></document-viewer>
       <document-viewer
         doc-name="role_description"
         title="Interviewer Style"
+        :content="roleDescriptionContent"
+        @update:content="roleDescriptionContent = $event"
       ></document-viewer>
     </v-expansion-panels>
   </v-navigation-drawer>
@@ -66,6 +75,9 @@ export default {
       geminiApiKey: "",
       showGeminiApiKey: false,
       apiKeyEdited: false,
+      cvContent: "",
+      jobDescriptionContent: "",
+      roleDescriptionContent: "",
     };
   },
   methods: {
@@ -106,10 +118,30 @@ export default {
         alert(`Error verifying API key: ${error}`);
       }
     },
+    async fetchDocument(docName) {
+      try {
+        const response = await fetch(`/api/documents/${docName}`);
+        const data = await response.json();
+        if (response.ok) {
+          return data.content;
+        } else {
+          return `Error: ${data.error}`;
+        }
+      } catch (error) {
+        console.error(error);
+        return 'Error fetching document.';
+      }
+    },
+    async loadAllDocuments() {
+      this.cvContent = await this.fetchDocument("cv");
+      this.jobDescriptionContent = await this.fetchDocument("job_description");
+      this.roleDescriptionContent = await this.fetchDocument("role_description");
+    },
   },
   mounted() {
     this.geminiApiKey = localStorage.getItem("geminiApiKey") || "";
     this.apiKeyEdited = !this.geminiApiKey;
+    this.loadAllDocuments();
   },
 };
 </script>
@@ -135,4 +167,3 @@ export default {
   box-shadow: 0 3px 5px 2px rgba(255, 105, 135, .3);
 }
 </style>
-
