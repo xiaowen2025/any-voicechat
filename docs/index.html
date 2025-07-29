@@ -50,24 +50,42 @@
         ul {
             list-style-type: none;
             padding-left: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
         li {
-            background: #2a2a2a;
-            margin-bottom: 1rem;
-            padding: 1.2rem;
-            border-radius: 8px;
-            border-left: 4px solid #4d90fe;
-            font-size: 1.1rem;
+            background: linear-gradient(145deg, #2e2e2e, #242424);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #333;
+            border-left: 4px solid #eab676;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        li strong {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: block;
         }
         strong {
-            color: #8ab4f8;
+            color: #eab676;
         }
         .feature-section {
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border-radius: 8px;
-            background-color: #252525;
-            border: 1px solid #333;
+            padding: 2rem;
+            margin-top: 2.5rem;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #2a2a2a, #202020);
+            border: 1px solid #444;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
         }
         img {
             max-width: 100%;
@@ -91,16 +109,14 @@
     <div class="container">
         <header>
             <h1>Interview Simulator</h1>
-            <p>A tool for realistic, real-time voice interview simulations.</p>
         </header>
 
         <main>
-            <h2>Key Features</h2>
             <ul>
-                <li><strong>Realistic Voice Interaction:</strong> Engage in natural, real-time conversations with an AI interviewer.</li>
-                <li><strong>Dynamic Feedback:</strong> Receive detailed notes on your responses.</li>
-                <li><strong>Personalized Scenarios:</strong> Customize the interview by providing your own resume (CV), a specific job description, and choosing an interview style (e.g., behavioral, technical, friendly).</li>
-                <li><strong>Post-Interview Analysis:</strong> Get a comprehensive analysis of your performance after the interview, presented in a clear markdown format.</li>
+                <li><strong>Realistic Voice Interaction</strong> Engage in natural, real-time conversations with an AI interviewer.</li>
+                <li><strong>Dynamic Feedback</strong> Receive detailed notes on your responses.</li>
+                <li><strong>Personalized Scenarios</strong> Customize the interview by providing your own resume (CV), a specific job description, and choosing an interview style (e.g., behavioral, technical, friendly).</li>
+                <li><strong>Post-Interview Analysis</strong> Get a comprehensive analysis of your performance after the interview, presented in a clear markdown format.</li>
             </ul>
 
             <div class="feature-section">
