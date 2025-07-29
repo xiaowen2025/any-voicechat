@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Simulator Documentation</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem 2rem;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        header {
+            text-align: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #333;
+        }
+        h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+        }
+        h2 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+        }
+        h3 {
+            font-size: 1.6rem;
+            color: #e0e0e0;
+            margin-top: 2.5rem;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            background: #2a2a2a;
+            margin-bottom: 1rem;
+            padding: 1.2rem;
+            border-radius: 8px;
+            border-left: 4px solid #4d90fe;
+            font-size: 1.1rem;
+        }
+        strong {
+            color: #8ab4f8;
+        }
+        .feature-section {
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 8px;
+            background-color: #252525;
+            border: 1px solid #333;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 2px solid #444;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        a {
+            color: #8ab4f8;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interview Simulator</h1>
+            <p>A tool for realistic, real-time voice interview simulations.</p>
+        </header>
+
+        <main>
+            <h2>Key Features</h2>
+            <ul>
+                <li><strong>Realistic Voice Interaction:</strong> Engage in natural, real-time conversations with an AI interviewer.</li>
+                <li><strong>Dynamic Feedback:</strong> Receive detailed notes on your responses.</li>
+                <li><strong>Personalized Scenarios:</strong> Customize the interview by providing your own resume (CV), a specific job description, and choosing an interview style (e.g., behavioral, technical, friendly).</li>
+                <li><strong>Post-Interview Analysis:</strong> Get a comprehensive analysis of your performance after the interview, presented in a clear markdown format.</li>
+            </ul>
+
+            <div class="feature-section">
+                <h3>1. Initial View</h3>
+                <p>When you first launch the application, you will see the main interface.</p>
+                <img src="imgs/1-init.png" alt="Initial View of the application">
+            </div>
+
+            <div class="feature-section">
+                <h3>2. Edit Context</h3>
+                <p>You can customize the interview by editing the context. This includes providing your CV, the job description, and the interview style.</p>
+                <img src="imgs/2-edit-context.png" alt="Editing the interview context">
+            </div>
+
+            <div class="feature-section">
+                <h3>3. Save API Key</h3>
+                <p>To use the application, you need to provide a Gemini API key from <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>. Free usage is available daily.</p>
+                <img src="imgs/3-save-api-key.png" alt="Saving the API key">
+            </div>
+
+            <div class="feature-section">
+                <h3>4. Interview Notes</h3>
+                <p>During the interview, the AI will take notes based on your responses. These notes are displayed in real-time.</p>
+                <img src="imgs/4-interview-notes.png" alt="Real-time interview notes">
+            </div>
+
+            <div class="feature-section">
+                <h3>5. Display Analysis</h3>
+                <p>After the interview is complete, you will receive a detailed analysis of your performance. The analysis is presented in markdown format for easy reading.</p>
+                <img src="imgs/5-display-analysis.png" alt="Displaying the final interview analysis">
+            </div>
+        </main>
+    </div>
+</body>
+</html>
