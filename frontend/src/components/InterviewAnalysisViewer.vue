@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>Interview Analysis</v-card-title>
+    <v-card-title>Analysis</v-card-title>
     <v-card-text>
       <div v-html="renderedMarkdown"></div>
     </v-card-text>
