@@ -17,7 +17,7 @@ export default createVuetify({
     },
   },
   theme: {
-    defaultTheme: 'light',
+    defaultTheme: 'dark',
     themes: {
       light: {
         dark: false,
@@ -47,9 +47,9 @@ export default createVuetify({
           info: '#4A90E2',
           success: '#81C784',
           warning: '#FFB74D',
-          background: '#1E1E1E',
-          surface: '#2C2C2C',
-          'on-background': '#E0E0E0',
+          background: '#20222d',
+          surface: '#20222d',
+          'on-background': '#fae4c3ff',
           'on-surface': '#E0E0E0',
         },
       },
