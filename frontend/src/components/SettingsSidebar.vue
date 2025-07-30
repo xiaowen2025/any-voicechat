@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer app :width="drawerWidth" class="resizable-drawer">
+  <v-navigation-drawer
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue', $event)"
+    app
+    :width="drawerWidth"
+    class="resizable-drawer"
+  >
     <div class="drag-handle" @mousedown="startResize"></div>
     <!-- You can add navigation links here later -->
     <v-list-item title="Settings" subtitle="Click text to Edit" class="font-weight-bold">
@@ -62,9 +68,10 @@ import DocumentViewer from "./DocumentViewer.vue";
 export default {
   name: "SettingsSidebar",
   props: {
+    modelValue: Boolean,
     isDarkTheme: Boolean,
   },
-  emits: ["toggle-theme", "api-key-updated"],
+  emits: ["update:modelValue", "toggle-theme", "api-key-updated"],
   components: {
     DocumentViewer,
   },
