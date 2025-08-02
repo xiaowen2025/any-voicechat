@@ -35,9 +35,9 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from core.interviewer.agent import create_agent
+from core.voice_agent.agent import create_agent
 from core.analyser.analyse_interview import analyse_interview, save_analysis
-from core.interviewer.context import load_interviewer_context
+from core.voice_agent.context import load_interviewer_context
 from api import documents
 from api import api_key
 

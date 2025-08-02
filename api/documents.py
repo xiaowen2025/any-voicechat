@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from core.interviewer.context import DATA_PATH
+from core.voice_agent.context import DATA_PATH
 
 router = APIRouter()
 

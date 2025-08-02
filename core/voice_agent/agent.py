@@ -1,9 +1,9 @@
 import asyncio
 from google.adk.agents import Agent
 
-from core.interviewer.tools import tool_take_notes
-from core.interviewer.prompt import instruction_template
-from core.interviewer.context import load_interviewer_context
+from core.voice_agent.take_notes import tool_take_notes
+from core.voice_agent.prompt import instruction_template
+from core.voice_agent.context import load_interviewer_context
 
 def create_agent() -> Agent:
     """Creates and returns an interviewer agent."""
