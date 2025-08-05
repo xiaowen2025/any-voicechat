@@ -2,8 +2,8 @@ from google import genai
 from google.genai import types
 
 
-from core.interviewer.context import load_interviewer_context, InterviewerContext
-from core.interviewer.context import DATA_PATH
+from core.voice_agent.context import load_interviewer_context, InterviewerContext
+from core.voice_agent.context import DATA_PATH
 
 def save_analysis(analysis: str) -> str:
     """Saves the analysis to a file in the default context directory.
