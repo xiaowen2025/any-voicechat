@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>Analysis</v-card-title>
-    <v-card-text>
+    <v-card-text class="pa-5">
       <div class="analysis-content" v-html="renderedMarkdown"></div>
     </v-card-text>
   </v-card>

@@ -11,7 +11,7 @@
 
     <v-app-bar v-if="config">
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{ config.title }}</v-toolbar-title>
+      <v-toolbar-title class="text-center w-100">{{ config.title }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main>

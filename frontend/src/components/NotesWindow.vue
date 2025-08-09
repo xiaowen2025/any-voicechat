@@ -81,7 +81,7 @@ export default {
 
 <style scoped>
 .notes-window {
-  margin: 16px 0;
+  margin: 2px 0;
 }
 
 .notes-content {
