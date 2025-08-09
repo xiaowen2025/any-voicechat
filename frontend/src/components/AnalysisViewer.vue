@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title>Analysis</v-card-title>
     <v-card-text>
-      <div v-html="renderedMarkdown"></div>
+      <div class="analysis-content" v-html="renderedMarkdown"></div>
     </v-card-text>
   </v-card>
 </template>
@@ -29,5 +29,8 @@ export default {
 </script>
 
 <style scoped>
-/* Add any specific styles for the analysis viewer here */
+.analysis-content {
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
 </style>

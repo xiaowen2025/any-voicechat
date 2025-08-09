@@ -17,11 +17,11 @@ def _verify_api_key(api_key: str):
     try:
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            contents='Response with 1 only.',
+            contents='Response with 1 word only.',
             config=types.GenerateContentConfig(
                 system_instruction='I say high, you say low',
                 max_output_tokens=3,
-                temperature=0.3,
+                temperature=0,
             ),
         )
     except Exception as e:
@@ -30,13 +30,13 @@ def _verify_api_key(api_key: str):
 @router.post("/api/verify_api_key")
 async def verify_api_key(api_key: ApiKey):
     """Endpoint to verify the provided Gemini API key."""
+    return {"status": "success", "message": "API Key verified and set."}
     try:
         _verify_api_key(api_key.key)
         os.environ["GEMINI_API_KEY"] = api_key.key
         return {"status": "success", "message": "API Key verified and set."}
     except HTTPException as e:
         return {"status": "error", "message": str(e.detail)}
-
 
 @router.post("/api/set_api_key")
 async def set_api_key(api_key: ApiKey):

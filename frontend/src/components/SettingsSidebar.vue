@@ -9,7 +9,37 @@
     <div class="drag-handle" @mousedown="startResize"></div>
     <!-- You can add navigation links here later -->
     <v-list-item title="Settings" subtitle="Click text to Edit" class="font-weight-bold">
-      <template v-slot:append>
+    </v-list-item>
+    <v-divider></v-divider>
+    <v-expansion-panels v-model="panel" multiple>
+      <document-viewer
+        v-for="(item, name, index) in context"
+        :key="name"
+        :doc-name="name"
+        :title="formatTitle(name)"
+        :content="item.value || item.default_value"
+        @update:content="updateContext(name, $event)"
+      ></document-viewer>
+    </v-expansion-panels>
+    <template v-slot:append>
+      <v-container>
+        <v-text-field
+          v-model="geminiApiKey"
+          :type="showGeminiApiKey ? 'text' : 'password'"
+          label="Gemini API Key"
+          outlined
+          dense
+          class="mb-2"
+          @focus="apiKeyEdited = true"
+        >
+          <template v-slot:append>
+            <v-icon @click="showGeminiApiKey = !showGeminiApiKey">
+              {{ showGeminiApiKey ? 'mdi-eye-off' : 'mdi-eye' }}
+            </v-icon>
+          </template>
+        </v-text-field>
+        <v-btn v-if="apiKeyEdited" @click="saveGeminiApiKey" class="mb-4 fancy-btn" size="large" rounded="lg">Save API Key</v-btn>
+        <v-divider class="mb-4"></v-divider>
         <v-switch
           :model-value="isDarkMode"
           @update:model-value="$emit('dark-mode-toggled', $event)"
@@ -24,38 +54,8 @@
           hide-details
           @update:model-value="$emit('theme-changed', $event)"
         ></v-select>
-      </template>
-    </v-list-item>
-    <v-divider></v-divider>
-    <v-container>
-      <v-text-field
-        v-model="geminiApiKey"
-        :type="showGeminiApiKey ? 'text' : 'password'"
-        label="Gemini API Key"
-        outlined
-        dense
-        class="mb-2"
-        @focus="apiKeyEdited = true"
-      >
-        <template v-slot:append>
-          <v-icon @click="showGeminiApiKey = !showGeminiApiKey">
-            {{ showGeminiApiKey ? 'mdi-eye-off' : 'mdi-eye' }}
-          </v-icon>
-        </template>
-      </v-text-field>
-      <v-btn v-if="apiKeyEdited" @click="saveGeminiApiKey" class="mb-4 fancy-btn" size="large" rounded="lg">Save API Key</v-btn>
-    </v-container>
-    <v-divider></v-divider>
-    <v-expansion-panels v-model="panel">
-      <document-viewer
-        v-for="(item, name) in context"
-        :key="name"
-        :doc-name="name"
-        :title="formatTitle(name)"
-        :content="item.value || item.default_value"
-        @update:content="updateContext(name, $event)"
-      ></document-viewer>
-    </v-expansion-panels>
+      </v-container>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -77,7 +77,7 @@ export default {
   data() {
     return {
       drawerWidth: 500, // Default width
-      panel: 0, // Default open panel
+      panel: [], // Default open panels
       geminiApiKey: "",
       showGeminiApiKey: false,
       apiKeyEdited: false,
@@ -137,6 +137,7 @@ export default {
         const data = await response.json();
         if (response.ok) {
           this.context = data;
+          this.panel = Object.keys(this.context).map((_, index) => index);
         } else {
           console.error('Error fetching context:', data.error);
         }
@@ -168,6 +169,9 @@ export default {
   mounted() {
     this.geminiApiKey = localStorage.getItem("geminiApiKey") || "";
     this.apiKeyEdited = !this.geminiApiKey;
+    if (this.geminiApiKey) {
+      this.$emit('api-key-updated', true);
+    }
     this.loadContext();
   },
 };
