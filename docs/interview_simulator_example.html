@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Simulator Documentation</title>
+    <style>
+        body {
+            background-color: #21232e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem 2rem;
+            background-color: #1f212c;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        header {
+            text-align: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #3c3f50;
+        }
+        h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+        }
+        h2 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            border-bottom: 1px solid #3c3f50;
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+        }
+        h3 {
+            font-size: 1.6rem;
+            color: #e0e0e0;
+            margin-top: 2.5rem;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        li {
+            background: linear-gradient(145deg, #31344b, #262936);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #3c3f50;
+            border-left: 4px solid #c26120;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        li strong {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        strong {
+            color: #eab676;
+        }
+        .feature-section {
+            padding: 2rem;
+            margin-top: 2.5rem;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #2a2d3b, #20222d);
+            border: 1px solid #3c3f50;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 2px solid #3c3f50;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        a {
+            color: #8ab4f8;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2a2d3b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #606482;
+            border-radius: 10px;
+            border: 3px solid #2a2d3b;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #eab676;
+        }
+        ::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="https://xiaowen2025.github.io/interview-simulator/" target="_blank">Interview Simulator</a></h1>
+        </header>
+
+        <main>
+            <ul>
+                <li><strong>Realistic Voice Interaction</strong> Engage in natural, real-time conversations with an AI interviewer.</li>
+                <li><strong>Personalized Scenarios</strong> Customize the interview by providing your own resume, target job description and interview style.</li>
+                <li><strong>Real-time Notes</strong> Interview notes are taken automatically to help you track your performance.</li>
+                <li><strong>Post-Interview Analysis</strong> Get a comprehensive analysis of your performance after the interview.</li>
+            </ul>
+
+            <div class="feature-section">
+                <h3>1. Customizable Interviewer Avatar</h3>
+                <img src="imgs/1-init.png" alt="Initial View of the application">
+            </div>
+
+            <div class="feature-section">
+                <h3>2. Customizable Interview Context</h3>
+                <img src="imgs/2-edit-context.png" alt="Editing the interview context">
+            </div>
+            <div class="feature-section">
+                <h3>3. Interview Notes</h3>
+                <p>During the interview, notes are taken automatically and are displayed in real-time.</p>
+                <img src="imgs/4-interview-notes.png" alt="Real-time interview notes">
+            </div>
+
+            <div class="feature-section">
+                <h3>4. Post-Interview Analysis</h3>
+                <p>After the interview is complete, you can ask for a detailed analysis of your performance.</p>
+                <img src="imgs/5-display-analysis.png" alt="Displaying the final interview analysis">
+            </div>
+        </main>
+    </div>
+</body>
+</html>
