@@ -3,8 +3,8 @@
     <v-btn
       v-if="!showAnalyseButton"
       @click="$emit('toggle-interview')"
-      :class="{ 'fancy-btn': !interviewStarted }"
-      :color="interviewStarted ? 'red' : ''"
+      :class="{ 'fancy-btn': !conversationStarted }"
+      :color="conversationStarted ? 'red' : ''"
       :disabled="isConnecting || !isApiKeySet"
       :loading="isConnecting"
       variant="tonal"
@@ -13,14 +13,14 @@
       class="font-weight-bold"
     >
       <template v-slot:prepend>
-        <v-icon>{{ interviewStarted ? 'mdi-stop-circle-outline' : 'mdi-play-circle-outline' }}</v-icon>
+        <v-icon>{{ conversationStarted ? 'mdi-stop-circle-outline' : 'mdi-play-circle-outline' }}</v-icon>
       </template>
       
       <template v-slot:loader>
         <v-progress-circular indeterminate size="24" width="2"></v-progress-circular>
       </template>
 
-      {{ interviewStarted ? 'Stop Interview' : 'Start Interview' }}
+      {{ conversationStarted ? 'Stop Conversation' : 'Start Talking' }}
     </v-btn>
 
     <v-btn
@@ -36,7 +36,7 @@
       <template v-slot:prepend>
         <v-icon>mdi-chart-bar</v-icon>
       </template>
-      Analyse Interview
+      Analyse
     </v-btn>
   </v-card-actions>
 </template>
@@ -44,7 +44,7 @@
 <script>
 export default {
   props: {
-    interviewStarted: {
+    conversationStarted: {
       type: Boolean,
       required: true,
     },

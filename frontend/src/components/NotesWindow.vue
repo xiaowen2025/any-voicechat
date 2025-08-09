@@ -5,7 +5,7 @@
         Notes
       </v-card-title>
       <v-card-text>
-        <div v-html="renderedMarkdown"></div>
+        <div class="notes-content" v-html="renderedMarkdown"></div>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -82,5 +82,10 @@ export default {
 <style scoped>
 .notes-window {
   margin: 16px 0;
+}
+
+.notes-content {
+  font-size: 1.2rem;
+  line-height: 1.6;
 }
 </style>

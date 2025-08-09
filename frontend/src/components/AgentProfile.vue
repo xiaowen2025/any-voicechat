@@ -18,7 +18,7 @@ export default {
       type: Object,
       default: null,
     },
-    interviewStarted: {
+    conversationStarted: {
       type: Boolean,
       default: false,
     },
@@ -30,7 +30,7 @@ export default {
     };
   },
   watch: {
-    interviewStarted(newValue) {
+    conversationStarted(newValue) {
       if (newValue) {
         this.drawVisualizer();
       } else {
@@ -38,7 +38,7 @@ export default {
       }
     },
     analyserNode(newNode) {
-        if (this.interviewStarted && newNode) {
+        if (this.conversationStarted && newNode) {
             this.drawVisualizer();
         }
     }
@@ -87,7 +87,7 @@ export default {
       const dataArray = new Uint8Array(bufferLength);
 
       const draw = () => {
-        if (!this.interviewStarted) {
+        if (!this.conversationStarted) {
           canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
           return;
         }

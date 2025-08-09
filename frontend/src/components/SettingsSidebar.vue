@@ -11,12 +11,19 @@
     <v-list-item title="Settings" subtitle="Click text to Edit" class="font-weight-bold">
       <template v-slot:append>
         <v-switch
-          :model-value="isDarkTheme"
-          hide-details
-          inset
+          :model-value="isDarkMode"
+          @update:model-value="$emit('dark-mode-toggled', $event)"
           label="Dark Mode"
-          @update:modelValue="$emit('toggle-theme')"
         ></v-switch>
+        <v-select
+          :model-value="selectedTheme"
+          :items="themeNames"
+          label="Theme"
+          dense
+          outlined
+          hide-details
+          @update:model-value="$emit('theme-changed', $event)"
+        ></v-select>
       </template>
     </v-list-item>
     <v-divider></v-divider>
@@ -54,14 +61,16 @@
 
 <script>
 import DocumentViewer from "./DocumentViewer.vue";
+import { themes } from '../themes';
 
 export default {
   name: "SettingsSidebar",
   props: {
     modelValue: Boolean,
-    isDarkTheme: Boolean,
+    selectedTheme: String,
+    isDarkMode: Boolean,
   },
-  emits: ["update:modelValue", "toggle-theme", "api-key-updated"],
+  emits: ["update:modelValue", "api-key-updated", "theme-changed", "dark-mode-toggled"],
   components: {
     DocumentViewer,
   },
@@ -74,6 +83,11 @@ export default {
       apiKeyEdited: false,
       context: {},
     };
+  },
+  computed: {
+    themeNames() {
+      return Object.keys(themes);
+    }
   },
   methods: {
     formatTitle(name) {
@@ -111,7 +125,6 @@ export default {
         } else {
           this.geminiApiKey = '';
           localStorage.removeItem('geminiApiKey');
-          this.$emit('api-key-updated', false);
           alert(`API Key is invalid: ${result.message}`);
         }
       } catch (error) {

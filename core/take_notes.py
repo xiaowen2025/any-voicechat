@@ -23,7 +23,8 @@ async def tool_take_notes(note: str) -> str:
             notes = await f.read()
 
     # Append new Q&A
-    notes += f"\n## {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n{note}\n\n"
+    # notes += f"\n## {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n{note}\n\n"
+    notes += f"\n\n{note}"
 
     async with aiofiles.open(notes_file_path, "w", encoding="utf-8") as f:
         await f.write(notes)

@@ -4,7 +4,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
   const websocket = ref(null);
   const messages = ref([]);
   const isConnecting = ref(false);
-  const interviewStarted = ref(false);
+  const conversationStarted = ref(false);
   const interviewFinished = ref(false);
   const currentMessageId = ref(null);
 
@@ -22,7 +22,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
     websocket.value.onopen = () => {
       console.log('WebSocket connection established');
       messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection established. You can start speaking.' });
-      interviewStarted.value = true;
+      conversationStarted.value = true;
       isConnecting.value = false;
     };
 
@@ -60,14 +60,14 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
     websocket.value.onclose = () => {
       console.log('WebSocket connection closed');
       messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection closed.' });
-      interviewStarted.value = false;
+      conversationStarted.value = false;
       isConnecting.value = false;
     };
 
     websocket.value.onerror = (error) => {
       console.error('WebSocket error:', error);
       messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection error.' });
-      interviewStarted.value = false;
+      conversationStarted.value = false;
       isConnecting.value = false;
     };
   };
@@ -76,7 +76,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
     if (websocket.value && websocket.value.readyState < 2) { // OPEN or CONNECTING
       websocket.value.close();
     }
-    interviewStarted.value = false;
+    conversationStarted.value = false;
     isConnecting.value = false;
     interviewFinished.value = true;
   };
@@ -85,7 +85,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
     websocket,
     messages,
     isConnecting,
-    interviewStarted,
+    conversationStarted,
     interviewFinished,
     connect,
     disconnect,

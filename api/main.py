@@ -44,20 +44,6 @@ async def startup_event():
     if not notes_path.exists():
         notes_path.touch()
 
-    # Load settings
-    settings_path = data_path / "settings.json"
-    settings = json.loads(settings_path.read_text())
-
-    # Check for context files
-    if "context_dict" in settings and isinstance(settings["context_dict"], dict):
-        for context_name in settings["context_dict"]:
-            context_file = data_path / f"{context_name}.md"
-            if not context_file.exists():
-                context_file.touch()
-                # write default context value
-                value = settings["context_dict"][context_name]
-                context_file.write_text(f"{value}\n")
-
 
 app.include_router(analyse.router)
 app.include_router(result_docs.router)

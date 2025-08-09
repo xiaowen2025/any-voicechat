@@ -1,15 +1,17 @@
 <template>
-  <v-app>
+  <v-app v-if="themeLoaded">
     <settings-sidebar
       v-model="showSettings"
-      :is-dark-theme="isDarkTheme"
-      @toggle-theme="toggleTheme"
+      :selected-theme="selectedTheme"
+      :is-dark-mode="isDarkMode"
+      @theme-changed="changeTheme"
+      @dark-mode-toggled="toggleDarkMode"
       @api-key-updated="updateApiKeyStatus"
     />
 
-    <v-app-bar app>
+    <v-app-bar v-if="config">
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
-      <v-toolbar-title>Interview Simulator</v-toolbar-title>
+      <v-toolbar-title>{{ config.title }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main>
@@ -20,13 +22,13 @@
               <v-card-text class="flex-grow-1 d-flex flex-column">
                 <agent-profile
                   :analyser-node="analyserNode"
-                  :interview-started="interviewStarted"
+                  :conversation-started="conversationStarted"
                 />
-                <notes-window ref="interviewNotes" />
+                <notes-window ref="notes" />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
                 <control-buttons
-                  :interview-started="interviewStarted"
+                  :conversation-started="conversationStarted"
                   :interview-finished="interviewFinished"
                   :is-connecting="isConnecting"
                   :is-analysing="isAnalysing"
@@ -48,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, inject, nextTick } from 'vue';
 import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
 import StatusWindow from './components/StatusWindow.vue';
@@ -58,12 +60,23 @@ import NotesWindow from './components/NotesWindow.vue';
 import AnalysisViewer from "./components/AnalysisViewer.vue";
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
+import { themes as customThemes } from './themes';
+
+// --- Injected ---
+const config = inject('config');
 
 // --- Reactive State ---
 
 // Theme
 const theme = useTheme();
-const isDarkTheme = ref(theme.global.current.value.dark);
+const availableThemes = Object.keys(customThemes);
+let initialTheme = localStorage.getItem('theme') || 'Default';
+if (!availableThemes.includes(initialTheme)) {
+  initialTheme = 'Default';
+}
+const selectedTheme = ref(initialTheme);
+const isDarkMode = ref(localStorage.getItem('darkMode') === 'true');
+const themeLoaded = ref(false);
 
 // Component State
 const showSettings = ref(true);
@@ -71,7 +84,7 @@ const isApiKeySet = ref(false);
 const isAnalysing = ref(false);
 const analysisCompleted = ref(false);
 const analysisContent = ref('');
-const interviewNotes = ref(null); // for the ref in the template
+const notes = ref(null); // for the ref in the template
 
 // Composables
 const audioWebsocket = ref(null);
@@ -87,7 +100,7 @@ const {
   websocket,
   messages,
   isConnecting,
-  interviewStarted,
+  conversationStarted,
   interviewFinished,
   connect,
   disconnect,
@@ -101,9 +114,23 @@ watch(websocket, (newWebsocketInstance) => {
 
 // --- Functions ---
 
-const toggleTheme = () => {
-  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark';
-  isDarkTheme.value = theme.global.current.value.dark;
+const applyTheme = async () => {
+  const themeName = isDarkMode.value ? `${selectedTheme.value}Dark` : selectedTheme.value;
+  theme.global.name.value = themeName;
+  await nextTick();
+  themeLoaded.value = true;
+};
+
+const changeTheme = (themeName) => {
+  selectedTheme.value = themeName;
+  localStorage.setItem('theme', themeName);
+  applyTheme();
+};
+
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value;
+  localStorage.setItem('darkMode', isDarkMode.value);
+  applyTheme();
 };
 
 function onAnalysisComplete(analysis) {
@@ -134,7 +161,7 @@ function updateApiKeyStatus() {
 }
 
 async function toggleInterview() {
-  if (interviewStarted.value) {
+  if (conversationStarted.value) {
     stopInterview();
   } else {
     await startInterview();
@@ -191,6 +218,7 @@ async function setApiKey() {
 
 onMounted(() => {
   setApiKey();
+  applyTheme();
 });
 
 onBeforeUnmount(() => {

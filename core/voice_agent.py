@@ -24,10 +24,10 @@ def create_agent(settings) -> Agent:
 
     logging.info(f"Creating agent with context: {final_instruction}")
     root_agent = Agent(
-        name="interview_agent",
+        name="agent",
         # model="gemini-2.5-flash-preview-native-audio-dialog",
         model="gemini-live-2.5-flash-preview",  
-        description="Interviewer",
+        description="Voice Agent",
         instruction=final_instruction,
         tools=[tool_take_notes],
     )

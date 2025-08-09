@@ -21,7 +21,6 @@ router = APIRouter()
 
 @router.post("/api/analyse")
 async def post_analyse():
-    """Triggers the interview analysis."""
     notes = open(f"{DATA_PATH}/notes.md", "r").read()
     settings = json.loads(open(f"{DATA_PATH}/settings.json").read())
     settings = Settings(**settings)
