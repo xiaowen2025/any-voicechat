@@ -1,4 +1,4 @@
-# AnyVoiceChat
+# Vox Hub
 A general-purpose voice chat agent framework with real-time note-taking and post-conversation analysis, powered by Gemini Live API. It can be easily configured for various scenarios, from interview simulations to creative brainstorming partners.  
 
 See example app configurations under `app_examples/`.
