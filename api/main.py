@@ -51,7 +51,7 @@ app.include_router(api_key.router)
 app.include_router(context.router)
 app.include_router(websocket.router)
 
-app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
+# app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
 
 def main():

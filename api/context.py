@@ -5,6 +5,18 @@ from core.settings import load_settings, save_settings
 router = APIRouter()
 
 
+@router.get("/api/settings")
+async def get_settings():
+    """
+    Retrieves the entire settings dictionary.
+    """
+    try:
+        settings = load_settings()
+        return JSONResponse(content=settings)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
 @router.get("/api/context")
 async def get_context():
     """
