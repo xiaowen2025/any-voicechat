@@ -12,18 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from core.analyse import analyse, save_analysis
 from core.settings import DATA_PATH, Settings
+from api.dependencies import get_settings
 
 router = APIRouter()
 
 @router.post("/api/analyse")
-async def post_analyse():
+async def post_analyse(settings: Settings = Depends(get_settings)):
     notes = open(f"{DATA_PATH}/notes.md", "r").read()
-    settings = json.loads(open(f"{DATA_PATH}/settings.json").read())
-    settings = Settings(**settings)
     analysis_result = analyse(settings, notes)
     save_analysis(analysis_result)
     return {"message": "Analysis complete", "analysis": analysis_result}
