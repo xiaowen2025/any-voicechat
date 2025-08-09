@@ -23,7 +23,7 @@ from fastapi.staticfiles import StaticFiles
 from api import result_docs
 from api import api_key
 from api import context
-from api import websocket
+from api.websocket import connection as websocket
 from api import analyse
 from core.settings import DATA_PATH
 
