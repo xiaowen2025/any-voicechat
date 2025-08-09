@@ -1,8 +1,8 @@
 <template>
-  <div class="interview-notes-window">
+  <div class="notes-window">
     <v-card>
       <v-card-title class="font-weight-bold">
-        Interview Notes
+        Notes
       </v-card-title>
       <v-card-text>
         <div v-html="renderedMarkdown"></div>
@@ -21,7 +21,7 @@
 import MarkdownIt from 'markdown-it';
 
 export default {
-  name: 'InterviewNotesWindow',
+  name: 'NotesWindow',
   data() {
     return {
       notes: '',
@@ -37,7 +37,7 @@ export default {
   methods: {
     async fetchNotes() {
       try {
-        const response = await fetch('/api/documents/interview_note');
+        const response = await fetch('/api/result_docs/notes');
         if (response.ok) {
           const data = await response.json();
           this.notes = data.content;
@@ -51,7 +51,7 @@ export default {
     },
     async saveNotes() {
       try {
-        await fetch('/api/documents/interview_note', {
+        await fetch('/api/result_docs/notes', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export default {
 </script>
 
 <style scoped>
-.interview-notes-window {
+.notes-window {
   margin: 16px 0;
 }
 </style>

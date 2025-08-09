@@ -13,7 +13,7 @@ import MarkdownIt from 'markdown-it';
 const md = new MarkdownIt();
 
 export default {
-  name: 'InterviewAnalysisViewer',
+  name: 'AnalysisViewer',
   props: {
     content: {
       type: String,
