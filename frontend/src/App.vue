@@ -22,7 +22,7 @@
                   :analyser-node="analyserNode"
                   :interview-started="interviewStarted"
                 />
-                <interview-notes-window ref="interviewNotes" />
+                <notes-window ref="interviewNotes" />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
                 <control-buttons
@@ -39,7 +39,7 @@
             </v-card>
           </v-col>
           <v-col v-if="analysisCompleted" cols="6" class="d-flex flex-column">
-            <interview-analysis-viewer :content="analysisContent" />
+            <analysis-viewer :content="analysisContent" />
           </v-col>
         </v-row>
       </v-container>
@@ -54,8 +54,8 @@ import AgentProfile from './components/AgentProfile.vue';
 import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
-import InterviewNotesWindow from './components/InterviewNotesWindow.vue';
-import InterviewAnalysisViewer from "./components/InterviewAnalysisViewer.vue";
+import NotesWindow from './components/NotesWindow.vue';
+import AnalysisViewer from "./components/AnalysisViewer.vue";
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
 

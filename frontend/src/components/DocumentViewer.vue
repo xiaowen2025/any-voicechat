@@ -53,7 +53,7 @@ export default {
   methods: {
     async save() {
       try {
-        const response = await fetch(`/api/documents/${this.docName}`, {
+        const response = await fetch(`/api/result_docs/${this.docName}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

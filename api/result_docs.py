@@ -1,11 +1,15 @@
+# Result Documents include notes took during conversations and the post-conversation analysis.
 import os
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from core.voice_agent.context import DATA_PATH
+
+
+from core.settings import DATA_PATH
 
 router = APIRouter()
 
-@router.get("/api/documents/{doc_name}")
+
+@router.get("/api/result_docs/{doc_name}")
 async def get_document(doc_name: str):
     file_path = os.path.join(DATA_PATH, f"{doc_name}.md")
     try:
@@ -15,7 +19,7 @@ async def get_document(doc_name: str):
     except FileNotFoundError:
         return JSONResponse(content={"error": f"{doc_name} not found."}, status_code=404)
 
-@router.put("/api/documents/{doc_name}")
+@router.put("/api/result_docs/{doc_name}")
 async def update_document(doc_name: str, request: Request):
     file_path = os.path.join(DATA_PATH, f"{doc_name}.md")
     try:

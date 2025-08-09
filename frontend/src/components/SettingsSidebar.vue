@@ -41,22 +41,12 @@
     <v-divider></v-divider>
     <v-expansion-panels v-model="panel">
       <document-viewer
-        doc-name="cv"
-        title="CV"
-        :content="cvContent"
-        @update:content="cvContent = $event"
-      ></document-viewer>
-      <document-viewer
-        doc-name="job_description"
-        title="Job Description"
-        :content="jobDescriptionContent"
-        @update:content="jobDescriptionContent = $event"
-      ></document-viewer>
-      <document-viewer
-        doc-name="role_description"
-        title="Interviewer Style"
-        :content="roleDescriptionContent"
-        @update:content="roleDescriptionContent = $event"
+        v-for="(item, name) in context"
+        :key="name"
+        :doc-name="name"
+        :title="formatTitle(name)"
+        :content="item.value || item.default_value"
+        @update:content="updateContext(name, $event)"
       ></document-viewer>
     </v-expansion-panels>
   </v-navigation-drawer>
@@ -82,12 +72,15 @@ export default {
       geminiApiKey: "",
       showGeminiApiKey: false,
       apiKeyEdited: false,
-      cvContent: "",
-      jobDescriptionContent: "",
-      roleDescriptionContent: "",
+      context: {},
     };
   },
   methods: {
+    formatTitle(name) {
+      if (!name) return '';
+      const words = name.split('_');
+      return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    },
     startResize(event) {
       event.preventDefault();
       document.addEventListener("mousemove", this.doResize);
@@ -125,30 +118,44 @@ export default {
         alert(`Error verifying API key: ${error}`);
       }
     },
-    async fetchDocument(docName) {
+    async loadContext() {
       try {
-        const response = await fetch(`/api/documents/${docName}`);
+        const response = await fetch('/api/context');
         const data = await response.json();
         if (response.ok) {
-          return data.content;
+          this.context = data;
         } else {
-          return `Error: ${data.error}`;
+          console.error('Error fetching context:', data.error);
         }
       } catch (error) {
-        console.error(error);
-        return 'Error fetching document.';
+        console.error('Error fetching context:', error);
       }
     },
-    async loadAllDocuments() {
-      this.cvContent = await this.fetchDocument("cv");
-      this.jobDescriptionContent = await this.fetchDocument("job_description");
-      this.roleDescriptionContent = await this.fetchDocument("role_description");
-    },
+    async updateContext(contextName, content) {
+      try {
+        const response = await fetch(`/api/context/${contextName}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ value: content }),
+        });
+        const result = await response.json();
+        if (response.ok) {
+          console.log(`Context '${contextName}' updated.`);
+          if (this.context[contextName]) {
+              this.context[contextName].value = content;
+          }
+        } else {
+          alert(`Error updating context: ${result.error}`);
+        }
+      } catch (error) {
+        alert(`Error updating context: ${error}`);
+      }
+    }
   },
   mounted() {
     this.geminiApiKey = localStorage.getItem("geminiApiKey") || "";
     this.apiKeyEdited = !this.geminiApiKey;
-    this.loadAllDocuments();
+    this.loadContext();
   },
 };
 </script>
