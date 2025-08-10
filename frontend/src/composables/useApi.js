@@ -1,41 +1,18 @@
 import { ref } from 'vue';
+import { useSettings } from './useSettings';
 
 export function useApi() {
+  const { loadSettings, getContext, updateContext: updateSettingsContext } = useSettings();
   const context = ref({});
 
   async function loadContext() {
-    try {
-      const response = await fetch('/api/context');
-      const data = await response.json();
-      if (response.ok) {
-        context.value = data;
-      } else {
-        console.error('Error fetching context:', data.error);
-      }
-    } catch (error) {
-      console.error('Error fetching context:', error);
-    }
+    loadSettings();
+    context.value = getContext();
   }
 
   async function updateContext(contextName, content) {
-    try {
-      const response = await fetch(`/api/context/${contextName}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: content }),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        console.log(`Context '${contextName}' updated.`);
-        if (context.value[contextName]) {
-          context.value[contextName].value = content;
-        }
-      } else {
-        alert(`Error updating context: ${result.error}`);
-      }
-    } catch (error) {
-      alert(`Error updating context: ${error}`);
-    }
+    updateSettingsContext(contextName, content);
+    context.value[contextName].value = content;
   }
 
   async function saveGeminiApiKey(apiKey) {

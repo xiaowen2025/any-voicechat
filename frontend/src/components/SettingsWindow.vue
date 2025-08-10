@@ -22,6 +22,7 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue';
+import { useSettings } from '../composables/useSettings';
 
 export default {
   name: 'SettingsWindow',
@@ -30,57 +31,37 @@ export default {
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const settings = ref({});
+    const { settings, loadSettings, saveSettings } = useSettings();
     const editableSettings = ref('');
 
-    async function loadSettings() {
+    function load() {
+      const currentSettings = loadSettings();
+      editableSettings.value = JSON.stringify(currentSettings, null, 2);
+    }
+
+    function saveSettingsLocal() {
       try {
-        const response = await fetch('/api/settings');
-        const data = await response.json();
-        if (response.ok) {
-          settings.value = data;
-          editableSettings.value = JSON.stringify(data, null, 2);
-        } else {
-          console.error('Error fetching settings:', data.error);
-        }
+        const newSettings = JSON.parse(editableSettings.value);
+        saveSettings(newSettings);
+        emit('update:modelValue', false);
+        window.location.reload();
       } catch (error) {
-        console.error('Error fetching settings:', error);
+        console.error('Error parsing settings:', error);
+        alert('Error parsing settings: Please ensure it is valid JSON.');
       }
     }
 
-    async function saveSettings() {
-      try {
-        const response = await fetch('/api/settings', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: editableSettings.value,
-        });
-        const data = await response.json();
-        if (response.ok) {
-          settings.value = JSON.parse(editableSettings.value);
-          emit('update:modelValue', false);
-          window.location.reload();
-        } else {
-          console.error('Error saving settings:', data.error);
-        }
-      } catch (error) {
-        console.error('Error saving settings:', error);
-      }
-    }
-
-    onMounted(loadSettings);
+    onMounted(load);
 
     watch(() => props.modelValue, (newValue) => {
       if (newValue) {
-        loadSettings();
+        load();
       }
     });
 
     return {
       editableSettings,
-      saveSettings,
+      saveSettings: saveSettingsLocal,
     };
   },
 };
