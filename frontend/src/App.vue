@@ -24,7 +24,8 @@
                   :analyser-node="analyserNode"
                   :conversation-started="conversationStarted"
                 />
-                <notes-window ref="notes" />
+                <notes-window ref="notes" :content="analysisContent" />
+                <analysis-viewer :content="analysisContent" />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
                 <control-buttons
@@ -43,7 +44,6 @@
         </v-row>
       </v-container>
     </v-main>
-    <analysis-viewer :content="analysisContent" />
   </v-app>
 </template>
 
@@ -53,7 +53,7 @@ import AgentProfile from './components/AgentProfile.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import NotesWindow from './components/NotesWindow.vue';
-import AnalysisViewer from "./components/AnalysisViewer.vue";
+import AnalysisViewer from './components/AnalysisViewer.vue';
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
 import { useThemeManager } from './composables/useThemeManager';
