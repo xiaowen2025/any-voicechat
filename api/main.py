@@ -25,6 +25,7 @@ from api import api_key
 from api import context
 from api.websocket import connection as websocket
 from api import analyse
+from api import avatar
 from core.settings import DATA_PATH
 
 
@@ -50,6 +51,7 @@ app.include_router(result_docs.router)
 app.include_router(api_key.router)
 app.include_router(context.router)
 app.include_router(websocket.router)
+app.include_router(avatar.router)
 
 app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
