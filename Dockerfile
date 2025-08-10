@@ -25,4 +25,4 @@ EXPOSE 8000
 
 
 # Command to run the application.
-CMD ["uv", "run", "interviewer"]
+CMD ["uv", "run", "api"]

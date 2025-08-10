@@ -1,18 +1,21 @@
 <template>
   <div class="d-flex flex-column align-center justify-center pa-3">
-    <v-avatar class="mb-4" rounded="lg" @click="triggerAvatarUpload" style="cursor: pointer; width: 400px; height: 300px;">
+    <v-avatar class="mb-4" rounded="lg" @click="openAvatarEditor" style="cursor: pointer; width: 400px; height: 300px;">
       <v-img :src="currentAvatar" contain></v-img>
     </v-avatar>
-    <input type="file" ref="avatarUploader" @change="handleAvatarChange" accept="image/*" style="display: none;" />
     <canvas ref="visualizer" width="125" height="50"></canvas>
+    <AvatarEditor v-model="avatarEditorDialog" @avatar-saved="onAvatarSaved" />
   </div>
 </template>
 
 <script>
 import defaultAvatar from '../assets/agent-avatar.png';
-import imageCompression from 'browser-image-compression';
+import AvatarEditor from './AvatarEditor.vue';
 
 export default {
+  components: {
+    AvatarEditor,
+  },
   props: {
     analyserNode: {
       type: Object,
@@ -27,6 +30,7 @@ export default {
     return {
       currentAvatar: defaultAvatar,
       visualizerAnimationId: null,
+      avatarEditorDialog: false,
     };
   },
   watch: {
@@ -47,37 +51,18 @@ export default {
     this.loadAvatar();
   },
   methods: {
-    triggerAvatarUpload() {
-      this.$refs.avatarUploader.click();
-    },
-    async handleAvatarChange(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 800,
-        useWebWorker: true,
-      };
-
-      try {
-        const compressedFile = await imageCompression(file, options);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const base64String = e.target.result;
-          localStorage.setItem('userAvatar', base64String);
-          this.currentAvatar = base64String;
-        };
-        reader.readAsDataURL(compressedFile);
-      } catch (error) {
-        console.error('Error compressing or reading the image:', error);
-      }
+    openAvatarEditor() {
+      this.avatarEditorDialog = true;
     },
     loadAvatar() {
       const savedAvatar = localStorage.getItem('userAvatar');
       if (savedAvatar) {
         this.currentAvatar = savedAvatar;
       }
+    },
+    onAvatarSaved(newAvatar) {
+      this.currentAvatar = newAvatar;
+      this.avatarEditorDialog = false;
     },
     drawVisualizer() {
       const canvas = this.$refs.visualizer;
