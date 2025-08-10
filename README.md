@@ -1,4 +1,4 @@
-# Vox Hub: Any Voice Assistant
+# Vox Hub: Echo Your Ideas.
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/versions/3.12/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)

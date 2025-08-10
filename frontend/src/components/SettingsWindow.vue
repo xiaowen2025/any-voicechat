@@ -31,7 +31,7 @@ export default {
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const { settings, loadSettings, saveSettings } = useSettings();
+    const { settings, loadSettings, saveSettings: saveSettingsHook } = useSettings();
     const editableSettings = ref('');
 
     function load() {
@@ -42,7 +42,7 @@ export default {
     function saveSettingsLocal() {
       try {
         const newSettings = JSON.parse(editableSettings.value);
-        saveSettings(newSettings);
+        saveSettingsHook(newSettings);
         emit('update:modelValue', false);
         window.location.reload();
       } catch (error) {

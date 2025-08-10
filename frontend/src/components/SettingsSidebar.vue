@@ -94,8 +94,8 @@ import DocumentViewer from "./DocumentViewer.vue";
 import GeminiApiKeyManager from "./GeminiApiKeyManager.vue";
 import SettingsWindow from "./SettingsWindow.vue";
 import { themes } from "../themes";
-import { useApi } from "../composables/useApi";
 import { useResizableDrawer } from "../composables/useResizableDrawer";
+import { useSettings } from '../composables/useSettings';
 import { onMounted, ref } from "vue";
 
 export default {
@@ -117,12 +117,7 @@ export default {
     SettingsWindow,
   },
   setup(props, { emit }) {
-    const {
-      context,
-      loadContext,
-      updateContext,
-      saveGeminiApiKey: saveKey,
-    } = useApi();
+    const { getContext, updateContext } = useSettings();
     const { drawerWidth, startResize } = useResizableDrawer(500);
 
     const panel = ref([]);
@@ -130,6 +125,7 @@ export default {
     const apiKeyEdited = ref(false);
     const isSettingsWindowVisible = ref(false);
     const areGeneralSettingsVisible = ref(false);
+    const context = ref({});
 
     const themeNames = Object.keys(themes);
 
@@ -142,13 +138,9 @@ export default {
     }
 
     async function saveGeminiApiKey() {
-      const success = await saveKey(geminiApiKey.value);
-      if (success) {
-        emit("api-key-updated", !!geminiApiKey.value);
-        apiKeyEdited.value = false;
-      } else {
-        geminiApiKey.value = "";
-      }
+      localStorage.setItem("geminiApiKey", geminiApiKey.value);
+      emit("api-key-updated", !!geminiApiKey.value);
+      apiKeyEdited.value = false;
     }
 
     onMounted(async () => {
@@ -157,7 +149,7 @@ export default {
       if (geminiApiKey.value) {
         emit("api-key-updated", true);
       }
-      await loadContext();
+      context.value = getContext();
       panel.value = Object.keys(context.value).map((_, index) => index);
     });
 
