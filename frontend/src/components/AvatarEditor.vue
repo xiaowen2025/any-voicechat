@@ -23,7 +23,7 @@
                 <vue-cropper
                   ref="cropper"
                   :src="imageSrc"
-                  :aspect-ratio="1"
+                  :aspect-ratio="4/3"
                   style="width: 100%;"
                   :key="cropperKey"
                 ></vue-cropper>
@@ -121,12 +121,6 @@ export default {
       try {
         const response = await fetch('/api/avatar/generate', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            prompt: 'minimalist flat design with cute cartoon character face with elements relevant to the current app settings',
-          }),
         });
 
         if (!response.ok) {

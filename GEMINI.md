@@ -2,7 +2,7 @@ Always use an absolute path.
 
 ├── api/                  # Backend FastAPI application
 ├── frontend/             # Frontend Vue.js application
-├── interviewer/          # Core Python package for the interview agent
+├── core/                 # Core Python package for the voice agent
 ├── default_settings/     # Example files for setting up an interview
 ├── tests/                # Tests for the application
 
