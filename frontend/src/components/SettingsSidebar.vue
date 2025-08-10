@@ -22,8 +22,12 @@
         @update:content="updateContext(name, $event)"
       ></document-viewer>
     </v-expansion-panels>
+    <settings-window v-model="isSettingsWindowVisible"></settings-window>
     <template v-slot:append>
       <v-container>
+        <v-btn block @click="isSettingsWindowVisible = true" class="mb-4">
+          Show Settings JSON
+        </v-btn>
         <v-divider class="mb-4"></v-divider>
         <v-row align="center">
           <v-col>
@@ -63,6 +67,7 @@
 <script>
 import DocumentViewer from "./DocumentViewer.vue";
 import GeminiApiKeyManager from "./GeminiApiKeyManager.vue";
+import SettingsWindow from "./SettingsWindow.vue";
 import { themes } from '../themes';
 import { useApi } from '../composables/useApi';
 import { useResizableDrawer } from '../composables/useResizableDrawer';
@@ -79,6 +84,7 @@ export default {
   components: {
     DocumentViewer,
     GeminiApiKeyManager,
+    SettingsWindow,
   },
   setup(props, { emit }) {
     const { context, loadContext, updateContext, saveGeminiApiKey: saveKey } = useApi();
@@ -87,6 +93,7 @@ export default {
     const panel = ref([]);
     const geminiApiKey = ref("");
     const apiKeyEdited = ref(false);
+    const isSettingsWindowVisible = ref(false);
 
     const themeNames = Object.keys(themes);
 
@@ -124,6 +131,7 @@ export default {
       context,
       themeNames,
       formatTitle,
+      isSettingsWindowVisible,
       startResize,
       saveGeminiApiKey,
       updateContext,
