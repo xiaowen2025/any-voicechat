@@ -30,7 +30,6 @@ def _verify_api_key(api_key: str):
 @router.post("/api/verify_api_key")
 async def verify_api_key(api_key: ApiKey):
     """Endpoint to verify the provided Gemini API key."""
-    # return {"status": "success", "message": "API Key verified and set."}
     try:
         _verify_api_key(api_key.key)
         os.environ["GEMINI_API_KEY"] = api_key.key
