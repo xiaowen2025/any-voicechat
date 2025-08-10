@@ -21,7 +21,7 @@
                   <v-icon size="48">mdi-cloud-upload</v-icon>
                   <p>Drag & Drop or Click to Upload</p>
                 </div>
-                <div v-else style="width: 100%; height: 100%;">
+                <div v-else style="width: 100%; height: 100%;" @click.stop>
                   <vue-cropper
                     ref="cropper"
                     :src="imageSrc"

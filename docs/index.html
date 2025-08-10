@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnyVoiceChat - A General-Purpose Voice Chat Agent Framework</title>
+    <title>Vox Hub: Any Voice Assistant</title>
     <style>
         body {
             background-color: #12131a;
@@ -81,10 +81,8 @@
         .examples-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 3rem;
+            gap: 2rem;
             padding-top: 1rem;
-            max-width: 700px;
-            margin: auto;
         }
         .example-card {
             background: #2a2d3b;
@@ -92,6 +90,7 @@
             overflow: hidden;
             border: 1px solid #3c3f50;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
         }
         .example-card:hover {
             transform: translateY(-5px);
@@ -108,26 +107,57 @@
             margin-top: 0;
             font-size: 1.5rem;
         }
+        pre {
+            background-color: #2a2d3b;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #3c3f50;
+        }
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #3c3f50;
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Vox Hub</h1>
-            <p>A general-purpose voice chat agent app with real-time note-taking and post-conversation analysis.</p>
+            <p>A versatile voice chat application.</p>
         </header>
 
         <main>
+            <main>
             <h2>Key Features</h2>
             <ul class="features-list">
-                <li><strong>Real-time Voice Interaction</strong> Engage in natural, real-time conversations with an AI agent.</li>
-                <li><strong>Live Note-Taking</strong> Receive detailed notes on your side of the conversation in real-time.</li>
-                <li><strong>Configurable Agent Behavior</strong> Easily customize the agent's role, personality, and context by modifying a JSON configuration file.</li>
-                <li><strong>Post-Conversation Analysis</strong> Get a comprehensive analysis of the conversation, presented in a clear markdown format.</li>
+                <li><strong>Live Note-Taking:</strong> Get real-time, detailed notes on your side of the conversation.</li>
+                <li><strong>Post-Conversation Analysis:</strong> Receive a comprehensive analysis of the entire conversation in a clean, easy-to-read markdown format.</li>
+                <li><strong>Customizable Avatars:</strong> Generate a unique AI avatar with a single click, tailored to your chosen scenario.</li>
+                <li><strong>Configurable Scenarios:</strong> Easily customize the agent's role, personality, and context by editing a single JSON file.</li>
             </ul>
 
             <h2>Example Apps</h2>
             <div class="examples-grid">
+                <div>
+                    <h3 class="app-title">Comfort Chat</h3>
+                    <div class="example-card">
+                        <img src="imgs/app-listen.png" alt="Comfort Chat">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="app-title">Story Architect</h3>
+                    <div class="example-card">
+                        <img src="imgs/app-story.png" alt="Story Architect">
+                    </div>
+                </div>
                 <div>
                     <h3 class="app-title">Interview Simulator</h3>
                     <div class="example-card">
@@ -142,20 +172,12 @@
                         <img src="imgs/app-language.png" alt="Language Pal">
                     </div>
                 </div>
-                <div>
-                    <h3 class="app-title">Comefort Chat</h3>
-                    <div class="example-card">
-                        <img src="imgs/app-listen.png" alt="Friendly Listener">
-                    </div>
-                </div>
-                <div>
-                    <h3 class="app-title">Story Architect</h3>
-                    <div class="example-card">
-                        <img src="imgs/app-story.png" alt="Story Architect">
-                    </div>
-                </div>
             </div>
         </main>
+
+        <footer>
+            <p>This project is licensed under the Apache 2.0 License. See the <a href="LICENSE">LICENSE</a> file for details.</p>
+        </footer>
     </div>
 </body>
 </html>
