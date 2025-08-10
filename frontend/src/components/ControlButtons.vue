@@ -1,5 +1,5 @@
 <template>
-  <v-card-actions class="pa-4 justify-center">
+  <v-card-actions class="pa-4 justify-center flex-column">
     <v-btn
       v-if="!showAnalyseButton"
       @click="$emit('toggle-interview')"
@@ -17,6 +17,16 @@
       </template>
 
     </v-btn>
+
+    <v-alert
+      v-if="!isApiKeySet && !showAnalyseButton"
+      type="info"
+      variant="tonal"
+      class="mt-4"
+      dense
+    >
+      Please set your Gemini API key in the settings to begin.
+    </v-alert>
 
     <v-btn
       v-if="showAnalyseButton"
