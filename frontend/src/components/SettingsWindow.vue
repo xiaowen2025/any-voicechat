@@ -17,11 +17,13 @@
           :items="['Puck', 'Leda']"
         ></v-select>
 
-        <v-text-field label="Language Code" v-model="settings.language_code"></v-text-field>
-
-        <div v-for="(value, key) in settings.context_dict" :key="key">
-            <v-text-field :label="value.description" v-model="value.value"></v-text-field>
-        </div>
+        <v-select
+          label="Language Code"
+          v-model="settings.language_code"
+          :items="languages"
+          item-title="text"
+          item-value="value"
+        ></v-select>
 
       </v-card-text>
       <v-card-actions>
@@ -44,6 +46,17 @@ export default {
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const settings = ref(null);
+    const languages = ref([
+        { text: 'English (US)', value: 'en-US' },
+        { text: 'Chinese (Simplified)', value: 'zh-CN' },
+        { text: 'German', value: 'de-DE' },
+        { text: 'French', value: 'fr-FR' },
+        { text: 'Hindi', value: 'hi-IN' },
+        { text: 'Japanese', value: 'ja-JP' },
+        { text: 'Spanish', value: 'es-ES' },
+        { text: 'Portuguese', value: 'pt-BR' },
+        { text: 'Russian', value: 'ru-RU' },
+    ]);
 
     async function loadSettings() {
       try {
@@ -51,6 +64,9 @@ export default {
         const data = await response.json();
         if (response.ok) {
           settings.value = data;
+          if (!settings.value.language_code) {
+            settings.value.language_code = 'en-US';
+          }
         } else {
           console.error('Error fetching settings:', data.error);
         }
@@ -91,6 +107,7 @@ export default {
     return {
       settings,
       saveSettings,
+      languages,
     };
   },
 };
