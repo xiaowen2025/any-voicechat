@@ -29,6 +29,8 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="$emit('update:modelValue', false)">Close</v-btn>
+        <v-btn color="blue darken-1" text @click="triggerFileUpload">Upload JSON</v-btn>
+        <input type="file" ref="fileInput" @change="handleFileUpload" accept=".json" style="display: none" />
         <v-btn color="blue darken-1" text @click="saveSettings">Save</v-btn>
       </v-card-actions>
     </v-card>
@@ -46,6 +48,7 @@ export default {
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const settings = ref(null);
+    const fileInput = ref(null);
     const languages = ref([
         { text: 'English (US)', value: 'en-US' },
         { text: 'Chinese (Simplified)', value: 'zh-CN' },
@@ -57,6 +60,29 @@ export default {
         { text: 'Portuguese', value: 'pt-BR' },
         { text: 'Russian', value: 'ru-RU' },
     ]);
+
+    function triggerFileUpload() {
+      fileInput.value.click();
+    }
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const newSettings = JSON.parse(e.target.result);
+          settings.value = { ...settings.value, ...newSettings };
+          saveSettings();
+        } catch (error) {
+          console.error('Error parsing JSON file:', error);
+        }
+      };
+      reader.readAsText(file);
+    }
 
     async function loadSettings() {
       try {
@@ -108,6 +134,9 @@ export default {
       settings,
       saveSettings,
       languages,
+      fileInput,
+      triggerFileUpload,
+      handleFileUpload,
     };
   },
 };
