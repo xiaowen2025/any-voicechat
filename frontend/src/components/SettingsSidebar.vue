@@ -8,10 +8,10 @@
   >
     <div class="drag-handle" @mousedown="startResize"></div>
     <!-- You can add navigation links here later -->
-    <v-list-item class="my-4 py-5">
+    <v-list-item class="my-2">
       <v-row align="center">
         <v-col>
-          <span class="font-weight-bold text-h4">Settings</span>
+          <span class="font-weight-bold">Context</span>
         </v-col>
         <v-col class="d-flex justify-end">
           <v-btn icon @click="isSettingsWindowVisible = true">
@@ -33,39 +33,58 @@
     </v-expansion-panels>
     <settings-window v-model="isSettingsWindowVisible"></settings-window>
     <template v-slot:append>
-      <v-container>
-        <v-divider class="mb-4"></v-divider>
-        <v-row align="center">
-          <v-col>
-            <v-select
-              :model-value="selectedTheme"
-              :items="themeNames"
-              label="Theme"
-              dense
-              outlined
-              hide-details
-              @update:model-value="$emit('theme-changed', $event)"
-            ></v-select>
-          </v-col>
-          <v-col>
-            <v-switch
-              :model-value="isDarkMode"
-              @update:model-value="$emit('dark-mode-toggled', $event)"
-              label="Dark Mode"
-              hide-details
-            ></v-switch>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-container>
-        <gemini-api-key-manager
-          :gemini-api-key="geminiApiKey"
-          :api-key-edited="apiKeyEdited"
-          @update:gemini-api-key="geminiApiKey = $event"
-          @update:api-key-edited="apiKeyEdited = $event"
-          @save-api-key="saveGeminiApiKey"
-        ></gemini-api-key-manager>
-      </v-container>
+      <v-list-item
+        @click="areGeneralSettingsVisible = !areGeneralSettingsVisible"
+        class="px-2"
+      >
+        <v-list-item-title class="font-weight-bold"
+          >Settings</v-list-item-title
+        >
+        <template v-slot:append>
+          <v-icon>
+            {{
+              areGeneralSettingsVisible ? "mdi-chevron-up" : "mdi-chevron-down"
+            }}
+          </v-icon>
+        </template>
+      </v-list-item>
+      <v-expand-transition>
+        <div v-show="areGeneralSettingsVisible">
+          <v-container>
+            <v-divider class="mb-4"></v-divider>
+            <v-row align="center">
+              <v-col>
+                <v-select
+                  :model-value="selectedTheme"
+                  :items="themeNames"
+                  label="Theme"
+                  dense
+                  outlined
+                  hide-details
+                  @update:model-value="$emit('theme-changed', $event)"
+                ></v-select>
+              </v-col>
+              <v-col>
+                <v-switch
+                  :model-value="isDarkMode"
+                  @update:model-value="$emit('dark-mode-toggled', $event)"
+                  label="Dark Mode"
+                  hide-details
+                ></v-switch>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-container>
+            <gemini-api-key-manager
+              :gemini-api-key="geminiApiKey"
+              :api-key-edited="apiKeyEdited"
+              @update:gemini-api-key="geminiApiKey = $event"
+              @update:api-key-edited="apiKeyEdited = $event"
+              @save-api-key="saveGeminiApiKey"
+            ></gemini-api-key-manager>
+          </v-container>
+        </div>
+      </v-expand-transition>
     </template>
   </v-navigation-drawer>
 </template>
@@ -74,10 +93,10 @@
 import DocumentViewer from "./DocumentViewer.vue";
 import GeminiApiKeyManager from "./GeminiApiKeyManager.vue";
 import SettingsWindow from "./SettingsWindow.vue";
-import { themes } from '../themes';
-import { useApi } from '../composables/useApi';
-import { useResizableDrawer } from '../composables/useResizableDrawer';
-import { onMounted, ref } from 'vue';
+import { themes } from "../themes";
+import { useApi } from "../composables/useApi";
+import { useResizableDrawer } from "../composables/useResizableDrawer";
+import { onMounted, ref } from "vue";
 
 export default {
   name: "SettingsSidebar",
@@ -86,36 +105,49 @@ export default {
     selectedTheme: String,
     isDarkMode: Boolean,
   },
-  emits: ["update:modelValue", "api-key-updated", "theme-changed", "dark-mode-toggled"],
+  emits: [
+    "update:modelValue",
+    "api-key-updated",
+    "theme-changed",
+    "dark-mode-toggled",
+  ],
   components: {
     DocumentViewer,
     GeminiApiKeyManager,
     SettingsWindow,
   },
   setup(props, { emit }) {
-    const { context, loadContext, updateContext, saveGeminiApiKey: saveKey } = useApi();
+    const {
+      context,
+      loadContext,
+      updateContext,
+      saveGeminiApiKey: saveKey,
+    } = useApi();
     const { drawerWidth, startResize } = useResizableDrawer(500);
-    
+
     const panel = ref([]);
     const geminiApiKey = ref("");
     const apiKeyEdited = ref(false);
     const isSettingsWindowVisible = ref(false);
+    const areGeneralSettingsVisible = ref(false);
 
     const themeNames = Object.keys(themes);
 
     function formatTitle(name) {
-      if (!name) return '';
-      const words = name.split('_');
-      return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      if (!name) return "";
+      const words = name.split("_");
+      return words
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
     }
 
     async function saveGeminiApiKey() {
       const success = await saveKey(geminiApiKey.value);
       if (success) {
-        emit('api-key-updated', !!geminiApiKey.value);
+        emit("api-key-updated", !!geminiApiKey.value);
         apiKeyEdited.value = false;
       } else {
-        geminiApiKey.value = '';
+        geminiApiKey.value = "";
       }
     }
 
@@ -123,7 +155,7 @@ export default {
       geminiApiKey.value = localStorage.getItem("geminiApiKey") || "";
       apiKeyEdited.value = !geminiApiKey.value;
       if (geminiApiKey.value) {
-        emit('api-key-updated', true);
+        emit("api-key-updated", true);
       }
       await loadContext();
       panel.value = Object.keys(context.value).map((_, index) => index);
@@ -138,11 +170,12 @@ export default {
       themeNames,
       formatTitle,
       isSettingsWindowVisible,
+      areGeneralSettingsVisible,
       startResize,
       saveGeminiApiKey,
       updateContext,
     };
-  }
+  },
 };
 </script>
 
@@ -160,5 +193,4 @@ export default {
   cursor: col-resize;
   z-index: 10;
 }
-
 </style>
