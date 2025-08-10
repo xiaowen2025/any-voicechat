@@ -160,10 +160,3 @@ export default {
   cursor: col-resize;
   z-index: 10;
 }
-
-.fancy-btn {
-  background: linear-gradient(45deg, #972408 30%, #fa9256 90%);
-  color: white !important;
-  box-shadow: 0 3px 5px 2px rgba(255, 105, 135, .3);
-}
-</style>
