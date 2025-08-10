@@ -5,11 +5,22 @@
         <span class="headline">Settings</span>
       </v-card-title>
       <v-card-text>
-        <v-textarea
-          v-model="editableSettings"
-          auto-grow
-          rows="15"
-        ></v-textarea>
+        <v-tabs v-model="tab">
+          <v-tab value="form">User-Friendly</v-tab>
+          <v-tab value="raw">Raw JSON</v-tab>
+        </v-tabs>
+        <v-window v-model="tab">
+          <v-window-item value="form">
+            <SettingsForm v-model="settings" />
+          </v-window-item>
+          <v-window-item value="raw">
+            <v-textarea
+              v-model="editableSettings"
+              auto-grow
+              rows="15"
+            ></v-textarea>
+          </v-window-item>
+        </v-window>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -22,14 +33,19 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue';
+import SettingsForm from './SettingsForm.vue';
 
 export default {
   name: 'SettingsWindow',
+  components: {
+    SettingsForm,
+  },
   props: {
     modelValue: Boolean,
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    const tab = ref('form');
     const settings = ref({});
     const editableSettings = ref('');
 
@@ -50,16 +66,26 @@ export default {
 
     async function saveSettings() {
       try {
+        let settingsToSave;
+        if (tab.value === 'form') {
+          settingsToSave = JSON.stringify(settings.value, null, 2);
+        } else {
+          settingsToSave = editableSettings.value;
+        }
+
         const response = await fetch('/api/settings', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: editableSettings.value,
+          body: settingsToSave,
         });
+
         const data = await response.json();
         if (response.ok) {
-          settings.value = JSON.parse(editableSettings.value);
+          if (tab.value === 'raw') {
+            settings.value = JSON.parse(editableSettings.value);
+          }
           emit('update:modelValue', false);
           window.location.reload();
         } else {
@@ -78,7 +104,13 @@ export default {
       }
     });
 
+    watch(settings, (newValue) => {
+      editableSettings.value = JSON.stringify(newValue, null, 2);
+    }, { deep: true });
+
     return {
+      tab,
+      settings,
       editableSettings,
       saveSettings,
     };
