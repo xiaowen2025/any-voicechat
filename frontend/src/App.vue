@@ -1,5 +1,5 @@
 <template>
-  <v-app v-if="themeLoaded">
+  <v-app v-if="isThemeLoaded">
     <settings-sidebar
       v-model="showSettings"
       :selected-theme="selectedTheme"
@@ -49,30 +49,27 @@
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
-import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
-import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import NotesWindow from './components/NotesWindow.vue';
 import AnalysisViewer from "./components/AnalysisViewer.vue";
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
-import { themes as customThemes } from './themes';
+import { useThemeManager } from './composables/useThemeManager';
 
 // --- Reactive State ---
 const appName = ref('Any Voicechat');
 
 // Theme
-const theme = useTheme();
-const availableThemes = Object.keys(customThemes);
-let initialTheme = localStorage.getItem('theme') || 'Default';
-if (!availableThemes.includes(initialTheme)) {
-  initialTheme = 'Default';
-}
-const selectedTheme = ref(initialTheme);
-const isDarkMode = ref(localStorage.getItem('darkMode') === 'true');
-const themeLoaded = ref(false);
+const {
+  selectedTheme,
+  isDarkMode,
+  changeTheme,
+  toggleDarkMode,
+  initTheme,
+} = useThemeManager();
+const isThemeLoaded = ref(false);
 
 // Component State
 const showSettings = ref(true);
@@ -141,25 +138,6 @@ async function fetchAnalysis() {
   }
 }
 
-const applyTheme = async () => {
-  const themeName = isDarkMode.value ? `${selectedTheme.value}Dark` : selectedTheme.value;
-  theme.global.name.value = themeName;
-  await nextTick();
-  themeLoaded.value = true;
-};
-
-const changeTheme = (themeName) => {
-  selectedTheme.value = themeName;
-  localStorage.setItem('theme', themeName);
-  applyTheme();
-};
-
-const toggleDarkMode = () => {
-  isDarkMode.value = !isDarkMode.value;
-  localStorage.setItem('darkMode', isDarkMode.value);
-  applyTheme();
-};
-
 function onAnalysisComplete(analysis) {
   analysisContent.value = analysis;
   analysisCompleted.value = true;
@@ -191,11 +169,11 @@ async function toggleInterview() {
   if (conversationStarted.value) {
     stopInterview();
   } else {
-    await startInterview();
+    await startConversation();
   }
 }
 
-async function startInterview() {
+async function startConversation() {
   analysisCompleted.value = false;
   analysisContent.value = '';
   try {
@@ -243,11 +221,13 @@ async function setApiKey() {
 
 // --- Lifecycle Hooks ---
 
-onMounted(() => {
+onMounted(async () => {
   fetchSettings();
   fetchAnalysis();
   setApiKey();
-  applyTheme();
+  initTheme();
+  await nextTick();
+  isThemeLoaded.value = true;
 });
 
 onBeforeUnmount(() => {
