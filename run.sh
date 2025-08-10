@@ -13,4 +13,4 @@ docker build --no-cache -t backend .
 
 # Run backend container
 echo "Launching backend..."
-docker run --rm -p 8000:8000 backend
+docker run --rm -d --name vox-hub-backend -p 8000:8000 backend

@@ -15,6 +15,8 @@ class Settings(BaseModel):
     goal_description: str
     notes_taking_instruction: str
     analyse_instruction: str
+    voice_name: str
+    language_code: str
 
 
 def load_settings():
