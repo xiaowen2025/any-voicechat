@@ -9,7 +9,16 @@
     <div class="drag-handle" @mousedown="startResize"></div>
     <!-- You can add navigation links here later -->
     <v-list-item class="my-4 py-5">
-      <span class="font-weight-bold text-h4">Settings</span>
+      <v-row align="center">
+        <v-col>
+          <span class="font-weight-bold text-h4">Settings</span>
+        </v-col>
+        <v-col class="d-flex justify-end">
+          <v-btn icon @click="isSettingsWindowVisible = true">
+            <v-icon>mdi-cog</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-list-item>
     <v-divider></v-divider>
     <v-expansion-panels v-model="panel" multiple>
@@ -25,9 +34,6 @@
     <settings-window v-model="isSettingsWindowVisible"></settings-window>
     <template v-slot:append>
       <v-container>
-        <v-btn block @click="isSettingsWindowVisible = true" class="mb-4">
-          Show Settings JSON
-        </v-btn>
         <v-divider class="mb-4"></v-divider>
         <v-row align="center">
           <v-col>
