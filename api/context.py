@@ -17,6 +17,19 @@ async def get_settings():
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
+@router.post("/api/settings")
+async def update_settings(request: Request):
+    """
+    Updates the entire settings dictionary.
+    """
+    try:
+        new_settings = await request.json()
+        save_settings(new_settings)
+        return JSONResponse(content={"message": "Settings updated successfully."})
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
 @router.get("/api/context")
 async def get_context(settings: dict = Depends(load_settings)):
     """

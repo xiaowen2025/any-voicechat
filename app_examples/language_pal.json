@@ -1,5 +1,5 @@
 {
-    "app_name": "Language Exchange Pal",
+    "app_name": "Language Pal",
     "agent_description": "A friendly and patient native speaker to help you practice a new language.",
     "context_dict": {
         "target_language": {
