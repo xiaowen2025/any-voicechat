@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="500px">
+  <v-dialog v-model="dialog" max-width="800px">
     <v-card>
       <v-card-title>
         <span class="headline">Edit Avatar</span>
@@ -7,26 +7,41 @@
       <v-card-text>
         <v-container>
           <v-row>
-            <v-col cols="12" class="d-flex justify-center">
-              <v-progress-circular
-                v-if="loading"
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </v-col>
-            <v-col cols="12">
+            <v-col cols="12" md="8">
+              <v-card
+                class="d-flex justify-center align-center"
+                :class="{ 'grey lighten-4': !imageSrc }"
+                style="height: 300px; border: 2px dashed; cursor: pointer;"
+                :style="{ 'border-color': $vuetify.theme.current.colors.secondary }"
+                @click="triggerFileInput"
+                @dragover.prevent
+                @drop.prevent="onDrop"
+              >
+                <div v-if="!imageSrc" class="text-center">
+                  <v-icon size="48">mdi-cloud-upload</v-icon>
+                  <p>Drag & Drop or Click to Upload</p>
+                </div>
+                <div v-else style="width: 100%; height: 100%;">
+                  <vue-cropper
+                    ref="cropper"
+                    :src="imageSrc"
+                    :aspect-ratio="4/3"
+                    style="width: 100%; height: 100%;"
+                    :key="cropperKey"
+                    @crop="crop"
+                    @ready="crop"
+                  ></vue-cropper>
+                </div>
+              </v-card>
               <input type="file" ref="fileInput" @change="loadImage" accept="image/*" style="display: none;" />
-              <v-btn @click="triggerFileInput">Select Image</v-btn>
             </v-col>
-            <v-col cols="12">
-              <div v-if="imageSrc">
-                <vue-cropper
-                  ref="cropper"
-                  :src="imageSrc"
-                  :aspect-ratio="4/3"
-                  style="width: 100%;"
-                  :key="cropperKey"
-                ></vue-cropper>
+            <v-col cols="12" md="4">
+              <div class="d-flex flex-column align-center">
+                <p class="font-weight-bold">Preview</p>
+                <v-avatar size="200" rounded="lg">
+                  <v-img :src="croppedImage" v-if="croppedImage" contain></v-img>
+                  <div v-else class="grey lighten-2" style="width: 100%; height: 100%;"></div>
+                </v-avatar>
               </div>
             </v-col>
           </v-row>
@@ -34,10 +49,16 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="dialog = false">Cancel</v-btn>
-        <v-btn color="blue darken-1" text @click="cropAndSave">Save</v-btn>
-        <v-btn color="deep-purple accent-4" text @click="generateAvatar" :loading="loading">AI Generate</v-btn>
+        <v-btn color="secondary" text @click="dialog = false">Cancel</v-btn>
+        <v-btn color="primary" @click="generateAvatar" :loading="loading">
+          <v-icon left>mdi-auto-fix</v-icon>
+          AI Generate
+        </v-btn>
+        <v-btn color="primary" @click="cropAndSave" :disabled="!croppedImage">Save</v-btn>
       </v-card-actions>
+      <v-overlay :value="loading" absolute>
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+      </v-overlay>
     </v-card>
   </v-dialog>
 </template>
@@ -63,6 +84,7 @@ export default {
       imageSrc: null,
       loading: false,
       cropperKey: 0,
+      croppedImage: null,
     };
   },
   computed: {
@@ -79,8 +101,15 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
+    onDrop(event) {
+      const file = event.dataTransfer.files[0];
+      this.handleFile(file);
+    },
     loadImage(event) {
       const file = event.target.files[0];
+      this.handleFile(file);
+    },
+    handleFile(file) {
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -90,10 +119,12 @@ export default {
         reader.readAsDataURL(file);
       }
     },
-    async cropAndSave() {
+    crop() {
       if (!this.$refs.cropper) return;
-      const croppedCanvas = this.$refs.cropper.getCroppedCanvas();
-      const croppedImageData = croppedCanvas.toDataURL('image/png');
+      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+    },
+    async cropAndSave() {
+      if (!this.croppedImage) return;
 
       const options = {
         maxSizeMB: 1,
@@ -102,7 +133,7 @@ export default {
       };
 
       try {
-        const blob = await (await fetch(croppedImageData)).blob();
+        const blob = await (await fetch(this.croppedImage)).blob();
         const compressedFile = await imageCompression(blob, options);
         const reader = new FileReader();
         reader.onload = (e) => {
