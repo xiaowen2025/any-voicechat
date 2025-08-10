@@ -1,8 +1,8 @@
 <template>
   <div class="notes-window">
     <v-card>
-      <v-card-title class="font-weight-bold">
-        Notes
+      <v-card-title class="d-flex justify-space-between align-center font-weight-bold">
+        <span>Notes</span>
       </v-card-title>
       <v-card-text>
         <div class="notes-content" v-html="renderedMarkdown"></div>
@@ -22,6 +22,15 @@ import MarkdownIt from 'markdown-it';
 
 export default {
   name: 'NotesWindow',
+  components: {
+
+  },
+  props: {
+    content: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       notes: '',

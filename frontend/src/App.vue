@@ -1,5 +1,5 @@
 <template>
-  <v-app v-if="themeLoaded">
+  <v-app v-if="isThemeLoaded">
     <settings-sidebar
       v-model="showSettings"
       :selected-theme="selectedTheme"
@@ -9,22 +9,23 @@
       @api-key-updated="updateApiKeyStatus"
     />
 
-    <v-app-bar v-if="config">
+    <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-center w-100">{{ config.title }}</v-toolbar-title>
+      <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main>
       <v-container fluid class="fill-height pa-4">
         <v-row class="fill-height">
-          <v-col :cols="analysisCompleted ? 6 : 12" class="d-flex flex-column">
+          <v-col cols="12" class="d-flex flex-column">
             <v-card class="flex-grow-1 d-flex flex-column">
               <v-card-text class="flex-grow-1 d-flex flex-column">
                 <agent-profile
                   :analyser-node="analyserNode"
                   :conversation-started="conversationStarted"
                 />
-                <notes-window ref="notes" />
+                <notes-window ref="notes" :content="analysisContent" />
+                <analysis-viewer :content="analysisContent" />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
                 <control-buttons
@@ -40,9 +41,6 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col v-if="analysisCompleted" cols="6" class="d-flex flex-column">
-            <analysis-viewer :content="analysisContent" />
-          </v-col>
         </v-row>
       </v-container>
     </v-main>
@@ -50,33 +48,28 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, inject, nextTick } from 'vue';
-import { useTheme } from 'vuetify';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import AgentProfile from './components/AgentProfile.vue';
-import StatusWindow from './components/StatusWindow.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import NotesWindow from './components/NotesWindow.vue';
-import AnalysisViewer from "./components/AnalysisViewer.vue";
+import AnalysisViewer from './components/AnalysisViewer.vue';
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
-import { themes as customThemes } from './themes';
-
-// --- Injected ---
-const config = inject('config');
+import { useThemeManager } from './composables/useThemeManager';
 
 // --- Reactive State ---
+const appName = ref('Any Voicechat');
 
 // Theme
-const theme = useTheme();
-const availableThemes = Object.keys(customThemes);
-let initialTheme = localStorage.getItem('theme') || 'Default';
-if (!availableThemes.includes(initialTheme)) {
-  initialTheme = 'Default';
-}
-const selectedTheme = ref(initialTheme);
-const isDarkMode = ref(localStorage.getItem('darkMode') === 'true');
-const themeLoaded = ref(false);
+const {
+  selectedTheme,
+  isDarkMode,
+  changeTheme,
+  toggleDarkMode,
+  initTheme,
+} = useThemeManager();
+const isThemeLoaded = ref(false);
 
 // Component State
 const showSettings = ref(true);
@@ -114,24 +107,36 @@ watch(websocket, (newWebsocketInstance) => {
 
 // --- Functions ---
 
-const applyTheme = async () => {
-  const themeName = isDarkMode.value ? `${selectedTheme.value}Dark` : selectedTheme.value;
-  theme.global.name.value = themeName;
-  await nextTick();
-  themeLoaded.value = true;
-};
+async function fetchSettings() {
+  try {
+    const response = await fetch('/api/settings');
+    if (response.ok) {
+      const data = await response.json();
+      if (data.app_name) {
+        appName.value = data.app_name;
+        document.title = data.app_name;
+      }
+    } else {
+      console.error('Error fetching settings:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+  }
+}
 
-const changeTheme = (themeName) => {
-  selectedTheme.value = themeName;
-  localStorage.setItem('theme', themeName);
-  applyTheme();
-};
-
-const toggleDarkMode = () => {
-  isDarkMode.value = !isDarkMode.value;
-  localStorage.setItem('darkMode', isDarkMode.value);
-  applyTheme();
-};
+async function fetchAnalysis() {
+  try {
+    const response = await fetch('/api/result_docs/analysis');
+    if (response.ok) {
+      const data = await response.json();
+      analysisContent.value = data.content;
+    } else {
+      console.error('Error fetching analysis:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching analysis:', error);
+  }
+}
 
 function onAnalysisComplete(analysis) {
   analysisContent.value = analysis;
@@ -164,11 +169,11 @@ async function toggleInterview() {
   if (conversationStarted.value) {
     stopInterview();
   } else {
-    await startInterview();
+    await startConversation();
   }
 }
 
-async function startInterview() {
+async function startConversation() {
   analysisCompleted.value = false;
   analysisContent.value = '';
   try {
@@ -216,9 +221,13 @@ async function setApiKey() {
 
 // --- Lifecycle Hooks ---
 
-onMounted(() => {
+onMounted(async () => {
+  fetchSettings();
+  fetchAnalysis();
   setApiKey();
-  applyTheme();
+  initTheme();
+  await nextTick();
+  isThemeLoaded.value = true;
 });
 
 onBeforeUnmount(() => {

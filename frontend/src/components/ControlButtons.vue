@@ -3,24 +3,19 @@
     <v-btn
       v-if="!showAnalyseButton"
       @click="$emit('toggle-interview')"
-      :class="{ 'fancy-btn': !conversationStarted }"
-      :color="conversationStarted ? 'red' : ''"
+      :color="conversationStarted ? 'red' : 'primary'"
       :disabled="isConnecting || !isApiKeySet"
       :loading="isConnecting"
-      variant="tonal"
-      size="large"
-      rounded="lg"
-      class="font-weight-bold"
+      variant="elevated"
+      size="x-large"
+      fab
     >
-      <template v-slot:prepend>
-        <v-icon>{{ conversationStarted ? 'mdi-stop-circle-outline' : 'mdi-play-circle-outline' }}</v-icon>
-      </template>
+      <v-icon>{{ conversationStarted ? 'mdi-stop' : 'mdi-microphone' }}</v-icon>
       
       <template v-slot:loader>
         <v-progress-circular indeterminate size="24" width="2"></v-progress-circular>
       </template>
 
-      {{ conversationStarted ? 'Stop Conversation' : 'Start Talking' }}
     </v-btn>
 
     <v-btn
@@ -75,9 +70,4 @@ export default {
 </script>
 
 <style scoped>
-.fancy-btn {
-  background: linear-gradient(45deg, #972408 30%, #fa9256 90%);
-  color: white !important;
-  box-shadow: 0 3px 5px 2px rgba(255, 105, 135, .3);
-}
 </style>
