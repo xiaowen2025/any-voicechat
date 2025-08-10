@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { VueCropper } from 'vue-cropperjs';
+import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import imageCompression from 'browser-image-compression';
 

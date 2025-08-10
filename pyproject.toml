@@ -4,9 +4,9 @@ include = ["api*", "core*"]
 namespaces = false
 
 [project]
-name = "interviewer"
+name = "vox"
 version = "0.1.0"
-scripts = {interviewer = "api.main:main"}
+scripts = {api = "api.main:main", vox = "run.sh"}
 
 dependencies = [
     "google-genai",
