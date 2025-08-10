@@ -56,9 +56,11 @@ import AnalysisViewer from './components/AnalysisViewer.vue';
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
 import { useThemeManager } from './composables/useThemeManager';
+import { useSettings } from './composables/useSettings';
 
 // --- Reactive State ---
 const appName = ref('Any Voicechat');
+const { settings, loadSettings } = useSettings();
 
 // Theme
 const {
@@ -104,24 +106,14 @@ watch(websocket, (newWebsocketInstance) => {
   audioWebsocket.value = newWebsocketInstance;
 });
 
-// --- Functions ---
-
-async function fetchSettings() {
-  try {
-    const response = await fetch('/api/settings');
-    if (response.ok) {
-      const data = await response.json();
-      if (data.app_name) {
-        appName.value = data.app_name;
-        document.title = data.app_name;
-      }
-    } else {
-      console.error('Error fetching settings:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error fetching settings:', error);
+watch(settings, (newSettings) => {
+  if (newSettings && newSettings.app_name) {
+    appName.value = newSettings.app_name;
+    document.title = newSettings.app_name;
   }
-}
+});
+
+// --- Functions ---
 
 async function fetchAnalysis() {
   try {
@@ -221,7 +213,7 @@ async function setApiKey() {
 // --- Lifecycle Hooks ---
 
 onMounted(async () => {
-  fetchSettings();
+  loadSettings();
   fetchAnalysis();
   setApiKey();
   initTheme();
