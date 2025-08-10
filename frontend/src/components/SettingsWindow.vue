@@ -4,12 +4,25 @@
       <v-card-title>
         <span class="headline">Settings</span>
       </v-card-title>
-      <v-card-text>
-        <v-textarea
-          v-model="editableSettings"
-          auto-grow
-          rows="15"
-        ></v-textarea>
+      <v-card-text v-if="settings">
+        <v-text-field label="App Name" v-model="settings.app_name"></v-text-field>
+        <v-textarea label="Agent Description" v-model="settings.agent_description"></v-textarea>
+        <v-textarea label="Goal Description" v-model="settings.goal_description"></v-textarea>
+        <v-textarea label="Notes Taking Instruction" v-model="settings.notes_taking_instruction"></v-textarea>
+        <v-textarea label="Analyse Instruction" v-model="settings.analyse_instruction"></v-textarea>
+
+        <v-select
+          label="Voice"
+          v-model="settings.voice_name"
+          :items="['Puck', 'Leda']"
+        ></v-select>
+
+        <v-text-field label="Language Code" v-model="settings.language_code"></v-text-field>
+
+        <div v-for="(value, key) in settings.context_dict" :key="key">
+            <v-text-field :label="value.description" v-model="value.value"></v-text-field>
+        </div>
+
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -30,8 +43,7 @@ export default {
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const settings = ref({});
-    const editableSettings = ref('');
+    const settings = ref(null);
 
     async function loadSettings() {
       try {
@@ -39,7 +51,6 @@ export default {
         const data = await response.json();
         if (response.ok) {
           settings.value = data;
-          editableSettings.value = JSON.stringify(data, null, 2);
         } else {
           console.error('Error fetching settings:', data.error);
         }
@@ -55,11 +66,10 @@ export default {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: editableSettings.value,
+          body: JSON.stringify(settings.value),
         });
         const data = await response.json();
         if (response.ok) {
-          settings.value = JSON.parse(editableSettings.value);
           emit('update:modelValue', false);
           window.location.reload();
         } else {
@@ -79,7 +89,7 @@ export default {
     });
 
     return {
-      editableSettings,
+      settings,
       saveSettings,
     };
   },
