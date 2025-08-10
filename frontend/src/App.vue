@@ -37,7 +37,6 @@
                   @toggle-interview="toggleInterview"
                   @analyse="analyseInterview"
                 />
-                <status-window :messages="messages" class="flex-grow-1" />
               </v-card-actions>
             </v-card>
           </v-col>

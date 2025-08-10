@@ -4,11 +4,10 @@
       <v-card>
         <v-card-title class="text-h5">
           Analysis
-          <v-spacer></v-spacer>
-          <v-btn icon @click="showAnalysis = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
         </v-card-title>
+        <v-btn absolute top right icon @click="showAnalysis = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
         <v-divider></v-divider>
         <v-card-text class="pa-5">
           <div v-if="content" class="analysis-content" v-html="renderedMarkdown"></div>
