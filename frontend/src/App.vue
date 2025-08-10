@@ -17,7 +17,7 @@
     <v-main>
       <v-container fluid class="fill-height pa-4">
         <v-row class="fill-height">
-          <v-col :cols="analysisCompleted ? 6 : 12" class="d-flex flex-column">
+          <v-col cols="12" class="d-flex flex-column">
             <v-card class="flex-grow-1 d-flex flex-column">
               <v-card-text class="flex-grow-1 d-flex flex-column">
                 <agent-profile
@@ -40,12 +40,10 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col v-if="analysisCompleted" cols="6" class="d-flex flex-column">
-            <analysis-viewer :content="analysisContent" />
-          </v-col>
         </v-row>
       </v-container>
     </v-main>
+    <analysis-viewer v-if="analysisCompleted" :content="analysisContent" />
   </v-app>
 </template>
 
