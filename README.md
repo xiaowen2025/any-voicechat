@@ -14,11 +14,18 @@
 
 ## Example Applications
 
-| Interview Simulator | Language Pal |
-| :---: | :---: |
-| ![Interview Simulator](docs/imgs/app-interview.png) | ![Language Pal](docs/imgs/app-language.png) |
-| **Friendly Listener** | **Story Architect** |
-| ![Friendly Listener](docs/imgs/app-listen.png) | ![Story Architect](docs/imgs/app-story.png) |
+### Comfort Chat
+![Comfort Chat](docs/imgs/app-listen.png)
+
+### Story Architect
+![Story Architect](docs/imgs/app-story.png)
+
+### Interview Simulator
+![Interview Simulator](docs/imgs/app-interview.png)  
+
+### Language Pal
+![Language Pal](docs/imgs/app-language.png)
+
 
 ## Getting Started
 

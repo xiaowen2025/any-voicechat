@@ -6,13 +6,13 @@
             "description": "Candidate's resume containing personal details, education, experience, publications, and awards.",
             "value": "Albert Einstein  \n\nBorn: March 14, 1879\n\nEducation: PhD in Physics, University of Zurich, 1905\n\nExperience:\n- Patent Examiner, Swiss Patent Office, 1902-1909\n- Professor of Theoretical Physics, University of Berlin, 1914-1933\n- Visiting Professor, Institute for Advanced Study, Princeton, 1933-1955\n\nPublications:\n- \"On the Electrodynamics of Moving Bodies\" (1905)\n- \"General Theory of Relativity\" (1915)\n- \"The World As I See It\" (1949)\n\nAwards:\n- Nobel Prize in Physics, 1921\n- Copley Medal, 1925\n- Time Magazine Person of the Century, 1999"
         },
-        "job_description": {
-            "description": "Details about the role the candidate is applying for, including responsibilities and preferred qualifications.",
-            "value": "Amusement Park Character Performer:  \n\nAs a character performer, you will bring to life beloved characters in a vibrant amusement park setting. Your role involves interacting with guests, posing for photos, and participating in parades and shows. A background in theater or performance is a plus!"
-        },
         "interview_style": {
             "description": "Guidelines for conducting the interview, including the format and tone.",
             "value": "Ask question one by one, keep each question clear and concise."
+        },
+        "job_description": {
+            "description": "Details about the role the candidate is applying for, including responsibilities and preferred qualifications.",
+            "value": "Amusement Park Character Performer:  \n\nAs a character performer, you will bring to life beloved characters in a vibrant amusement park setting. Your role involves interacting with guests, posing for photos, and participating in parades and shows. A background in theater or performance is a plus!"
         }
     },
     "goal_description": "To effectively evaluate candidates for the character performer role.",

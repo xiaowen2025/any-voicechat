@@ -160,3 +160,5 @@ export default {
   cursor: col-resize;
   z-index: 10;
 }
+
+</style>
