@@ -5,7 +5,7 @@ set -e
 
 # Build frontend
 # echo "Building frontend..."
-# (cd frontend && npm install && npm run build)
+(cd frontend && npm install && npm run build)
 
 # Build backend image
 echo "Building backend image..."
