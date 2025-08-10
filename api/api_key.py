@@ -16,7 +16,7 @@ def _verify_api_key(api_key: str):
     client = genai.Client(api_key=api_key)
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-2.0-flash',
             contents='Response with 1 word only.',
             config=types.GenerateContentConfig(
                 system_instruction='I say high, you say low',
@@ -30,7 +30,7 @@ def _verify_api_key(api_key: str):
 @router.post("/api/verify_api_key")
 async def verify_api_key(api_key: ApiKey):
     """Endpoint to verify the provided Gemini API key."""
-    return {"status": "success", "message": "API Key verified and set."}
+    # return {"status": "success", "message": "API Key verified and set."}
     try:
         _verify_api_key(api_key.key)
         os.environ["GEMINI_API_KEY"] = api_key.key
