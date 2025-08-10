@@ -10,7 +10,8 @@
             </v-btn>
           </v-card-title>
           <v-card-text class="pa-5">
-            <div class="analysis-content" v-html="renderedMarkdown"></div>
+            <div v-if="content" class="analysis-content" v-html="renderedMarkdown"></div>
+            <div v-else>No analysis exists yet.</div>
           </v-card-text>
         </v-card>
     </div>

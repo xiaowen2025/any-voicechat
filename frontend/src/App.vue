@@ -9,9 +9,9 @@
       @api-key-updated="updateApiKeyStatus"
     />
 
-    <v-app-bar v-if="config">
+    <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-center w-100">{{ config.title }}</v-toolbar-title>
+      <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
     </v-app-bar>
 
     <v-main>
@@ -43,12 +43,12 @@
         </v-row>
       </v-container>
     </v-main>
-    <analysis-viewer v-if="analysisCompleted" :content="analysisContent" />
+    <analysis-viewer :content="analysisContent" />
   </v-app>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, inject, nextTick } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useTheme } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
 import StatusWindow from './components/StatusWindow.vue';
@@ -60,10 +60,8 @@ import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
 import { themes as customThemes } from './themes';
 
-// --- Injected ---
-const config = inject('config');
-
 // --- Reactive State ---
+const appName = ref('Any Voicechat');
 
 // Theme
 const theme = useTheme();
@@ -111,6 +109,37 @@ watch(websocket, (newWebsocketInstance) => {
 });
 
 // --- Functions ---
+
+async function fetchSettings() {
+  try {
+    const response = await fetch('/api/settings');
+    if (response.ok) {
+      const data = await response.json();
+      if (data.app_name) {
+        appName.value = data.app_name;
+        document.title = data.app_name;
+      }
+    } else {
+      console.error('Error fetching settings:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+  }
+}
+
+async function fetchAnalysis() {
+  try {
+    const response = await fetch('/api/result_docs/analysis');
+    if (response.ok) {
+      const data = await response.json();
+      analysisContent.value = data.content;
+    } else {
+      console.error('Error fetching analysis:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching analysis:', error);
+  }
+}
 
 const applyTheme = async () => {
   const themeName = isDarkMode.value ? `${selectedTheme.value}Dark` : selectedTheme.value;
@@ -215,6 +244,8 @@ async function setApiKey() {
 // --- Lifecycle Hooks ---
 
 onMounted(() => {
+  fetchSettings();
+  fetchAnalysis();
   setApiKey();
   applyTheme();
 });
