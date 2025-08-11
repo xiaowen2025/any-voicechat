@@ -41,7 +41,7 @@ async def get_context(settings: dict = Depends(load_settings)):
 
 import json
 import os
-from core.settings import APP_EXAMPLES_PATH
+from api.settings import APP_EXAMPLES_PATH
 
 @router.post("/api/settings/load_app/{app_id}")
 async def load_app_settings(app_id: str):

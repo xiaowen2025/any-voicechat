@@ -1,7 +1,7 @@
 import os
 import json
 from fastapi import APIRouter
-from core.settings import APP_EXAMPLES_PATH
+from api.settings import APP_EXAMPLES_PATH
 
 router = APIRouter()
 

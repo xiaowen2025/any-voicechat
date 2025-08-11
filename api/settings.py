@@ -5,7 +5,7 @@ from typing import Dict
 
 DATA_PATH = "api/._local"
 SETTINGS_FILE_PATH = os.path.join(DATA_PATH, "settings.json")
-DEFAULT_SETTINGS_FILE_PATH = "core/default_settings.json"
+DEFAULT_SETTINGS_FILE_PATH = "api/default_settings.json"
 APP_EXAMPLES_PATH = "app_examples"
 LIVE_MODEL_NAME = "gemini-2.5-flash-live-preview"
 

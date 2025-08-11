@@ -27,7 +27,7 @@ from api.websocket import connection as websocket
 from api import analyse
 from api import avatar
 from api import apps
-from core.settings import DATA_PATH
+from api.settings import DATA_PATH
 
 
 load_dotenv()

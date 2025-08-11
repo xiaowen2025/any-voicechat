@@ -1,7 +1,7 @@
 import logging
 
-from core.services.google_ai import create_live_agent
-from core.settings import Settings, load_settings
+from api.services.google_ai import create_live_agent
+from api.settings import Settings, load_settings
 
 instruction_template = """
 Role: {agent_description}

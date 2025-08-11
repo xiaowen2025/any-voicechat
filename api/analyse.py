@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from fastapi import APIRouter, Depends
-from core.analyse import analyse, save_analysis
-from core.settings import DATA_PATH, Settings
+from api.analyse_logic import analyse, save_analysis
+from api.settings import DATA_PATH, Settings
 from api.dependencies import get_settings
 
 router = APIRouter()

@@ -1,8 +1,8 @@
 
 from google import genai
 
-from core.settings import DATA_PATH
-from core.settings import Settings
+from api.settings import DATA_PATH
+from api.settings import Settings
 
 
 def save_analysis(analysis: str) -> str:

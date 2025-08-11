@@ -1,7 +1,7 @@
 from google.adk.agents import Agent
 
-from core.take_notes import tool_take_notes
-from core.settings import LIVE_MODEL_NAME
+from api.take_notes import tool_take_notes
+from api.settings import LIVE_MODEL_NAME
 
 
 def create_live_agent(
