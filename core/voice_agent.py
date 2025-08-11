@@ -1,6 +1,6 @@
 import logging
 
-from core.services.google_ai import create_google_agent
+from core.services.google_ai import create_live_agent
 from core.settings import Settings, load_settings
 
 instruction_template = """
@@ -38,7 +38,7 @@ def create_agent(settings: Settings):
     )
 
     logging.info(f"Creating agent with context: {final_instruction}")
-    return create_google_agent(final_instruction)
+    return create_live_agent(final_instruction)
 
 
 if __name__ == "__main__":

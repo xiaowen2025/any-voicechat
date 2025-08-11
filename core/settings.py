@@ -3,11 +3,10 @@ import os
 from pydantic import BaseModel
 from typing import Dict
 
-from core.config import (
-    DATA_PATH,
-    DEFAULT_SETTINGS_FILE_PATH,
-    SETTINGS_FILE_PATH,
-)
+DATA_PATH = "api/._local"
+SETTINGS_FILE_PATH = os.path.join(DATA_PATH, "settings.json")
+DEFAULT_SETTINGS_FILE_PATH = "core/default_settings.json"
+LIVE_MODEL_NAME = "gemini-2.5-flash-live-preview"
 
 
 class Settings(BaseModel):

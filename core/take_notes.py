@@ -1,7 +1,7 @@
 import os
 import aiofiles
 
-from core.config import DATA_PATH
+from core.settings import DATA_PATH
 
 
 async def tool_take_notes(note: str) -> str:
