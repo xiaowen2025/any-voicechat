@@ -141,7 +141,7 @@ async function handleAppSelection(appId) {
       method: 'POST',
     });
     if (response.ok) {
-      await loadSettings(); // Reload settings after loading an app
+      await loadSettings(true); // Force refresh from server
       snackbar.show('App loaded successfully!', 'success');
       showAppsGallery.value = false;
     } else {

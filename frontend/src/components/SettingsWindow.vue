@@ -92,10 +92,7 @@ function handleFileUpload(event) {
       const currentSettings = settings.value || {};
       
       const finalSettings = { ...currentSettings, ...newSettings };
-      finalSettings.context_dict = {
-        ...(currentSettings.context_dict || {}),
-        ...(newSettings.context_dict || {}),
-      };
+      finalSettings.context_dict = newSettings.context_dict || {};
       
       updateSettings(finalSettings);
       showSnackbar('Settings imported successfully.', 'success');

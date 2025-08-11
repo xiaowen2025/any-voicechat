@@ -5,9 +5,9 @@ const settings = ref(null);
 
 export function useSettings() {
 
-  async function loadSettings() {
+  async function loadSettings(forceRefresh = false) {
     const cachedSettings = localStorage.getItem('settings');
-    if (cachedSettings) {
+    if (cachedSettings && !forceRefresh) {
       settings.value = JSON.parse(cachedSettings);
       return;
     }
