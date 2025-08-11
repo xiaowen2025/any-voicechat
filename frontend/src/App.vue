@@ -12,10 +12,17 @@
     <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
+      <v-btn icon @click="showAppsGallery = true">
+        <v-icon>mdi-apps</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-main>
-      <v-container fluid class="fill-height pa-4">
+      <apps-gallery
+        v-if="showAppsGallery"
+        @app-selected="handleAppSelection"
+      />
+      <v-container v-else fluid class="fill-height pa-4">
         <v-row class="fill-height">
           <v-col cols="12" class="d-flex flex-column">
             <v-card class="flex-grow-1 d-flex flex-column">
@@ -61,6 +68,7 @@ import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import NotesWindow from './components/NotesWindow.vue';
 import AnalysisViewer from './components/AnalysisViewer.vue';
+import AppsGallery from './components/AppsGallery.vue';
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
 import { useThemeManager } from './composables/useThemeManager';
@@ -68,6 +76,7 @@ import { useSettings } from './composables/useSettings';
 import { useSnackbar } from './composables/useSnackbar';
 
 // --- Reactive State ---
+const showAppsGallery = ref(true);
 const appName = ref('Any Voicechat');
 const { settings, loadSettings } = useSettings();
 const snackbar = useSnackbar();
@@ -124,6 +133,26 @@ watch(settings, (newSettings) => {
 });
 
 // --- Functions ---
+
+async function handleAppSelection(appId) {
+  try {
+    const response = await fetch(`/api/settings/load_app/${appId}`, {
+      method: 'POST',
+    });
+    if (response.ok) {
+      await loadSettings(); // Reload settings after loading an app
+      snackbar.show('App loaded successfully!', 'success');
+      showAppsGallery.value = false;
+    } else {
+      const errorData = await response.json();
+      snackbar.show(`Error loading app: ${errorData.error}`, 'error');
+      console.error('Error loading app:', response.statusText);
+    }
+  } catch (error) {
+    snackbar.show('An unexpected error occurred.', 'error');
+    console.error('Error loading app:', error);
+  }
+}
 
 async function fetchAnalysis() {
   try {

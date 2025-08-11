@@ -39,6 +39,29 @@ async def get_context(settings: dict = Depends(load_settings)):
     return JSONResponse(content=context)
 
 
+import json
+import os
+from core.settings import APP_EXAMPLES_PATH
+
+@router.post("/api/settings/load_app/{app_id}")
+async def load_app_settings(app_id: str):
+    """
+    Loads settings from an app example into the main settings.
+    """
+    try:
+        filepath = os.path.join(APP_EXAMPLES_PATH, f"{app_id}.json")
+        if not os.path.exists(filepath):
+            return JSONResponse(content={"error": "App not found"}, status_code=404)
+
+        with open(filepath, "r") as f:
+            app_settings = json.load(f)
+
+        save_settings(app_settings)
+        return JSONResponse(content={"message": f"App '{app_id}' loaded successfully."})
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
 @router.put("/api/context/{context_name}")
 async def update_context(context_name: str, request: Request, settings: dict = Depends(load_settings)):
     """

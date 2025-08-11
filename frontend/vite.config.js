@@ -11,6 +11,14 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['vuetify'],
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
   plugins: [
     vue(),
     vueDevTools(),
