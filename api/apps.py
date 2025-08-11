@@ -5,13 +5,6 @@ from api.settings import APP_EXAMPLES_PATH
 
 router = APIRouter()
 
-# In a real app, you might have a more robust way of mapping avatars
-# For this example, we'll just cycle through the available ones.
-avatars = [
-    "/src/assets/avatar-2.png",
-    "/src/assets/avatar-3.png",
-    "/src/assets/avatar-4.png",
-]
 
 @router.get("/api/apps")
 async def get_apps():
@@ -29,7 +22,6 @@ async def get_apps():
             apps.append({
                 "id": filename.replace(".json", ""),
                 "name": data.get("app_name", "Unnamed App"),
-                "summary": data.get("agent_description", "No summary available."),
-                "avatar": avatars[i % len(avatars)],
+                "summary": data.get("agent_description", "No summary available.")
             })
     return apps
