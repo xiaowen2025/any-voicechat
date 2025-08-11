@@ -43,6 +43,14 @@
         </v-row>
       </v-container>
     </v-main>
+    <v-snackbar
+      v-model="snackbar.visible.value"
+      :color="snackbar.color.value"
+      timeout="3000"
+      @update:modelValue="snackbar.visible.value = $event"
+    >
+      {{ snackbar.message.value }}
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -57,10 +65,12 @@ import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
 import { useThemeManager } from './composables/useThemeManager';
 import { useSettings } from './composables/useSettings';
+import { useSnackbar } from './composables/useSnackbar';
 
 // --- Reactive State ---
 const appName = ref('Any Voicechat');
 const { settings, loadSettings } = useSettings();
+const snackbar = useSnackbar();
 
 // Theme
 const {

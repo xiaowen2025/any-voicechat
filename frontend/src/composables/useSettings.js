@@ -1,7 +1,9 @@
 import { ref } from 'vue';
 
+// Create a single, shared state for settings
+const settings = ref(null);
+
 export function useSettings() {
-  const settings = ref(null);
 
   async function loadSettings() {
     const cachedSettings = localStorage.getItem('settings');
