@@ -5,7 +5,9 @@ from typing import Dict
 
 DATA_PATH = "api/._local"
 SETTINGS_FILE_PATH = os.path.join(DATA_PATH, "settings.json")
-DEFAULT_SETTINGS_FILE_PATH = "core/default_settings.json"
+DEFAULT_SETTINGS_FILE_PATH = "api/default_settings.json"
+APP_EXAMPLES_PATH = "app_examples"
+LIVE_MODEL_NAME = "gemini-2.5-flash-live-preview"
 
 
 class Settings(BaseModel):
@@ -44,13 +46,3 @@ def save_settings(settings: dict):
     """
     with open(SETTINGS_FILE_PATH, "w", encoding="utf-8") as f:
         json.dump(settings, f, indent=4)
-
-
-# Load default settings for validation and type hinting if needed elsewhere
-try:
-    default_settings = load_settings()
-except (FileNotFoundError, json.JSONDecodeError):
-    # Handle cases where default settings might be corrupted or not found
-    # during initial setup, though load_settings should prevent this.
-    print("Warning: Could not load default settings.")
-    default_settings = {}

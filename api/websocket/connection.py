@@ -3,7 +3,7 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from core.settings import DATA_PATH
+from api.settings import DATA_PATH
 from api.websocket.agent import start_agent_session
 from api.websocket.messaging import agent_to_client_messaging, client_to_agent_messaging
 

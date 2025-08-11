@@ -39,7 +39,7 @@
       class="font-weight-bold"
     >
       <template v-slot:prepend>
-        <v-icon>mdi-chart-bar</v-icon>
+        <v-icon>mdi-chart-bubble</v-icon>
       </template>
       Analyse
     </v-btn>

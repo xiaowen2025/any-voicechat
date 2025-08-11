@@ -95,8 +95,9 @@ import GeminiApiKeyManager from "./GeminiApiKeyManager.vue";
 import SettingsWindow from "./SettingsWindow.vue";
 import { themes } from "../themes";
 import { useApi } from "../composables/useApi";
+import { useSettings } from "../composables/useSettings";
 import { useResizableDrawer } from "../composables/useResizableDrawer";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 
 export default {
   name: "SettingsSidebar",
@@ -117,12 +118,9 @@ export default {
     SettingsWindow,
   },
   setup(props, { emit }) {
-    const {
-      context,
-      loadContext,
-      updateContext,
-      saveGeminiApiKey: saveKey,
-    } = useApi();
+    const { saveGeminiApiKey: saveKey } = useApi();
+    const { settings, updateSettings } = useSettings();
+    const context = computed(() => settings.value?.context_dict || {});
     const { drawerWidth, startResize } = useResizableDrawer(500);
 
     const panel = ref([]);
@@ -141,6 +139,14 @@ export default {
         .join(" ");
     }
 
+    function updateContext(name, content) {
+      const newSettings = { ...settings.value };
+      if (newSettings.context_dict && newSettings.context_dict[name]) {
+        newSettings.context_dict[name].value = content;
+        updateSettings(newSettings);
+      }
+    }
+
     async function saveGeminiApiKey() {
       const success = await saveKey(geminiApiKey.value);
       if (success) {
@@ -151,14 +157,15 @@ export default {
       }
     }
 
-    onMounted(async () => {
+    onMounted(() => {
       geminiApiKey.value = localStorage.getItem("geminiApiKey") || "";
       apiKeyEdited.value = !geminiApiKey.value;
       if (geminiApiKey.value) {
         emit("api-key-updated", true);
       }
-      await loadContext();
-      panel.value = Object.keys(context.value).map((_, index) => index);
+      if (context.value) {
+        panel.value = Object.keys(context.value).map((_, index) => index);
+      }
     });
 
     return {

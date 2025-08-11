@@ -12,10 +12,17 @@
     <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
+      <v-btn icon @click="showAppsGallery = !showAppsGallery">
+        <v-icon>{{ showAppsGallery ? 'mdi-close' : 'mdi-apps' }}</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-main>
-      <v-container fluid class="fill-height pa-4">
+      <apps-gallery
+        v-if="showAppsGallery"
+        @app-selected="handleAppSelection"
+      />
+      <v-container v-else fluid class="fill-height pa-4">
         <v-row class="fill-height">
           <v-col cols="12" class="d-flex flex-column">
             <v-card class="flex-grow-1 d-flex flex-column">
@@ -43,6 +50,14 @@
         </v-row>
       </v-container>
     </v-main>
+    <v-snackbar
+      v-model="snackbar.visible.value"
+      :color="snackbar.color.value"
+      timeout="3000"
+      @update:modelValue="snackbar.visible.value = $event"
+    >
+      {{ snackbar.message.value }}
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -53,12 +68,19 @@ import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import NotesWindow from './components/NotesWindow.vue';
 import AnalysisViewer from './components/AnalysisViewer.vue';
+import AppsGallery from './components/AppsGallery.vue';
 import { useAudio } from './composables/useAudio';
 import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
 import { useThemeManager } from './composables/useThemeManager';
+import { useSettings } from './composables/useSettings';
+import { useSnackbar } from './composables/useSnackbar';
 
 // --- Reactive State ---
-const appName = ref('Any Voicechat');
+const showAppsGallery = ref(false);
+const cachedSettings = JSON.parse(localStorage.getItem('settings') || '{}');
+const appName = ref(cachedSettings.app_name || 'App');
+const { settings, loadSettings } = useSettings();
+const snackbar = useSnackbar();
 
 // Theme
 const {
@@ -104,22 +126,32 @@ watch(websocket, (newWebsocketInstance) => {
   audioWebsocket.value = newWebsocketInstance;
 });
 
+watch(settings, (newSettings) => {
+  if (newSettings && newSettings.app_name) {
+    appName.value = newSettings.app_name;
+    document.title = newSettings.app_name;
+  }
+});
+
 // --- Functions ---
 
-async function fetchSettings() {
+async function handleAppSelection(appId) {
   try {
-    const response = await fetch('/api/settings');
+    const response = await fetch(`/api/settings/load_app/${appId}`, {
+      method: 'POST',
+    });
     if (response.ok) {
-      const data = await response.json();
-      if (data.app_name) {
-        appName.value = data.app_name;
-        document.title = data.app_name;
-      }
+      await loadSettings(true); // Force refresh from server
+      snackbar.show('App loaded successfully!', 'success');
+      showAppsGallery.value = false;
     } else {
-      console.error('Error fetching settings:', response.statusText);
+      const errorData = await response.json();
+      snackbar.show(`Error loading app: ${errorData.error}`, 'error');
+      console.error('Error loading app:', response.statusText);
     }
   } catch (error) {
-    console.error('Error fetching settings:', error);
+    snackbar.show('An unexpected error occurred.', 'error');
+    console.error('Error loading app:', error);
   }
 }
 
@@ -221,7 +253,7 @@ async function setApiKey() {
 // --- Lifecycle Hooks ---
 
 onMounted(async () => {
-  fetchSettings();
+  loadSettings();
   fetchAnalysis();
   setApiKey();
   initTheme();

@@ -18,8 +18,8 @@ from google.adk.agents.run_config import RunConfig
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 
-from core.voice_agent import create_agent
-from core.settings import DATA_PATH
+from api.voice_agent import create_agent
+from api.settings import DATA_PATH
 
 
 async def start_agent_session(user_id, settings, is_audio=False):

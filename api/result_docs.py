@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 
 
-from core.settings import DATA_PATH
+from api.settings import DATA_PATH
 
 router = APIRouter()
 
