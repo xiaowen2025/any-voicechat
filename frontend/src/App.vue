@@ -12,8 +12,8 @@
     <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
-      <v-btn icon @click="showAppsGallery = true">
-        <v-icon>mdi-apps</v-icon>
+      <v-btn icon @click="showAppsGallery = !showAppsGallery">
+        <v-icon>{{ showAppsGallery ? 'mdi-close' : 'mdi-apps' }}</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -76,7 +76,7 @@ import { useSettings } from './composables/useSettings';
 import { useSnackbar } from './composables/useSnackbar';
 
 // --- Reactive State ---
-const showAppsGallery = ref(true);
+const showAppsGallery = ref(false);
 const appName = ref('Any Voicechat');
 const { settings, loadSettings } = useSettings();
 const snackbar = useSnackbar();
