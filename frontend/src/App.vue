@@ -77,7 +77,8 @@ import { useSnackbar } from './composables/useSnackbar';
 
 // --- Reactive State ---
 const showAppsGallery = ref(false);
-const appName = ref('Any Voicechat');
+const cachedSettings = JSON.parse(localStorage.getItem('settings') || '{}');
+const appName = ref(cachedSettings.app_name || 'App');
 const { settings, loadSettings } = useSettings();
 const snackbar = useSnackbar();
 

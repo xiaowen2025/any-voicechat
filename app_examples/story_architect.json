@@ -13,5 +13,7 @@
   },
   "goal_description": "To expand upon the user's initial premise by generating potential plot hooks, character archetypes, and world-building details.",
   "notes_taking_instruction": "After each response of the user, take notes on what they just said.",
-  "analyse_instruction": "Provide a concise summary of the story that emerged."
+  "analyse_instruction": "Provide a concise summary of the story that emerged.",
+  "voice_name": "Puck",
+  "language_code": "en-US"
 }

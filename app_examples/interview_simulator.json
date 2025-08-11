@@ -17,5 +17,7 @@
     },
     "goal_description": "To effectively evaluate candidates for the character performer role.",
     "notes_taking_instruction": "After each round of question and answer, use the tool `tool_take_notes` to write down your question and the candidate's answer.",
-    "analyse_instruction": "Provide actionable suggestions for the interviewee to improve their performance. Keep it in one sentence."
+    "analyse_instruction": "Provide actionable suggestions for the interviewee to improve their performance. Keep it in one sentence.",
+    "voice_name": "Puck",
+    "language_code": "en-US"
 }
