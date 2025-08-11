@@ -10,14 +10,29 @@ def client():
     return TestClient(app)
 
 def test_generate_avatar(client):
-    with patch('google.generativeai.Client') as mock_client:
+    with patch("api.avatar.genai.Client") as mock_client:
         # Mock the client and its methods
-        mock_gen_image_response = MagicMock()
-        mock_gen_image_response.generated_images = [MagicMock()]
-        mock_gen_image_response.generated_images[0].image.image_bytes = b'test_image_bytes'
+        mock_response_iterator = [
+            MagicMock(
+                candidates=[
+                    MagicMock(
+                        content=MagicMock(
+                            parts=[
+                                MagicMock(
+                                    inline_data=MagicMock(data=b"test_image_bytes")
+                                )
+                            ]
+                        )
+                    )
+                ],
+                text=None,
+            )
+        ]
 
         mock_instance = mock_client.return_value
-        mock_instance.models.generate_images.return_value = mock_gen_image_response
+        mock_instance.models.generate_content_stream.return_value = (
+            mock_response_iterator
+        )
 
         # Call the endpoint
         response = client.post("/api/avatar/generate", json={"prompt": "a test prompt"})
@@ -26,7 +41,7 @@ def test_generate_avatar(client):
         assert response.status_code == 200
         data = response.json()
         assert "image" in data
-        assert data["image"] == base64.b64encode(b'test_image_bytes').decode('utf-8')
+        assert data["image"] == base64.b64encode(b"test_image_bytes").decode("utf-8")
 
         # Verify that the mock was called
-        mock_instance.models.generate_images.assert_called_once()
+        mock_instance.models.generate_content_stream.assert_called_once()
