@@ -36,7 +36,11 @@ async function fetchApps() {
   try {
     const response = await fetch('/api/apps');
     if (response.ok) {
-      apps.value = await response.json();
+      const fetchedApps = await response.json();
+      apps.value = fetchedApps.map(app => ({
+        ...app,
+        avatar: `/assets/avatar_${app.id}.png`
+      }));
     } else {
       console.error('Error fetching apps:', response.statusText);
     }

@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import defaultAvatar from '../assets/agent-avatar.png';
+import defaultAvatar from '../assets/agent-avatar.svg';
 import AvatarEditor from './AvatarEditor.vue';
 
 export default {
