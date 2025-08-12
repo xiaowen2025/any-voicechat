@@ -5,6 +5,7 @@ export function useConversationWebSocket() {
   const websocket = ref(null);
   const messages = ref([]);
   const notes = ref('');
+  const analysis = ref(null);
   const isConnecting = ref(false);
   const conversationStarted = ref(false);
   const conversationFinished = ref(false);
@@ -22,6 +23,7 @@ export function useConversationWebSocket() {
     conversationFinished.value = false;
     currentMessageId.value = null;
     notes.value = '';
+    analysis.value = null;
 
     const userId = Math.floor(Math.random() * 1000);
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -105,6 +107,7 @@ export function useConversationWebSocket() {
     websocket,
     messages,
     notes,
+    analysis,
     isConnecting,
     conversationStarted,
     conversationFinished,
@@ -112,3 +115,4 @@ export function useConversationWebSocket() {
     disconnect,
   };
 }
+

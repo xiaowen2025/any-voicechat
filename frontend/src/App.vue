@@ -32,7 +32,6 @@
                   :conversation-started="conversationStarted"
                 />
                 <notes-window />
-                <analysis-viewer :content="analysisContent" />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
                 <control-buttons
@@ -67,7 +66,6 @@ import AgentProfile from './components/AgentProfile.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import NotesWindow from './components/NotesWindow.vue';
-import AnalysisViewer from './components/AnalysisViewer.vue';
 import AppsGallery from './components/AppsGallery.vue';
 import { useAudio } from './composables/useAudio';
 import { useSharedConversation } from './composables/useSharedConversation';
@@ -96,8 +94,6 @@ const isThemeLoaded = ref(false);
 const showSettings = ref(true);
 const isApiKeySet = ref(false);
 const isAnalysing = ref(false);
-const analysisCompleted = ref(false);
-const analysisContent = ref('');
 
 // Composables
 const audioWebsocket = ref(null);
@@ -113,6 +109,7 @@ const {
   websocket,
   messages,
   notes,
+  analysis,
   isConnecting,
   conversationStarted,
   conversationFinished,
@@ -155,32 +152,13 @@ async function handleAppSelection(appId) {
   }
 }
 
-async function fetchAnalysis() {
-  try {
-    const response = await fetch('/api/result_docs/analysis');
-    if (response.ok) {
-      const data = await response.json();
-      analysisContent.value = data.content;
-    } else {
-      console.error('Error fetching analysis:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error fetching analysis:', error);
-  }
-}
-
-function onAnalysisComplete(analysis) {
-  analysisContent.value = analysis;
-  analysisCompleted.value = true;
-}
-
 async function analyseConversation() {
   isAnalysing.value = true;
   try {
     const response = await fetch('/api/analyse', { method: 'POST' });
     if (response.ok) {
       const data = await response.json();
-      onAnalysisComplete(data.analysis);
+      analysis.value = data.analysis;
     } else {
       console.error('Error analysing conversation:', response.statusText);
     }
@@ -205,8 +183,7 @@ async function toggleConversation() {
 }
 
 async function startConversation() {
-  analysisCompleted.value = false;
-  analysisContent.value = '';
+  analysis.value = null;
   try {
     await startAudio();
     connect(playAudio, stopPlayback);
@@ -254,7 +231,6 @@ async function setApiKey() {
 
 onMounted(async () => {
   loadSettings();
-  fetchAnalysis();
   setApiKey();
   initTheme();
   await nextTick();
