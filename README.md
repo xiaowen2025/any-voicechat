@@ -3,7 +3,9 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/versions/3.12/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-**Vox Hub** is a versatile voice chat application.
+**Vox Hub** is a versatile voice chat application.  
+
+Try it here: https://vox-hub.onrender.com/
 
 ## Features
 
@@ -50,7 +52,7 @@ Follow these steps to get Vox Hub up and running on your local machine.
 2.  **Make the run script executable:**
 
     ```bash
-    chmod +x run.sh
+    chmod +x run.sh && sh run.sh
     ```
 
 3.  **Build and launch the application:**
