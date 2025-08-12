@@ -1,7 +1,7 @@
 import logging
 
 from api.services.google_ai import create_live_agent
-from api.settings import Settings, load_settings
+from api.settings import Settings
 
 instruction_template = """
 Role: {agent_description}
@@ -39,9 +39,3 @@ def create_agent(settings: Settings):
 
     logging.info(f"Creating agent with context: {final_instruction}")
     return create_live_agent(final_instruction)
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    settings = load_settings()
-    agent = create_agent(settings)

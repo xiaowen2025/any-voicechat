@@ -1,6 +1,5 @@
 from google.adk.agents import Agent
 
-from api.take_notes import tool_take_notes
 from api.settings import LIVE_MODEL_NAME
 
 
@@ -12,6 +11,6 @@ def create_live_agent(
         model=LIVE_MODEL_NAME,
         description="Voice Agent",
         instruction=instruction,
-        tools=[tool_take_notes],
+        tools=[],
     )
     return agent

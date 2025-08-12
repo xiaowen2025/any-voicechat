@@ -73,13 +73,16 @@ import { useSharedConversation } from './composables/useSharedConversation';
 import { useThemeManager } from './composables/useThemeManager';
 import { useSettings } from './composables/useSettings';
 import { useSnackbar } from './composables/useSnackbar';
+import { useApi } from './composables/useApi';
 
 // --- Reactive State ---
 const showAppsGallery = ref(false);
 const cachedSettings = JSON.parse(localStorage.getItem('settings') || '{}');
 const appName = ref(cachedSettings.app_name || 'App');
-const { settings, loadSettings } = useSettings();
+const { settings, loadSettings, updateSettings } = useSettings();
 const snackbar = useSnackbar();
+const { getAppSettings } = useApi();
+
 
 // Theme
 const {
@@ -136,20 +139,16 @@ watch(settings, (newSettings) => {
 
 async function handleAppSelection(appId) {
   try {
-    const response = await fetch(`/api/settings/load_app/${appId}`, {
-      method: 'POST',
-    });
-    if (response.ok) {
-      await loadSettings(true); // Force refresh from server
+    const newSettings = await getAppSettings(appId);
+    if (newSettings) {
+      updateSettings(newSettings);
       const newAvatar = `/assets/avatar_${appId}.png`;
       currentAvatar.value = newAvatar;
       localStorage.setItem('userAvatar', newAvatar);
       snackbar.show('App loaded successfully!', 'success');
       showAppsGallery.value = false;
     } else {
-      const errorData = await response.json();
-      snackbar.show(`Error loading app: ${errorData.error}`, 'error');
-      console.error('Error loading app:', response.statusText);
+      snackbar.show('Error loading app settings.', 'error');
     }
   } catch (error) {
     snackbar.show('An unexpected error occurred.', 'error');

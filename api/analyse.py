@@ -1,5 +1,5 @@
 from google import genai
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 

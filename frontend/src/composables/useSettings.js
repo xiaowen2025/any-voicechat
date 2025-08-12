@@ -12,7 +12,9 @@ export function useSettings() {
       return;
     }
     try {
-      const response = await fetch('/api/settings');
+      const response = await fetch('/api/apps/language_pal/settings', {
+        method: 'GET',
+      });
       const data = await response.json();
       if (response.ok) {
         settings.value = data;

@@ -1,40 +1,15 @@
-import { ref } from 'vue';
-
 export function useApi() {
-  const context = ref({});
 
-  async function loadContext() {
+  async function getAppSettings(appId) {
     try {
-      const response = await fetch('/api/context');
-      const data = await response.json();
-      if (response.ok) {
-        context.value = data;
-      } else {
-        console.error('Error fetching context:', data.error);
+      const response = await fetch(`/api/apps/${appId}/settings`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      return await response.json();
     } catch (error) {
-      console.error('Error fetching context:', error);
-    }
-  }
-
-  async function updateContext(contextName, content) {
-    try {
-      const response = await fetch(`/api/context/${contextName}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: content }),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        console.log(`Context '${contextName}' updated.`);
-        if (context.value[contextName]) {
-          context.value[contextName].value = content;
-        }
-      } else {
-        alert(`Error updating context: ${result.error}`);
-      }
-    } catch (error) {
-      alert(`Error updating context: ${error}`);
+      console.error(`Error fetching app settings: ${error}`);
+      return null;
     }
   }
 
@@ -64,9 +39,7 @@ export function useApi() {
   }
 
   return {
-    context,
-    loadContext,
-    updateContext,
+    getAppSettings,
     saveGeminiApiKey,
   };
 }

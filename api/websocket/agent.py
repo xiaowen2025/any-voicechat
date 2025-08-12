@@ -1,11 +1,4 @@
-import asyncio
-import base64
-import json
-import os
 from google.genai.types import (
-    Part,
-    Content,
-    Blob,
     SpeechConfig,
     VoiceConfig,
     PrebuiltVoiceConfig,
@@ -15,11 +8,8 @@ from google.adk.runners import InMemoryRunner
 from google.adk.agents import LiveRequestQueue
 from google.adk.agents.run_config import RunConfig
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
 
 from api.voice_agent import create_agent
-from api.settings import DATA_PATH
 
 
 async def start_agent_session(user_id, settings, is_audio=False):

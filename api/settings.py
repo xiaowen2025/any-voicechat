@@ -1,10 +1,8 @@
 import json
-import os
 from pydantic import BaseModel
 from typing import Dict
 
-DATA_PATH = "api/._local"
-SETTINGS_FILE_PATH = os.path.join(DATA_PATH, "settings.json")
+
 DEFAULT_SETTINGS_FILE_PATH = "api/default_settings.json"
 APP_EXAMPLES_PATH = "app_examples"
 LIVE_MODEL_NAME = "gemini-2.5-flash-live-preview"
@@ -22,20 +20,5 @@ class Settings(BaseModel):
     language_code: str
 
 
-def load_settings():
-    """
-    Loads settings from the settings file.
-    If the file doesn't exist, it creates it from the default settings.
-    """
-    if not os.path.exists(SETTINGS_FILE_PATH):
-        # Create the directory if it doesn't exist
-        os.makedirs(DATA_PATH, exist_ok=True)
-        # Copy default settings to the new settings file
-        with open(DEFAULT_SETTINGS_FILE_PATH, "r", encoding="utf-8") as f_default:
-            default_settings = json.load(f_default)
-        with open(SETTINGS_FILE_PATH, "w", encoding="utf-8") as f_settings:
-            json.dump(default_settings, f_settings, indent=4)
-        return default_settings
-    else:
-        with open(SETTINGS_FILE_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+def load_default_settings():
+    return json.load(open(DEFAULT_SETTINGS_FILE_PATH, "r", encoding="utf-8"))
