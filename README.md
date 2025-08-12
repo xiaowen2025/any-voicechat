@@ -7,12 +7,17 @@
 
 ## Features
 
-*   **Live Note-Taking:** Get real-time, detailed notes on your side of the conversation.
+*   **Live Transcriptoin:** Get real-time transcription of your conversation.
 *   **Post-Conversation Analysis:** Receive a comprehensive analysis of the entire conversation in a clean, easy-to-read markdown format.
 *   **Customizable Avatars:** Generate a unique AI avatar with a single click, tailored to your chosen scenario.
 *   **Configurable Scenarios:** Easily customize the agent's role, personality, and context by editing a single JSON file. Explore different use cases in the `app_examples/` directory.
 
 ## Example Applications
+
+![gallery](docs/imgs/apps-gallery.png)
+
+### Language Pal
+![Language Pal](docs/imgs/app-language.png)
 
 ### Comfort Chat
 ![Comfort Chat](docs/imgs/app-listen.png)
@@ -22,9 +27,6 @@
 
 ### Interview Simulator
 ![Interview Simulator](docs/imgs/app-interview.png)  
-
-### Language Pal
-![Language Pal](docs/imgs/app-language.png)
 
 
 ## Getting Started

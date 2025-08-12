@@ -160,12 +160,13 @@ async function handleAppSelection(appId) {
 async function analyseConversation() {
   isAnalysing.value = true;
   try {
+    console.log('Sending notes for analysis:', notes.value);
     const response = await fetch('/api/analyse', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ notes: notes.value }), // Send notes in the request body
+      body: JSON.stringify({ notes: notes.value, settings: settings.value }), // Send notes and settings in the request body
     });
     if (response.ok) {
       const data = await response.json();

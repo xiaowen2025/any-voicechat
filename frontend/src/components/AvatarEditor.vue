@@ -68,6 +68,7 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import imageCompression from 'browser-image-compression';
 import { useSettings } from '@/composables/useSettings';
+import { useSnackbar } from '@/composables/useSnackbar';
 
 export default {
   components: {
@@ -82,8 +83,10 @@ export default {
   emits: ['update:modelValue', 'avatar-saved'],
   setup() {
     const { settings } = useSettings();
+    const { showSnackbar } = useSnackbar();
     return {
       settings,
+      showSnackbar,
     };
   },
   data() {
@@ -170,13 +173,15 @@ export default {
           });
 
         if (!response.ok) {
-          throw new Error('Failed to generate avatar');
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Failed to generate avatar');
         }
 
         const data = await response.json();
         this.imageSrc = `data:image/png;base64,${data.image}`;
         this.cropperKey += 1;
       } catch (error) {
+        this.showSnackbar(error.message, 'error');
         console.error('Error generating avatar:', error);
       } finally {
         this.loading = false;

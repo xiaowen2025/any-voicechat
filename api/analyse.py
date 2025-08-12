@@ -1,16 +1,17 @@
 from google import genai
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from typing import Optional
 
 
 from api.settings import Settings
-from api.dependencies import get_settings
 
 
 router = APIRouter()
 
 class AnalyseRequest(BaseModel):
     notes: str
+    settings: Optional[Settings] = None
 
 
 def analyse(settings: Settings, notes: str) -> str:
@@ -29,7 +30,7 @@ def analyse(settings: Settings, notes: str) -> str:
     {analyse_instruction}
     Context:
     {context}
-    Notes:
+    Transcription (message after "You" is what the user said):
     {notes}
     """
     context = {
@@ -51,7 +52,6 @@ def analyse(settings: Settings, notes: str) -> str:
 
 
 @router.post("/api/analyse")
-async def post_analyse(request: AnalyseRequest, settings: Settings = Depends(get_settings)):
-    notes = request.notes
-    analysis_result = analyse(settings, notes)
+async def post_analyse(request: AnalyseRequest):
+    analysis_result = analyse(request.settings, request.notes)
     return {"message": "Analysis complete", "analysis": analysis_result}

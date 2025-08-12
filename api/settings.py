@@ -8,6 +8,7 @@ SETTINGS_FILE_PATH = os.path.join(DATA_PATH, "settings.json")
 DEFAULT_SETTINGS_FILE_PATH = "api/default_settings.json"
 APP_EXAMPLES_PATH = "app_examples"
 LIVE_MODEL_NAME = "gemini-2.5-flash-live-preview"
+IMAGE_MODEL_NAME = "gemini-2.0-flash-preview-image-generation"
 
 
 class Settings(BaseModel):
@@ -38,11 +39,3 @@ def load_settings():
     else:
         with open(SETTINGS_FILE_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
-
-
-def save_settings(settings: dict):
-    """
-    Saves the given settings to the settings file.
-    """
-    with open(SETTINGS_FILE_PATH, "w", encoding="utf-8") as f:
-        json.dump(settings, f, indent=4)

@@ -68,10 +68,13 @@ def generate_image(prompt: str) -> dict:
 @router.post("/api/avatar/generate")
 async def generate_avatar(req: AvatarRequest):
     try:
-        prompt = f"an avatar for a {req.settings.agent_description}"
+        prompt = f"Design a minimalist cartoon avatar for {req.settings.agent_description}. Considering the context: {req.settings.context_dict}"
         return generate_image(prompt)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        error_message = "Sorry, this feature is not available now."
+        if "404" in str(e):
+            error_message = "gemini-2.0-flash-preview-image-generation is only supported in limited regions."
+        raise HTTPException(status_code=500, detail=error_message)
 
 
 if __name__ == "__main__":
