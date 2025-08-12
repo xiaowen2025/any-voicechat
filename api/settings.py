@@ -1,6 +1,6 @@
 import json
 from pydantic import BaseModel
-from typing import Dict
+from typing import Dict, Optional
 
 
 DEFAULT_SETTINGS_FILE_PATH = "api/default_settings.json"
@@ -17,6 +17,7 @@ class Settings(BaseModel):
     analyse_instruction: str
     voice_name: str
     language_code: str
+    gemini_api_key: Optional[str] = None
 
 
 def load_default_settings():

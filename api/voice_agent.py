@@ -1,4 +1,5 @@
 import logging
+import os
 from google import genai
 from api.services.google_ai import create_live_agent
 from api.settings import Settings
@@ -25,9 +26,6 @@ def create_agent(settings: Settings):
     """
     if isinstance(settings, dict):
         try:
-            api_key = settings.get("api_key")
-            if api_key:
-                genai.configure(api_key=api_key)
             settings = Settings(**settings)
         except Exception as e:
             raise ValueError(f"Invalid settings format: {e}")
@@ -43,4 +41,5 @@ def create_agent(settings: Settings):
     )
 
     logging.info(f"Creating agent with context: {final_instruction}")
+    os.environ["GEMINI_API_KEY"] = settings.gemini_api_key
     return create_live_agent(final_instruction)
