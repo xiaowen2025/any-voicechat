@@ -6,13 +6,15 @@ from google.genai import types
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from .settings import Settings
+
 router = APIRouter()
 
 class AvatarRequest(BaseModel):
-    prompt: str
+    settings: Settings
 
-def generate_image(prompt: str) -> dict:
-    client = genai.Client()
+def generate_image(prompt: str, api_key: str) -> dict:
+    client = genai.Client(api_key=api_key)
     
     model = "gemini-2.0-flash-preview-image-generation"
     
@@ -20,7 +22,7 @@ def generate_image(prompt: str) -> dict:
         types.Content(
             role="user",
             parts=[
-                types.Part.from_text(text=prompt),
+                types.Part.from_text(text=str(prompt)),
             ],
         ),
     ]
@@ -66,9 +68,13 @@ def generate_image(prompt: str) -> dict:
 @router.post("/api/avatar/generate")
 async def generate_avatar(req: AvatarRequest):
     try:
-        return generate_image(req.prompt)
+        prompt = f"Design a minimalist cartoon avatar for {req.settings.agent_description}. Considering the context: {req.settings.context_dict}"
+        return generate_image(prompt, api_key=req.settings.gemini_api_key)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        error_message = "Sorry, this feature is not available now."
+        if "404" in str(e):
+            error_message = "gemini-2.0-flash-preview-image-generation is only supported in limited regions."
+        raise HTTPException(status_code=500, detail=error_message)
 
 
 if __name__ == "__main__":

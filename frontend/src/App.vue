@@ -2,13 +2,16 @@
   <v-app v-if="isThemeLoaded">
     <settings-sidebar
       v-model="showSettings"
+      @toggle-settings="isSettingsWindowVisible = !isSettingsWindowVisible"
+    />
+    <settings-window
+      v-model="isSettingsWindowVisible"
       :selected-theme="selectedTheme"
       :is-dark-mode="isDarkMode"
       @theme-changed="changeTheme"
       @dark-mode-toggled="toggleDarkMode"
       @api-key-updated="updateApiKeyStatus"
     />
-
     <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
@@ -21,6 +24,7 @@
       <apps-gallery
         v-if="showAppsGallery"
         @app-selected="handleAppSelection"
+        @close="showAppsGallery = false"
       />
       <v-container v-else fluid class="fill-height pa-4">
         <v-row class="fill-height">
@@ -31,18 +35,17 @@
                   :analyser-node="analyserNode"
                   :conversation-started="conversationStarted"
                 />
-                <notes-window ref="notes" :content="analysisContent" />
-                <analysis-viewer :content="analysisContent" />
+                <notes-window />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
                 <control-buttons
                   :conversation-started="conversationStarted"
-                  :interview-finished="interviewFinished"
+                  :conversation-finished="conversationFinished"
                   :is-connecting="isConnecting"
                   :is-analysing="isAnalysing"
                   :is-api-key-set="isApiKeySet"
-                  @toggle-interview="toggleInterview"
-                  @analyse="analyseInterview"
+                  @toggle-conversation="toggleConversation"
+                  @analyse="analyseConversation"
                 />
               </v-card-actions>
             </v-card>
@@ -66,21 +69,24 @@ import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import AgentProfile from './components/AgentProfile.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
+import SettingsWindow from './components/SettingsWindow.vue';
 import NotesWindow from './components/NotesWindow.vue';
-import AnalysisViewer from './components/AnalysisViewer.vue';
 import AppsGallery from './components/AppsGallery.vue';
 import { useAudio } from './composables/useAudio';
-import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
+import { useSharedConversation } from './composables/useSharedConversation';
 import { useThemeManager } from './composables/useThemeManager';
 import { useSettings } from './composables/useSettings';
 import { useSnackbar } from './composables/useSnackbar';
+import { useApi } from './composables/useApi';
 
 // --- Reactive State ---
 const showAppsGallery = ref(false);
 const cachedSettings = JSON.parse(localStorage.getItem('settings') || '{}');
 const appName = ref(cachedSettings.app_name || 'App');
-const { settings, loadSettings } = useSettings();
+const { settings, loadSettings, updateSettings } = useSettings();
 const snackbar = useSnackbar();
+const { getAppSettings } = useApi();
+
 
 // Theme
 const {
@@ -94,11 +100,9 @@ const isThemeLoaded = ref(false);
 
 // Component State
 const showSettings = ref(true);
+const isSettingsWindowVisible = ref(false);
 const isApiKeySet = ref(false);
 const isAnalysing = ref(false);
-const analysisCompleted = ref(false);
-const analysisContent = ref('');
-const notes = ref(null); // for the ref in the template
 
 // Composables
 const audioWebsocket = ref(null);
@@ -113,12 +117,15 @@ const {
 const {
   websocket,
   messages,
+  notes,
+  analysis,
   isConnecting,
   conversationStarted,
-  interviewFinished,
+  conversationFinished,
+  currentAvatar,
   connect,
   disconnect,
-} = useInterviewWebSocket(playAudio, stopPlayback);
+} = useSharedConversation();
 
 // --- Watchers ---
 
@@ -137,58 +144,41 @@ watch(settings, (newSettings) => {
 
 async function handleAppSelection(appId) {
   try {
-    const response = await fetch(`/api/settings/load_app/${appId}`, {
-      method: 'POST',
-    });
-    if (response.ok) {
-      await loadSettings(true); // Force refresh from server
-      snackbar.show('App loaded successfully!', 'success');
+    const newSettings = await getAppSettings(appId);
+    if (newSettings) {
+      updateSettings(newSettings);
+      const newAvatar = `/assets/avatar_${appId}.png`;
+      currentAvatar.value = newAvatar;
+      localStorage.setItem('userAvatar', newAvatar);
       showAppsGallery.value = false;
-    } else {
-      const errorData = await response.json();
-      snackbar.show(`Error loading app: ${errorData.error}`, 'error');
-      console.error('Error loading app:', response.statusText);
-    }
+    } 
   } catch (error) {
-    snackbar.show('An unexpected error occurred.', 'error');
     console.error('Error loading app:', error);
   }
 }
 
-async function fetchAnalysis() {
-  try {
-    const response = await fetch('/api/result_docs/analysis');
-    if (response.ok) {
-      const data = await response.json();
-      analysisContent.value = data.content;
-    } else {
-      console.error('Error fetching analysis:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error fetching analysis:', error);
-  }
-}
-
-function onAnalysisComplete(analysis) {
-  analysisContent.value = analysis;
-  analysisCompleted.value = true;
-}
-
-async function analyseInterview() {
+async function analyseConversation() {
   isAnalysing.value = true;
   try {
-    const response = await fetch('/api/analyse', { method: 'POST' });
+    console.log('Sending notes for analysis:', notes.value);
+    const response = await fetch('/api/analyse', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ notes: notes.value, settings: settings.value }), // Send notes and settings in the request body
+    });
     if (response.ok) {
       const data = await response.json();
-      onAnalysisComplete(data.analysis);
+      analysis.value = data.analysis;
     } else {
-      console.error('Error analysing interview:', response.statusText);
+      console.error('Error analysing conversation:', response.statusText);
     }
   } catch (error) {
-    console.error('Error analysing interview:', error);
+    console.error('Error analysing conversation:', error);
   } finally {
     isAnalysing.value = false;
-    interviewFinished.value = false; // Ready for a new interview
+    conversationFinished.value = false; // Ready for a new conversation
   }
 }
 
@@ -196,28 +186,27 @@ function updateApiKeyStatus() {
   setApiKey();
 }
 
-async function toggleInterview() {
+async function toggleConversation() {
   if (conversationStarted.value) {
-    stopInterview();
+    stopConversation();
   } else {
     await startConversation();
   }
 }
 
 async function startConversation() {
-  analysisCompleted.value = false;
-  analysisContent.value = '';
+  analysis.value = null;
   try {
     await startAudio();
-    connect();
+    connect(playAudio, stopPlayback);
   } catch (error) {
-    console.error('Error starting interview:', error);
+    console.error('Error starting conversation:', error);
     messages.value.push({ id: Date.now(), sender: 'system', text: 'Error accessing microphone. Please grant permission and try again.' });
     stopAudio();
   }
 }
 
-function stopInterview() {
+function stopConversation() {
   stopAudio();
   disconnect();
 }
@@ -254,7 +243,10 @@ async function setApiKey() {
 
 onMounted(async () => {
   loadSettings();
-  fetchAnalysis();
+  const savedAvatar = localStorage.getItem('userAvatar');
+  if (savedAvatar) {
+    currentAvatar.value = savedAvatar;
+  }
   setApiKey();
   initTheme();
   await nextTick();
@@ -262,7 +254,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  stopInterview();
+  stopConversation();
 });
 </script>
 

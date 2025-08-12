@@ -15,7 +15,7 @@
         lg="3"
       >
         <v-card class="d-flex flex-column fill-height" @click="selectApp(app.id)">
-          <v-img :src="app.avatar" height="200px"></v-img>
+          <v-img :src="app.avatar" height="200px" cover></v-img>
           <v-card-title>{{ app.name }}</v-card-title>
           <v-card-text class="flex-grow-1">
             {{ app.summary }}
@@ -30,13 +30,17 @@
 import { ref, onMounted, defineEmits } from 'vue';
 
 const apps = ref([]);
-const emit = defineEmits(['app-selected']);
+const emit = defineEmits(['app-selected', 'close']);
 
 async function fetchApps() {
   try {
     const response = await fetch('/api/apps');
     if (response.ok) {
-      apps.value = await response.json();
+      const fetchedApps = await response.json();
+      apps.value = fetchedApps.map(app => ({
+        ...app,
+        avatar: `/assets/avatar_${app.id}.png`
+      }));
     } else {
       console.error('Error fetching apps:', response.statusText);
     }
@@ -47,6 +51,7 @@ async function fetchApps() {
 
 function selectApp(appId) {
   emit('app-selected', appId);
+  emit('close');
 }
 
 onMounted(() => {

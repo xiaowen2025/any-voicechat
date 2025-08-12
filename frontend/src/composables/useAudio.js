@@ -1,33 +1,29 @@
 import { ref, onUnmounted } from 'vue';
+import {
+  base64ToArray,
+  arrayBufferToBase64,
+  convertFloat32ToPCM,
+} from '../utils/audio';
 
-function base64ToArray(base64) {
-  const binaryString = window.atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
+/**
+ * @module useAudio
+ * @description A Vue composable for handling audio recording, playback, and processing.
+ * This composable manages the AudioContext, microphone input, and audio worklets for
+ * recording and playing PCM audio data. It also provides a visualizer node.
+ */
 
-function arrayBufferToBase64(buffer) {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
-}
-
-function convertFloat32ToPCM(inputData) {
-  const pcm16 = new Int16Array(inputData.length);
-  for (let i = 0; i < inputData.length; i++) {
-    pcm16[i] = inputData[i] * 0x7fff;
-  }
-  return pcm16.buffer;
-}
-
+/**
+ * Sets up and manages audio functionality.
+ *
+ * @param {import('vue').Ref<WebSocket>} websocket - A ref to the WebSocket instance for sending audio data.
+ * @param {Function} onAudioData - Callback function to handle incoming audio data.
+ * @returns {object} An object containing audio control functions and refs.
+ * @property {import('vue').Ref<AnalyserNode>} analyserNode - The audio analyser node for visualization.
+ * @property {Function} startAudio - Initializes and starts the audio recording and playback.
+ * @property {Function} stopAudio - Stops audio recording and playback and cleans up resources.
+ * @property {Function} playAudio - Plays a chunk of audio data.
+ * @property {Function} stopPlayback - Stops the audio playback.
+ */
 export function useAudio(websocket, onAudioData) {
   const audioPlayerNode = ref(null);
   const audioPlayerContext = ref(null);
@@ -38,6 +34,12 @@ export function useAudio(websocket, onAudioData) {
   const bufferTimer = ref(null);
   const analyserNode = ref(null);
 
+  /**
+   * Initializes and starts the audio recording and playback systems.
+   * This function sets up the AudioContext for both player and recorder,
+   * adds the necessary audio worklet modules, and requests microphone access.
+   * @returns {Promise<void>}
+   */
   const startAudio = async () => {
     // Start audio player
     audioPlayerContext.value = new AudioContext({ sampleRate: 24000 });
@@ -68,6 +70,12 @@ export function useAudio(websocket, onAudioData) {
     source.connect(analyserNode.value);
   };
 
+  /**
+   * Sends the buffered audio data over the WebSocket connection.
+   * This function is called periodically by a timer. It combines the
+   * buffered audio chunks into a single ArrayBuffer, converts it to
+   * Base64, and sends it as a JSON message.
+   */
   const sendBufferedAudio = () => {
     if (audioBuffer.value.length === 0 || !websocket.value || websocket.value.readyState !== WebSocket.OPEN) {
       return;
@@ -92,6 +100,10 @@ export function useAudio(websocket, onAudioData) {
     audioBuffer.value = [];
   };
 
+  /**
+   * Stops the audio recording and playback systems and cleans up all resources.
+   * This includes stopping the microphone, disconnecting nodes, and closing the AudioContexts.
+   */
   const stopAudio = () => {
     if (bufferTimer.value) {
       clearInterval(bufferTimer.value);
@@ -125,6 +137,10 @@ export function useAudio(websocket, onAudioData) {
     }
   };
 
+  /**
+   * Plays a chunk of audio data received from the server.
+   * @param {string} data - The Base64 encoded audio data to play.
+   */
   const playAudio = (data) => {
     if (audioPlayerNode.value) {
       const audioData = base64ToArray(data);
@@ -132,6 +148,9 @@ export function useAudio(websocket, onAudioData) {
     }
   };
 
+  /**
+   * Notifies the audio player worklet that the audio stream has ended.
+   */
   const stopPlayback = () => {
     if (audioPlayerNode.value) {
       audioPlayerNode.value.port.postMessage({ command: "endOfAudio" });

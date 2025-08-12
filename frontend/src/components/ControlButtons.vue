@@ -2,7 +2,7 @@
   <v-card-actions class="pa-4 justify-center flex-column">
     <v-btn
       v-if="!showAnalyseButton"
-      @click="$emit('toggle-interview')"
+      @click="$emit('toggle-conversation')"
       :color="conversationStarted ? 'red' : 'primary'"
       :disabled="isConnecting || !isApiKeySet"
       :loading="isConnecting"
@@ -53,7 +53,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    interviewFinished: {
+    conversationFinished: {
       type: Boolean,
       required: true,
     },
@@ -70,10 +70,10 @@ export default {
       required: true,
     },
   },
-  emits: ['toggle-interview', 'analyse'],
+  emits: ['toggle-conversation', 'analyse'],
   computed: {
     showAnalyseButton() {
-      return this.interviewFinished;
+      return this.conversationFinished;
     }
   },
 };

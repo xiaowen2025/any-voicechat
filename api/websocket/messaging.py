@@ -20,7 +20,7 @@ async def agent_to_client_messaging(websocket, live_events):
                     "interrupted": event.interrupted,
                 }
                 await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: {message}")
+                # print(f"[AGENT TO CLIENT]: {message}")
                 continue
 
             # Read the Content and its first Part
@@ -40,17 +40,27 @@ async def agent_to_client_messaging(websocket, live_events):
                         "data": base64.b64encode(audio_data).decode("ascii")
                     }
                     await websocket.send_text(json.dumps(message))
-                    print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
+                    # print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
                     continue
-
-            # If it's text and a parial text, send it
-            if part.text and event.partial:
+            # User message transcription
+            if event.content.role == "user" and part.text:
                 message = {
-                    "mime_type": "text/plain",
-                    "data": part.text
+                    "input_transcription": {
+                        "text": part.text
+                    }
                 }
                 await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: text/plain: {message}")
+                # print(f"[AGENT TO CLIENT]: input_transcription: {event}")
+
+            # Agent message transcription
+            elif event.content.role == "model" and part.text and event.partial:
+                message = {
+                    "output_transcription": {
+                        "text": part.text
+                    }
+                }
+                await websocket.send_text(json.dumps(message))
+                # print(f"[AGENT TO CLIENT]: output_transcription: {event}")
 
 
 async def client_to_agent_messaging(websocket, live_request_queue):

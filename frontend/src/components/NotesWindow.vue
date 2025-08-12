@@ -1,15 +1,25 @@
 <template>
   <div class="notes-window">
     <v-card>
-      <v-card-title class="d-flex justify-space-between align-center font-weight-bold">
-        <span>Notes</span>
-      </v-card-title>
+      <v-tabs v-model="tab" bg-color="secondary">
+        <v-tab value="transcription"><v-icon>mdi-text-box-outline</v-icon></v-tab>
+        <v-tab value="analysis"><v-icon>mdi-thought-bubble-outline</v-icon></v-tab>
+      </v-tabs>
+
       <v-card-text>
-        <div class="notes-content" v-html="renderedMarkdown"></div>
+        <v-window v-model="tab">
+          <v-window-item value="transcription">
+            <div class="notes-content" v-html="renderedMarkdown"></div>
+          </v-window-item>
+
+          <v-window-item value="analysis">
+            <div class="notes-content" v-html="renderedAnalysis"></div>
+          </v-window-item>
+        </v-window>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn icon @click="resetNotes">
+        <v-btn icon @click="resetData">
           <v-icon>mdi-restore</v-icon>
         </v-btn>
       </v-card-actions>
@@ -17,75 +27,30 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import MarkdownIt from 'markdown-it';
+import { useSharedConversation } from '../composables/useSharedConversation';
 
-export default {
-  name: 'NotesWindow',
-  components: {
+const { notes, analysis } = useSharedConversation();
+const md = new MarkdownIt();
+const tab = ref('transcription');
 
-  },
-  props: {
-    content: {
-      type: String,
-      default: ''
-    }
-  },
-  data() {
-    return {
-      notes: '',
-      intervalId: null,
-      md: new MarkdownIt(),
-    };
-  },
-  computed: {
-    renderedMarkdown() {
-      return this.md.render(this.notes);
-    }
-  },
-  methods: {
-    async fetchNotes() {
-      try {
-        const response = await fetch('/api/result_docs/notes');
-        if (response.ok) {
-          const data = await response.json();
-          this.notes = data.content;
-        } else {
-          this.notes = '# Could not load notes.';
-        }
-      } catch (error) {
-        console.error('Error fetching interview notes:', error);
-        this.notes = '# Error loading notes.';
-      }
-    },
-    async saveNotes() {
-      try {
-        await fetch('/api/result_docs/notes', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ content: this.notes }),
-        });
-      } catch (error) {
-        console.error('Error saving interview notes:', error);
-      }
-    },
-    async resetNotes() {
-      this.notes = '';
-      await this.saveNotes();
-    },
-  },
-  created() {
-    this.fetchNotes();
-    this.intervalId = setInterval(this.fetchNotes, 3000);
-  },
-  beforeUnmount() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  },
-};
+const renderedMarkdown = computed(() => {
+  return md.render(notes.value);
+});
+
+const renderedAnalysis = computed(() => {
+  if (analysis.value) {
+    return md.render(analysis.value);
+  }
+  return 'No analysis available yet.';
+});
+
+function resetData() {
+  notes.value = '';
+  analysis.value = null;
+}
 </script>
 
 <style scoped>
@@ -96,5 +61,7 @@ export default {
 .notes-content {
   font-size: 1.2rem;
   line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 </style>
