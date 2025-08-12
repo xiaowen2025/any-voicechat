@@ -67,6 +67,7 @@
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import imageCompression from 'browser-image-compression';
+import { useSettings } from '@/composables/useSettings';
 
 export default {
   components: {
@@ -79,6 +80,12 @@ export default {
     },
   },
   emits: ['update:modelValue', 'avatar-saved'],
+  setup() {
+    const { settings } = useSettings();
+    return {
+      settings,
+    };
+  },
   data() {
     return {
       imageSrc: null,
@@ -152,7 +159,15 @@ export default {
       try {
         const response = await fetch('/api/avatar/generate', {
           method: 'POST',
-        });
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            settings: {
+              ...this.settings
+            },
+            }),
+          });
 
         if (!response.ok) {
           throw new Error('Failed to generate avatar');

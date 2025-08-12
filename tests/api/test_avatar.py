@@ -34,8 +34,19 @@ def test_generate_avatar(client):
             mock_response_iterator
         )
 
+        test_settings = {
+            "app_name": "Test App",
+            "agent_description": "a friendly test agent",
+            "context_dict": {},
+            "goal_description": "testing",
+            "notes_taking_instruction": "none",
+            "analyse_instruction": "none",
+            "voice_name": "echo",
+            "language_code": "en-US"
+        }
+
         # Call the endpoint
-        response = client.post("/api/avatar/generate", json={"prompt": "a test prompt"})
+        response = client.post("/api/avatar/generate", json={"settings": test_settings})
 
         # Assertions
         assert response.status_code == 200
@@ -45,3 +56,7 @@ def test_generate_avatar(client):
 
         # Verify that the mock was called
         mock_instance.models.generate_content_stream.assert_called_once()
+        # Verify the prompt
+        args, kwargs = mock_instance.models.generate_content_stream.call_args
+        assert "contents" in kwargs
+        assert "an avatar for a a friendly test agent" in str(kwargs["contents"])

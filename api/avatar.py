@@ -6,10 +6,12 @@ from google.genai import types
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from .settings import Settings
+
 router = APIRouter()
 
 class AvatarRequest(BaseModel):
-    prompt: str
+    settings: Settings
 
 def generate_image(prompt: str) -> dict:
     client = genai.Client()
@@ -66,7 +68,8 @@ def generate_image(prompt: str) -> dict:
 @router.post("/api/avatar/generate")
 async def generate_avatar(req: AvatarRequest):
     try:
-        return generate_image(req.prompt)
+        prompt = f"an avatar for a {req.settings.agent_description}"
+        return generate_image(prompt)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

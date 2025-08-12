@@ -18,25 +18,19 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import MarkdownIt from 'markdown-it';
+import { useSharedConversation } from '../composables/useSharedConversation';
 
-const props = defineProps({
-  content: {
-    type: String,
-    default: ''
-  }
-});
-
+const { notes } = useSharedConversation();
 const md = new MarkdownIt();
 
 const renderedMarkdown = computed(() => {
-  return md.render(props.content);
+  return md.render(notes.value);
 });
 
 function resetNotes() {
-  // This function can be adapted or removed based on new requirements
-  console.log("Resetting notes is not implemented in websocket mode.");
+  notes.value = '';
 }
 </script>
 

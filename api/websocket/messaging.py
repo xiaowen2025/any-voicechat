@@ -42,25 +42,25 @@ async def agent_to_client_messaging(websocket, live_events):
                     await websocket.send_text(json.dumps(message))
                     # print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
                     continue
-            # If it's text and a parial text, send it
-            if part.text and event.partial:
-                message = {
-                    "role": event.content.role,
-                    "mime_type": "text/plain",
-                    "data": part.text
-                }
-                await websocket.send_text(json.dumps(message))
-                # print(f"[AGENT TO CLIENT]: text/plain: {message}")
-
             # User message transcription
-            if event.content.role == "user":
+            if event.content.role == "user" and part.text:
                 message = {
-                    "role": event.content.role,
-                    "mime_type": "text/plain",
-                    "data": part.text
+                    "input_transcription": {
+                        "text": part.text
+                    }
                 }
                 await websocket.send_text(json.dumps(message))
-                # print(f"[Client to AGENT]: text/plain: {message}")
+                print(f"[AGENT TO CLIENT]: input_transcription: {message}")
+
+            # Agent message transcription
+            elif event.content.role == "model" and part.text:
+                message = {
+                    "output_transcription": {
+                        "text": part.text
+                    }
+                }
+                await websocket.send_text(json.dumps(message))
+                print(f"[AGENT TO CLIENT]: output_transcription: {message}")
 
 
 async def client_to_agent_messaging(websocket, live_request_queue):

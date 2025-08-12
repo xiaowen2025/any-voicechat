@@ -31,18 +31,18 @@
                   :analyser-node="analyserNode"
                   :conversation-started="conversationStarted"
                 />
-                <notes-window :content="notes" />
+                <notes-window />
                 <analysis-viewer :content="analysisContent" />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
                 <control-buttons
                   :conversation-started="conversationStarted"
-                  :interview-finished="interviewFinished"
+                  :conversation-finished="conversationFinished"
                   :is-connecting="isConnecting"
                   :is-analysing="isAnalysing"
                   :is-api-key-set="isApiKeySet"
-                  @toggle-interview="toggleInterview"
-                  @analyse="analyseInterview"
+                  @toggle-conversation="toggleConversation"
+                  @analyse="analyseConversation"
                 />
               </v-card-actions>
             </v-card>
@@ -70,7 +70,7 @@ import NotesWindow from './components/NotesWindow.vue';
 import AnalysisViewer from './components/AnalysisViewer.vue';
 import AppsGallery from './components/AppsGallery.vue';
 import { useAudio } from './composables/useAudio';
-import { useInterviewWebSocket } from './composables/useInterviewWebSocket';
+import { useSharedConversation } from './composables/useSharedConversation';
 import { useThemeManager } from './composables/useThemeManager';
 import { useSettings } from './composables/useSettings';
 import { useSnackbar } from './composables/useSnackbar';
@@ -115,10 +115,10 @@ const {
   notes,
   isConnecting,
   conversationStarted,
-  interviewFinished,
+  conversationFinished,
   connect,
   disconnect,
-} = useInterviewWebSocket(playAudio, stopPlayback);
+} = useSharedConversation();
 
 // --- Watchers ---
 
@@ -174,7 +174,7 @@ function onAnalysisComplete(analysis) {
   analysisCompleted.value = true;
 }
 
-async function analyseInterview() {
+async function analyseConversation() {
   isAnalysing.value = true;
   try {
     const response = await fetch('/api/analyse', { method: 'POST' });
@@ -182,13 +182,13 @@ async function analyseInterview() {
       const data = await response.json();
       onAnalysisComplete(data.analysis);
     } else {
-      console.error('Error analysing interview:', response.statusText);
+      console.error('Error analysing conversation:', response.statusText);
     }
   } catch (error) {
-    console.error('Error analysing interview:', error);
+    console.error('Error analysing conversation:', error);
   } finally {
     isAnalysing.value = false;
-    interviewFinished.value = false; // Ready for a new interview
+    conversationFinished.value = false; // Ready for a new conversation
   }
 }
 
@@ -196,9 +196,9 @@ function updateApiKeyStatus() {
   setApiKey();
 }
 
-async function toggleInterview() {
+async function toggleConversation() {
   if (conversationStarted.value) {
-    stopInterview();
+    stopConversation();
   } else {
     await startConversation();
   }
@@ -209,15 +209,15 @@ async function startConversation() {
   analysisContent.value = '';
   try {
     await startAudio();
-    connect();
+    connect(playAudio, stopPlayback);
   } catch (error) {
-    console.error('Error starting interview:', error);
+    console.error('Error starting conversation:', error);
     messages.value.push({ id: Date.now(), sender: 'system', text: 'Error accessing microphone. Please grant permission and try again.' });
     stopAudio();
   }
 }
 
-function stopInterview() {
+function stopConversation() {
   stopAudio();
   disconnect();
 }
@@ -262,7 +262,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  stopInterview();
+  stopConversation();
 });
 </script>
 

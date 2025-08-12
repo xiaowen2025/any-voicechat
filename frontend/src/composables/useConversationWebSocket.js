@@ -1,19 +1,25 @@
 import { ref } from 'vue';
 import { useSettings } from './useSettings';
 
-export function useInterviewWebSocket(playAudio, stopPlayback) {
+export function useConversationWebSocket() {
   const websocket = ref(null);
   const messages = ref([]);
   const notes = ref('');
   const isConnecting = ref(false);
   const conversationStarted = ref(false);
-  const interviewFinished = ref(false);
+  const conversationFinished = ref(false);
   const currentMessageId = ref(null);
   const { settings } = useSettings();
 
-  const connect = () => {
+  let playAudioCallback = null;
+  let stopPlaybackCallback = null;
+
+  const connect = (playAudio, stopPlayback) => {
+    playAudioCallback = playAudio;
+    stopPlaybackCallback = stopPlayback;
+
     isConnecting.value = true;
-    interviewFinished.value = false;
+    conversationFinished.value = false;
     currentMessageId.value = null;
     notes.value = '';
 
@@ -40,35 +46,33 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
 
       if (message.turn_complete) {
         currentMessageId.value = null;
+        if (stopPlaybackCallback) stopPlaybackCallback();
         return;
       }
 
       if (message.interrupted) {
-        if (stopPlayback) stopPlayback();
+        if (stopPlaybackCallback) stopPlaybackCallback();
         return;
       }
 
       if (message.mime_type === 'audio/pcm' && message.data) {
-        if (playAudio) playAudio(message.data);
+        if (playAudioCallback) playAudioCallback(message.data);
       }
-
-      if (message.mime_type === 'text/plain') {
-        if (currentMessageId.value === null) {
-          currentMessageId.value = `msg-${Date.now()}`;
-          messages.value.push({ id: currentMessageId.value, sender: 'agent', text: message.data });
+      if (message.input_transcription) {
+        const lastLine = notes.value.trim().split('\n').pop();
+        if (!lastLine.startsWith('**You:**')) {
+          notes.value += `\n\n**You:** ${message.input_transcription.text}`;
         } else {
-          const msg = messages.value.find(m => m.id === currentMessageId.value);
-          if (msg) {
-            msg.text += message.data;
-          }
+          notes.value += `${message.input_transcription.text}`;
         }
       }
-
-      if (message.input_transcription) {
-        notes.value += `**You:** ${message.input_transcription.text}\n\n`;
-      }
       if (message.output_transcription) {
-        notes.value += `**Agent:** ${message.output_transcription.text}\n\n`;
+        const lastLine = notes.value.trim().split('\n').pop();
+        if (!lastLine.startsWith('**Agent:**')) {
+          notes.value += `\n\n**Agent:** ${message.output_transcription.text}`;
+        } else {
+          notes.value += `${message.output_transcription.text}`;
+        }
       }
     };
 
@@ -87,13 +91,14 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
     };
   };
 
+
   const disconnect = () => {
     if (websocket.value && websocket.value.readyState < 2) { // OPEN or CONNECTING
       websocket.value.close();
     }
     conversationStarted.value = false;
     isConnecting.value = false;
-    interviewFinished.value = true;
+    conversationFinished.value = true;
   };
 
   return {
@@ -102,7 +107,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
     notes,
     isConnecting,
     conversationStarted,
-    interviewFinished,
+    conversationFinished,
     connect,
     disconnect,
   };
