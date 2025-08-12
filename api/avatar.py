@@ -13,8 +13,8 @@ router = APIRouter()
 class AvatarRequest(BaseModel):
     settings: Settings
 
-def generate_image(prompt: str) -> dict:
-    client = genai.Client()
+def generate_image(prompt: str, api_key: str) -> dict:
+    client = genai.Client(api_key=api_key)
     
     model = "gemini-2.0-flash-preview-image-generation"
     
@@ -69,7 +69,7 @@ def generate_image(prompt: str) -> dict:
 async def generate_avatar(req: AvatarRequest):
     try:
         prompt = f"Design a minimalist cartoon avatar for {req.settings.agent_description}. Considering the context: {req.settings.context_dict}"
-        return generate_image(prompt)
+        return generate_image(prompt, api_key=req.settings.gemini_api_key)
     except Exception as e:
         error_message = "Sorry, this feature is not available now."
         if "404" in str(e):

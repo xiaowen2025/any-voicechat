@@ -163,6 +163,8 @@ function copySettings() {
 async function saveGeminiApiKey() {
   const success = await saveKey(geminiApiKey.value);
   if (success) {
+    editableSettings.value.gemini_api_key = geminiApiKey.value;
+    updateSettings(editableSettings.value);
     emit("api-key-updated", !!geminiApiKey.value);
     apiKeyEdited.value = false;
   } else {
@@ -171,10 +173,12 @@ async function saveGeminiApiKey() {
 }
 
 onMounted(() => {
-  geminiApiKey.value = localStorage.getItem("geminiApiKey") || "";
-  apiKeyEdited.value = !geminiApiKey.value;
-  if (geminiApiKey.value) {
+  if (settings.value?.gemini_api_key) {
+    geminiApiKey.value = settings.value.gemini_api_key;
+    apiKeyEdited.value = false;
     emit("api-key-updated", true);
+  } else {
+    apiKeyEdited.value = true;
   }
 });
 </script>

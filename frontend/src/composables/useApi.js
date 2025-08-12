@@ -1,4 +1,7 @@
+import { useSettings } from './useSettings';
+
 export function useApi() {
+  const { settings, updateSettings } = useSettings();
 
   async function getAppSettings(appId) {
     try {
@@ -25,6 +28,9 @@ export function useApi() {
       const result = await response.json();
       if (result.status === 'success') {
         localStorage.setItem('geminiApiKey', apiKey);
+        // Also update the settings object
+        const newSettings = { ...settings.value, gemini_api_key: apiKey };
+        updateSettings(newSettings);
         alert('API Key saved successfully!');
         return true;
       } else {
