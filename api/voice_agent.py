@@ -1,5 +1,5 @@
 import logging
-
+from google import genai
 from api.services.google_ai import create_live_agent
 from api.settings import Settings
 
@@ -25,6 +25,9 @@ def create_agent(settings: Settings):
     """
     if isinstance(settings, dict):
         try:
+            api_key = settings.get("api_key")
+            if api_key:
+                genai.configure(api_key=api_key)
             settings = Settings(**settings)
         except Exception as e:
             raise ValueError(f"Invalid settings format: {e}")
