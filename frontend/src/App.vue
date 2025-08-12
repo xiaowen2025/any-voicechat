@@ -2,13 +2,16 @@
   <v-app v-if="isThemeLoaded">
     <settings-sidebar
       v-model="showSettings"
+      @toggle-settings="isSettingsWindowVisible = !isSettingsWindowVisible"
+    />
+    <settings-window
+      v-model="isSettingsWindowVisible"
       :selected-theme="selectedTheme"
       :is-dark-mode="isDarkMode"
       @theme-changed="changeTheme"
       @dark-mode-toggled="toggleDarkMode"
       @api-key-updated="updateApiKeyStatus"
     />
-
     <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
@@ -66,6 +69,7 @@ import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import AgentProfile from './components/AgentProfile.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
+import SettingsWindow from './components/SettingsWindow.vue';
 import NotesWindow from './components/NotesWindow.vue';
 import AppsGallery from './components/AppsGallery.vue';
 import { useAudio } from './composables/useAudio';
@@ -96,6 +100,7 @@ const isThemeLoaded = ref(false);
 
 // Component State
 const showSettings = ref(true);
+const isSettingsWindowVisible = ref(false);
 const isApiKeySet = ref(false);
 const isAnalysing = ref(false);
 
