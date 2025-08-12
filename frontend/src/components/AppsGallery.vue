@@ -30,7 +30,7 @@
 import { ref, onMounted, defineEmits } from 'vue';
 
 const apps = ref([]);
-const emit = defineEmits(['app-selected']);
+const emit = defineEmits(['app-selected', 'close']);
 
 async function fetchApps() {
   try {
@@ -51,6 +51,7 @@ async function fetchApps() {
 
 function selectApp(appId) {
   emit('app-selected', appId);
+  emit('close');
 }
 
 onMounted(() => {

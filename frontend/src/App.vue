@@ -21,6 +21,7 @@
       <apps-gallery
         v-if="showAppsGallery"
         @app-selected="handleAppSelection"
+        @close="showAppsGallery = false"
       />
       <v-container v-else fluid class="fill-height pa-4">
         <v-row class="fill-height">
