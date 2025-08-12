@@ -49,8 +49,8 @@ async def start_agent_session(user_id, settings, is_audio=False):
     run_config = RunConfig(
         response_modalities=[modality],
         speech_config=speech_config,
-        input_audio_transcription=True,
-        output_audio_transcription=True,
+        input_audio_transcription={},
+        output_audio_transcription={},
     )
 
     # Create a LiveRequestQueue for this session

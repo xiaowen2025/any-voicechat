@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { useSettings } from './useSettings';
 
 export function useInterviewWebSocket(playAudio, stopPlayback) {
   const websocket = ref(null);
@@ -8,6 +9,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
   const conversationStarted = ref(false);
   const interviewFinished = ref(false);
   const currentMessageId = ref(null);
+  const { settings } = useSettings();
 
   const connect = () => {
     isConnecting.value = true;
@@ -23,6 +25,10 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
 
     websocket.value.onopen = () => {
       console.log('WebSocket connection established');
+      if (settings.value) {
+        websocket.value.send(JSON.stringify(settings.value));
+        console.log('Settings sent to server');
+      }
       messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection established. You can start speaking.' });
       conversationStarted.value = true;
       isConnecting.value = false;

@@ -3,20 +3,24 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from api.settings import DATA_PATH
 from api.websocket.agent import start_agent_session
 from api.websocket.messaging import agent_to_client_messaging, client_to_agent_messaging
 
 router = APIRouter()
+
 
 @router.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     """Client websocket endpoint"""
     # Wait for client connection
     print(f"Client #{user_id} connected, audio mode: {is_audio}")
-    settings = json.loads(open(f"{DATA_PATH}/settings.json").read())
-
     await websocket.accept()
+
+    # Wait for settings from the client
+    settings_json = await websocket.receive_text()
+    settings = json.loads(settings_json)
+    print("Received settings from client")
+
     # Start agent session
     user_id_str = str(user_id)
     live_events, live_request_queue = await start_agent_session(

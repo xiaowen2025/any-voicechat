@@ -20,7 +20,7 @@ def generate_image(prompt: str) -> dict:
         types.Content(
             role="user",
             parts=[
-                types.Part.from_text(text=prompt),
+                types.Part.from_text(text=str(prompt)),
             ],
         ),
     ]
