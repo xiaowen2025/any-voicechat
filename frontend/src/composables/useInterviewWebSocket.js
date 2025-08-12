@@ -3,6 +3,7 @@ import { ref } from 'vue';
 export function useInterviewWebSocket(playAudio, stopPlayback) {
   const websocket = ref(null);
   const messages = ref([]);
+  const notes = ref('');
   const isConnecting = ref(false);
   const conversationStarted = ref(false);
   const interviewFinished = ref(false);
@@ -12,6 +13,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
     isConnecting.value = true;
     interviewFinished.value = false;
     currentMessageId.value = null;
+    notes.value = '';
 
     const userId = Math.floor(Math.random() * 1000);
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -55,6 +57,13 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
           }
         }
       }
+
+      if (message.input_transcription) {
+        notes.value += `**You:** ${message.input_transcription.text}\n\n`;
+      }
+      if (message.output_transcription) {
+        notes.value += `**Agent:** ${message.output_transcription.text}\n\n`;
+      }
     };
 
     websocket.value.onclose = () => {
@@ -84,6 +93,7 @@ export function useInterviewWebSocket(playAudio, stopPlayback) {
   return {
     websocket,
     messages,
+    notes,
     isConnecting,
     conversationStarted,
     interviewFinished,
