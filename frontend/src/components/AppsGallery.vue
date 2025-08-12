@@ -15,7 +15,7 @@
         lg="3"
       >
         <v-card class="d-flex flex-column fill-height" @click="selectApp(app.id)">
-          <v-img :src="app.avatar" height="200px"></v-img>
+          <v-img :src="app.avatar" height="200px" cover></v-img>
           <v-card-title>{{ app.name }}</v-card-title>
           <v-card-text class="flex-grow-1">
             {{ app.summary }}

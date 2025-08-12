@@ -51,25 +51,9 @@ export default {
     },
   },
   methods: {
-    async save() {
-      try {
-        const response = await fetch(`/api/result_docs/${this.docName}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ content: this.editableContent }),
-        });
-        if (response.ok) {
-          this.$emit('update:content', this.editableContent);
-          this.editing = false;
-        } else {
-          const data = await response.json();
-          console.error('Error saving document:', data.error);
-        }
-      } catch (error) {
-        console.error('Error saving document:', error);
-      }
+    save() {
+      this.$emit('update:content', this.editableContent);
+      this.editing = false;
     },
     cancel() {
       this.editableContent = this.content;

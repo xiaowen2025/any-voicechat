@@ -20,7 +20,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from api import result_docs
 from api import api_key
 from api import context
 from api.websocket import connection as websocket
@@ -48,7 +47,6 @@ async def startup_event():
 
 
 app.include_router(analyse.router)
-app.include_router(result_docs.router)
 app.include_router(api_key.router)
 app.include_router(context.router)
 app.include_router(websocket.router)

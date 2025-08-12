@@ -1,27 +1,57 @@
-# Copyright 2025 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+from google import genai
 from fastapi import APIRouter, Depends
-from api.analyse_logic import analyse, save_analysis
-from api.settings import DATA_PATH, Settings
+from pydantic import BaseModel
+
+
+from api.settings import Settings
 from api.dependencies import get_settings
+
 
 router = APIRouter()
 
+class AnalyseRequest(BaseModel):
+    notes: str
+
+
+def analyse(settings: Settings, notes: str) -> str:
+    """
+    Analyzes the notes using the Gemini AI model.
+
+    Args:
+        settings (Settings): The application settings.
+        notes (str): The notes to be analyzed.
+
+    Returns:
+        str: The analysis text.
+    """
+    instruction_template = """
+    Task:
+    {analyse_instruction}
+    Context:
+    {context}
+    Notes:
+    {notes}
+    """
+    context = {
+        k: v["value"]
+        for k, v in settings.context_dict.items()
+        if v.get("value")
+    }
+    client = genai.Client(vertexai=False)
+    final_instruction = instruction_template.format(
+        analyse_instruction=settings.analyse_instruction,
+        context=context,
+        notes=notes,
+    )
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=[final_instruction],
+    )
+    return response.text
+
+
 @router.post("/api/analyse")
-async def post_analyse(settings: Settings = Depends(get_settings)):
-    notes = open(f"{DATA_PATH}/notes.md", "r").read()
+async def post_analyse(request: AnalyseRequest, settings: Settings = Depends(get_settings)):
+    notes = request.notes
     analysis_result = analyse(settings, notes)
-    save_analysis(analysis_result)
     return {"message": "Analysis complete", "analysis": analysis_result}

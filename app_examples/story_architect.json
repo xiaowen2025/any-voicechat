@@ -1,6 +1,6 @@
 {
   "app_name": "Story Architect",
-  "agent_description": "A creative partner to help brainstorm novel ideas.",
+  "agent_description": "A creative partner to help brainstorm ideas for your next story.",
   "context_dict": {
     "genre": {
       "description": "The genre of the novel (e.g., fantasy, sci-fi, mystery, romance).",
