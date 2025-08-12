@@ -8,7 +8,6 @@
         <v-text-field label="App Name" v-model="editableSettings.app_name"></v-text-field>
         <v-textarea label="Agent Description" v-model="editableSettings.agent_description"></v-textarea>
         <v-textarea label="Goal Description" v-model="editableSettings.goal_description"></v-textarea>
-        <v-textarea label="Notes Taking Instruction" v-model="editableSettings.notes_taking_instruction"></v-textarea>
         <v-textarea label="Analyse Instruction" v-model="editableSettings.analyse_instruction"></v-textarea>
 
         <v-select

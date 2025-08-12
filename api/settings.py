@@ -14,7 +14,6 @@ class Settings(BaseModel):
     agent_description: str
     context_dict: Dict[str, dict]
     goal_description: str
-    notes_taking_instruction: str
     analyse_instruction: str
     voice_name: str
     language_code: str

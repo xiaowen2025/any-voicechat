@@ -4,9 +4,12 @@ from api.services.google_ai import create_live_agent
 from api.settings import Settings
 
 instruction_template = """
-Role: {agent_description}
-Context: {context}
-Remember to take the notes: {notes_taking_instruction}
+<role>
+{agent_description}
+</role>
+<context>
+{context}
+</context>
 """
 
 
@@ -34,7 +37,6 @@ def create_agent(settings: Settings):
         agent_description=settings.agent_description,
         goal_description=settings.goal_description,
         context=context,
-        notes_taking_instruction=settings.notes_taking_instruction,
     )
 
     logging.info(f"Creating agent with context: {final_instruction}")

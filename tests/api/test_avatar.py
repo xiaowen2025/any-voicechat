@@ -39,7 +39,6 @@ def test_generate_avatar(client):
             "agent_description": "a friendly test agent",
             "context_dict": {},
             "goal_description": "testing",
-            "notes_taking_instruction": "none",
             "analyse_instruction": "none",
             "voice_name": "echo",
             "language_code": "en-US"
