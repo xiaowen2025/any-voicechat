@@ -31,7 +31,7 @@
                   :analyser-node="analyserNode"
                   :conversation-started="conversationStarted"
                 />
-                <notes-window ref="notes" :content="analysisContent" />
+                <notes-window :content="notes" />
                 <analysis-viewer :content="analysisContent" />
               </v-card-text>
               <v-card-actions class="d-flex flex-column align-center justify-center">
@@ -98,7 +98,6 @@ const isApiKeySet = ref(false);
 const isAnalysing = ref(false);
 const analysisCompleted = ref(false);
 const analysisContent = ref('');
-const notes = ref(null); // for the ref in the template
 
 // Composables
 const audioWebsocket = ref(null);
@@ -113,6 +112,7 @@ const {
 const {
   websocket,
   messages,
+  notes,
   isConnecting,
   conversationStarted,
   interviewFinished,

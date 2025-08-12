@@ -17,75 +17,27 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, ref } from 'vue';
 import MarkdownIt from 'markdown-it';
 
-export default {
-  name: 'NotesWindow',
-  components: {
+const props = defineProps({
+  content: {
+    type: String,
+    default: ''
+  }
+});
 
-  },
-  props: {
-    content: {
-      type: String,
-      default: ''
-    }
-  },
-  data() {
-    return {
-      notes: '',
-      intervalId: null,
-      md: new MarkdownIt(),
-    };
-  },
-  computed: {
-    renderedMarkdown() {
-      return this.md.render(this.notes);
-    }
-  },
-  methods: {
-    async fetchNotes() {
-      try {
-        const response = await fetch('/api/result_docs/notes');
-        if (response.ok) {
-          const data = await response.json();
-          this.notes = data.content;
-        } else {
-          this.notes = '# Could not load notes.';
-        }
-      } catch (error) {
-        console.error('Error fetching interview notes:', error);
-        this.notes = '# Error loading notes.';
-      }
-    },
-    async saveNotes() {
-      try {
-        await fetch('/api/result_docs/notes', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ content: this.notes }),
-        });
-      } catch (error) {
-        console.error('Error saving interview notes:', error);
-      }
-    },
-    async resetNotes() {
-      this.notes = '';
-      await this.saveNotes();
-    },
-  },
-  created() {
-    this.fetchNotes();
-    this.intervalId = setInterval(this.fetchNotes, 3000);
-  },
-  beforeUnmount() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  },
-};
+const md = new MarkdownIt();
+
+const renderedMarkdown = computed(() => {
+  return md.render(props.content);
+});
+
+function resetNotes() {
+  // This function can be adapted or removed based on new requirements
+  console.log("Resetting notes is not implemented in websocket mode.");
+}
 </script>
 
 <style scoped>
