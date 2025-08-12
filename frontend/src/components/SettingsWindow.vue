@@ -27,7 +27,7 @@
 
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" text @click="downloadSettings">Download Settings</v-btn>
+        <v-btn color="primary" text @click="copySettings">Copy Settings</v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="emit('update:modelValue', false)">Close</v-btn>
         <v-btn text @click="triggerFileUpload">Import Settings</v-btn>
@@ -113,15 +113,14 @@ function saveSettings() {
   emit('update:modelValue', false);
 }
 
-function downloadSettings() {
-  const blob = new Blob([JSON.stringify(settings.value, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'settings.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  showSnackbar('Settings downloaded.', 'info');
+function copySettings() {
+  const settingsJson = JSON.stringify(settings.value, null, 2);
+  navigator.clipboard.writeText(settingsJson).then(() => {
+    showSnackbar('Settings copied to clipboard.', 'info');
+  }).catch(err => {
+    console.error('Could not copy text: ', err);
+    showSnackbar('Failed to copy settings.', 'error');
+  });
 }
 </script>
 

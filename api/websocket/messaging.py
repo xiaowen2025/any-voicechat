@@ -50,17 +50,17 @@ async def agent_to_client_messaging(websocket, live_events):
                     }
                 }
                 await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: input_transcription: {message}")
+                # print(f"[AGENT TO CLIENT]: input_transcription: {event}")
 
             # Agent message transcription
-            elif event.content.role == "model" and part.text:
+            elif event.content.role == "model" and part.text and event.partial:
                 message = {
                     "output_transcription": {
                         "text": part.text
                     }
                 }
                 await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: output_transcription: {message}")
+                # print(f"[AGENT TO CLIENT]: output_transcription: {event}")
 
 
 async def client_to_agent_messaging(websocket, live_request_queue):

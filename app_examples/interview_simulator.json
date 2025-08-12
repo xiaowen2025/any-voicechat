@@ -1,6 +1,6 @@
 {
     "app_name": "Interview Simulator",
-    "agent_description": "Professional interviewer",
+    "agent_description": "A professional interviewer to help you prepare for your job interview.",
     "context_dict": {
         "resume": {
             "description": "Candidate's resume containing personal details, education, experience, publications, and awards.",
