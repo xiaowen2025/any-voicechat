@@ -1,10 +1,12 @@
 import { ref } from 'vue';
 import { useSettings } from './useSettings';
+import defaultAvatar from '../assets/agent-avatar.svg';
 
 export function useConversationWebSocket() {
   const websocket = ref(null);
   const messages = ref([]);
   const notes = ref('');
+  const currentAvatar = ref(defaultAvatar);
   const analysis = ref(null);
   const isConnecting = ref(false);
   const conversationStarted = ref(false);
@@ -111,6 +113,7 @@ export function useConversationWebSocket() {
     isConnecting,
     conversationStarted,
     conversationFinished,
+    currentAvatar,
     connect,
     disconnect,
   };

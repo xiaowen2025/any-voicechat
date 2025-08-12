@@ -113,6 +113,7 @@ const {
   isConnecting,
   conversationStarted,
   conversationFinished,
+  currentAvatar,
   connect,
   disconnect,
 } = useSharedConversation();
@@ -139,6 +140,9 @@ async function handleAppSelection(appId) {
     });
     if (response.ok) {
       await loadSettings(true); // Force refresh from server
+      const newAvatar = `/assets/avatar_${appId}.png`;
+      currentAvatar.value = newAvatar;
+      localStorage.setItem('userAvatar', newAvatar);
       snackbar.show('App loaded successfully!', 'success');
       showAppsGallery.value = false;
     } else {
@@ -231,6 +235,10 @@ async function setApiKey() {
 
 onMounted(async () => {
   loadSettings();
+  const savedAvatar = localStorage.getItem('userAvatar');
+  if (savedAvatar) {
+    currentAvatar.value = savedAvatar;
+  }
   setApiKey();
   initTheme();
   await nextTick();

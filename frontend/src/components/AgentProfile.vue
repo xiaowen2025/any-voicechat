@@ -8,104 +8,93 @@
   </div>
 </template>
 
-<script>
-import defaultAvatar from '../assets/agent-avatar.svg';
+<script setup>
+import { ref, watch, onBeforeUnmount } from 'vue';
 import AvatarEditor from './AvatarEditor.vue';
+import { useSharedConversation } from '../composables/useSharedConversation';
 
-export default {
-  components: {
-    AvatarEditor,
+const props = defineProps({
+  analyserNode: {
+    type: Object,
+    default: null,
   },
-  props: {
-    analyserNode: {
-      type: Object,
-      default: null,
-    },
-    conversationStarted: {
-      type: Boolean,
-      default: false,
-    },
+  conversationStarted: {
+    type: Boolean,
+    default: false,
   },
-  data() {
-    return {
-      currentAvatar: defaultAvatar,
-      visualizerAnimationId: null,
-      avatarEditorDialog: false,
-    };
-  },
-  watch: {
-    conversationStarted(newValue) {
-      if (newValue) {
-        this.drawVisualizer();
-      } else {
-        this.stopVisualizer();
-      }
-    },
-    analyserNode(newNode) {
-        if (this.conversationStarted && newNode) {
-            this.drawVisualizer();
-        }
+});
+
+const { currentAvatar } = useSharedConversation();
+const visualizerAnimationId = ref(null);
+const avatarEditorDialog = ref(false);
+const visualizer = ref(null);
+
+function openAvatarEditor() {
+  avatarEditorDialog.value = true;
+}
+
+function onAvatarSaved(newAvatar) {
+  currentAvatar.value = newAvatar;
+  localStorage.setItem('userAvatar', newAvatar);
+  avatarEditorDialog.value = false;
+}
+
+function drawVisualizer() {
+  const canvas = visualizer.value;
+  if (!canvas || !props.analyserNode) return;
+  const canvasCtx = canvas.getContext('2d');
+  const bufferLength = props.analyserNode.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  const draw = () => {
+    if (!props.conversationStarted) {
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
     }
-  },
-  mounted() {
-    this.loadAvatar();
-  },
-  methods: {
-    openAvatarEditor() {
-      this.avatarEditorDialog = true;
-    },
-    loadAvatar() {
-      const savedAvatar = localStorage.getItem('userAvatar');
-      if (savedAvatar) {
-        this.currentAvatar = savedAvatar;
-      }
-    },
-    onAvatarSaved(newAvatar) {
-      this.currentAvatar = newAvatar;
-      this.avatarEditorDialog = false;
-    },
-    drawVisualizer() {
-      const canvas = this.$refs.visualizer;
-      if (!canvas || !this.analyserNode) return;
-      const canvasCtx = canvas.getContext('2d');
-      const bufferLength = this.analyserNode.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+    visualizerAnimationId.value = requestAnimationFrame(draw);
+    props.analyserNode.getByteFrequencyData(dataArray);
+    canvasCtx.fillStyle = 'rgb(240, 240, 240)';
+    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+    const barWidth = (canvas.width / bufferLength) * 2.5;
+    let barHeight;
+    let x = 0;
+    for (let i = 0; i < bufferLength; i++) {
+      barHeight = dataArray[i] / 2;
+      canvasCtx.fillStyle = `rgb(66, 165, 245)`;
+      canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+      x += barWidth + 1;
+    }
+  };
+  draw();
+}
 
-      const draw = () => {
-        if (!this.conversationStarted) {
-          canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-          return;
-        }
-        this.visualizerAnimationId = requestAnimationFrame(draw);
-        this.analyserNode.getByteFrequencyData(dataArray);
-        canvasCtx.fillStyle = 'rgb(240, 240, 240)';
-        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-        const barWidth = (canvas.width / bufferLength) * 2.5;
-        let barHeight;
-        let x = 0;
-        for (let i = 0; i < bufferLength; i++) {
-          barHeight = dataArray[i] / 2;
-          canvasCtx.fillStyle = `rgb(66, 165, 245)`;
-          canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-          x += barWidth + 1;
-        }
-      };
-      draw();
-    },
-    stopVisualizer() {
-      if (this.visualizerAnimationId) {
-        cancelAnimationFrame(this.visualizerAnimationId);
-        this.visualizerAnimationId = null;
-        const canvas = this.$refs.visualizer;
-        if (canvas) {
-            const canvasCtx = canvas.getContext('2d');
-            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-      }
-    },
-  },
-  beforeUnmount() {
-    this.stopVisualizer();
-  },
-};
+function stopVisualizer() {
+  if (visualizerAnimationId.value) {
+    cancelAnimationFrame(visualizerAnimationId.value);
+    visualizerAnimationId.value = null;
+    const canvas = visualizer.value;
+    if (canvas) {
+      const canvasCtx = canvas.getContext('2d');
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+}
+
+watch(() => props.conversationStarted, (newValue) => {
+  if (newValue) {
+    drawVisualizer();
+  } else {
+    stopVisualizer();
+  }
+});
+
+watch(() => props.analyserNode, (newNode) => {
+  if (props.conversationStarted && newNode) {
+    drawVisualizer();
+  }
+});
+
+onBeforeUnmount(() => {
+  stopVisualizer();
+});
 </script>
