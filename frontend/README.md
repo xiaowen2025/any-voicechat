@@ -27,7 +27,6 @@ Below is a summary of the key directories and files in the `frontend` directory,
 ## File Descriptions
 
 -   `index.html`: The main HTML file that serves as the entry point for the application.
--   `jsconfig.json`: This file is used to configure the JavaScript language service provided by Visual Studio Code.
 -   `package-lock.json`: This file records the exact version of each dependency used in the project, ensuring consistent installations.
 -   `package.json`: This file defines the project's metadata, dependencies, and scripts.
 -   `start_servers.sh`: This script is used to start the development servers.

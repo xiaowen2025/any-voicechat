@@ -12,7 +12,6 @@ api/
 ├── apps.py
 ├── avatar.py
 ├── default_settings.json
-├── DOCUMENTATION.md
 ├── main.py
 ├── services/
 │   ├── __init__.py
