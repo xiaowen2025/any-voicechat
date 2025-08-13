@@ -15,6 +15,7 @@
     "cropperjs": "^1.6.2",
     "markdown-it": "^14.1.0",
     "vue": "^3.5.17",
+    "pinia": "^2.1.7",
     "vue-cropperjs": "^5.0.0",
     "vuetify": "^3.9.2"
   },

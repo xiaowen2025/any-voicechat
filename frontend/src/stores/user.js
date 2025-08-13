@@ -1,8 +1,9 @@
+import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-const isApiKeySet = ref(false);
+export const useUserStore = defineStore('user', () => {
+  const isApiKeySet = ref(false);
 
-export function useApiKey() {
   async function setApiKey() {
     const apiKey = localStorage.getItem('geminiApiKey');
     if (apiKey) {
@@ -35,4 +36,4 @@ export function useApiKey() {
     isApiKeySet,
     setApiKey,
   };
-}
+});

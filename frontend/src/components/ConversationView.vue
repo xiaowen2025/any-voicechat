@@ -27,15 +27,21 @@
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
 import AgentProfile from './AgentProfile.vue';
 import ControlButtons from './ControlButtons.vue';
 import NotesWindow from './NotesWindow.vue';
+import { useConversationStore } from '../stores/conversation';
+
+const conversationStore = useConversationStore();
+const {
+  isConnecting,
+  conversationStarted,
+  conversationFinished,
+} = storeToRefs(conversationStore);
 
 defineProps({
   analyserNode: Object,
-  conversationStarted: Boolean,
-  conversationFinished: Boolean,
-  isConnecting: Boolean,
   isAnalysing: Boolean,
 });
 

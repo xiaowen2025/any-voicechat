@@ -25,10 +25,17 @@
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
+import { useConversationStore } from '../stores/conversation';
+
+const conversationStore = useConversationStore();
+const {
+  conversationStarted,
+  conversationFinished,
+  isConnecting,
+} = storeToRefs(conversationStore);
+
 defineProps({
-  conversationStarted: Boolean,
-  conversationFinished: Boolean,
-  isConnecting: Boolean,
   isAnalysing: Boolean,
 });
 
