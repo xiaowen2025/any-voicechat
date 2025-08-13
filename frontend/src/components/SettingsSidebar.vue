@@ -48,9 +48,10 @@
 
 <script setup>
 import ContextViewer from "./ContextViewer.vue";
-import { useSettings } from "../composables/useSettings";
+import { useSettingsStore } from "../stores/settings";
 import { useResizableDrawer } from "../composables/useResizableDrawer";
 import { onMounted, ref, computed, watch } from "vue";
+import { storeToRefs } from "pinia";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -59,7 +60,9 @@ const props = defineProps({
 
 defineEmits(["update:modelValue", "toggle-settings"]);
 
-const { settings, updateSettings } = useSettings();
+const settingsStore = useSettingsStore();
+const { settings } = storeToRefs(settingsStore);
+const { updateSettings } = settingsStore;
 const context = computed(() => settings.value?.context_dict || {});
 const { drawerWidth, startResize } = useResizableDrawer(500);
 

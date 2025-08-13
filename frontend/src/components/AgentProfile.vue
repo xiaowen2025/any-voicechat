@@ -10,8 +10,9 @@
 
 <script setup>
 import { ref, watch, onBeforeUnmount } from 'vue';
+import { storeToRefs } from 'pinia';
 import AvatarEditor from './AvatarEditor.vue';
-import { useSharedConversation } from '../composables/useSharedConversation';
+import { useConversationStore } from '../stores/conversation';
 
 const props = defineProps({
   analyserNode: {
@@ -24,7 +25,8 @@ const props = defineProps({
   },
 });
 
-const { currentAvatar } = useSharedConversation();
+const conversationStore = useConversationStore();
+const { currentAvatar } = storeToRefs(conversationStore);
 const visualizerAnimationId = ref(null);
 const avatarEditorDialog = ref(false);
 const visualizer = ref(null);
