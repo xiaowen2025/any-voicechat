@@ -1,7 +1,7 @@
 import { useConversationWebSocket } from './useConversationWebSocket';
 
-const conversation = useConversationWebSocket();
+const state = useConversationWebSocket();
 
 export function useSharedConversation() {
-  return conversation;
+  return state;
 }

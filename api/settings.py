@@ -1,6 +1,9 @@
 import json
 from pydantic import BaseModel
 from typing import Dict, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 DEFAULT_SETTINGS_FILE_PATH = "api/default_settings.json"

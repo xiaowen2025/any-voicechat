@@ -1,9 +1,8 @@
 <template>
   <v-app v-if="isThemeLoaded">
     <settings-sidebar
-      v-model="showSettings"
-      :permanent="!isMobile"
-      :temporary="isMobile"
+      :model-value="showSettings"
+      @update:model-value="showSettings = $event"
       @toggle-settings="isSettingsWindowVisible = !isSettingsWindowVisible"
     />
     <settings-window
@@ -16,7 +15,8 @@
     />
     <v-app-bar>
       <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-center w-100">{{ appName }}</v-toolbar-title>
+      <v-toolbar-title>{{ appName }}</v-toolbar-title>
+      <v-spacer></v-spacer>
       <v-btn icon @click="showAppsGallery = !showAppsGallery">
         <v-icon>{{ showAppsGallery ? 'mdi-close' : 'mdi-apps' }}</v-icon>
       </v-btn>
@@ -28,38 +28,21 @@
         @app-selected="handleAppSelection"
         @close="showAppsGallery = false"
       />
-      <v-container v-else fluid class="fill-height pa-4">
-        <v-row class="fill-height">
-          <v-col cols="12" class="d-flex flex-column">
-            <v-card class="flex-grow-1 d-flex flex-column">
-              <v-card-text class="flex-grow-1 d-flex flex-column">
-                <agent-profile
-                  :analyser-node="analyserNode"
-                  :conversation-started="conversationStarted"
-                />
-                <notes-window />
-              </v-card-text>
-              <v-card-actions class="d-flex flex-column align-center justify-center">
-                <control-buttons
-                  :conversation-started="conversationStarted"
-                  :conversation-finished="conversationFinished"
-                  :is-connecting="isConnecting"
-                  :is-analysing="isAnalysing"
-                  :is-api-key-set="isApiKeySet"
-                  @toggle-conversation="toggleConversation"
-                  @analyse="analyseConversation"
-                />
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+      <conversation-view
+        v-else
+        :analyser-node="analyserNode"
+        :conversation-started="conversationStarted"
+        :conversation-finished="conversationFinished"
+        :is-connecting="isConnecting"
+        :is-analysing="isAnalysing"
+        @toggle-conversation="toggleConversation"
+        @analyse="analyseConversation"
+      />
     </v-main>
     <v-snackbar
       v-model="snackbar.visible.value"
       :color="snackbar.color.value"
       timeout="3000"
-      @update:modelValue="snackbar.visible.value = $event"
     >
       {{ snackbar.message.value }}
     </v-snackbar>
@@ -69,11 +52,9 @@
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue';
 import { useDisplay } from 'vuetify';
-import AgentProfile from './components/AgentProfile.vue';
-import ControlButtons from './components/ControlButtons.vue';
+import ConversationView from './components/ConversationView.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import SettingsWindow from './components/SettingsWindow.vue';
-import NotesWindow from './components/NotesWindow.vue';
 import AppsGallery from './components/AppsGallery.vue';
 import { useAudio } from './composables/useAudio';
 import { useSharedConversation } from './composables/useSharedConversation';
@@ -81,6 +62,7 @@ import { useThemeManager } from './composables/useThemeManager';
 import { useSettings } from './composables/useSettings';
 import { useSnackbar } from './composables/useSnackbar';
 import { useApi } from './composables/useApi';
+import { useApiKey } from './composables/useApiKey';
 
 // --- Reactive State ---
 const showAppsGallery = ref(false);
@@ -89,6 +71,7 @@ const appName = ref(cachedSettings.app_name || 'App');
 const { settings, loadSettings, updateSettings } = useSettings();
 const snackbar = useSnackbar();
 const { getAppSettings } = useApi();
+const { setApiKey } = useApiKey();
 
 
 // Theme
@@ -108,7 +91,6 @@ const isMobile = computed(() => mobile.value);
 // Component State
 const showSettings = ref(!isMobile.value);
 const isSettingsWindowVisible = ref(false);
-const isApiKeySet = ref(false);
 const isAnalysing = ref(false);
 
 // Composables
@@ -216,34 +198,6 @@ async function startConversation() {
 function stopConversation() {
   stopAudio();
   disconnect();
-}
-
-async function setApiKey() {
-  const apiKey = localStorage.getItem("geminiApiKey");
-  if (apiKey) {
-    try {
-      const response = await fetch('/api/set_api_key', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ key: apiKey }),
-      });
-      const data = await response.json();
-      if (data.status === 'success') {
-        isApiKeySet.value = true;
-        console.log('API key set successfully');
-      } else {
-        isApiKeySet.value = false;
-        console.error('Failed to set API key:', data.message);
-      }
-    } catch (error) {
-      isApiKeySet.value = false;
-      console.error('Error setting API key:', error);
-    }
-  } else {
-    isApiKeySet.value = false;
-  }
 }
 
 // --- Lifecycle Hooks ---
