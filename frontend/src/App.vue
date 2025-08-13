@@ -2,6 +2,8 @@
   <v-app v-if="isThemeLoaded">
     <settings-sidebar
       v-model="showSettings"
+      :permanent="!isMobile"
+      :temporary="isMobile"
       @toggle-settings="isSettingsWindowVisible = !isSettingsWindowVisible"
     />
     <settings-window
@@ -65,7 +67,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue';
+import { useDisplay } from 'vuetify';
 import AgentProfile from './components/AgentProfile.vue';
 import ControlButtons from './components/ControlButtons.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
@@ -98,8 +101,12 @@ const {
 } = useThemeManager();
 const isThemeLoaded = ref(false);
 
+// Display
+const { mobile } = useDisplay();
+const isMobile = computed(() => mobile.value);
+
 // Component State
-const showSettings = ref(true);
+const showSettings = ref(!isMobile.value);
 const isSettingsWindowVisible = ref(false);
 const isApiKeySet = ref(false);
 const isAnalysing = ref(false);

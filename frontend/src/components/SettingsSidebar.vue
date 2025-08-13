@@ -2,11 +2,15 @@
   <v-navigation-drawer
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
-    app
     :width="drawerWidth"
-    class="resizable-drawer"
+    :class="{ 'resizable-drawer': !isMobile }"
+    app
   >
-    <div class="drag-handle" @mousedown="startResize"></div>
+    <div
+      v-if="!isMobile"
+      class="drag-handle"
+      @mousedown="startResize"
+    ></div>
     <!-- You can add navigation links here later -->
     <v-list-item class="my-2">
       <v-row align="center">
@@ -52,7 +56,7 @@ export default {
   setup(props, { emit }) {
     const { settings, updateSettings } = useSettings();
     const context = computed(() => settings.value?.context_dict || {});
-    const { drawerWidth, startResize } = useResizableDrawer(500);
+    const { drawerWidth, startResize, isMobile } = useResizableDrawer(500);
 
     const panel = ref([]);
 
@@ -85,6 +89,7 @@ export default {
       formatTitle,
       startResize,
       updateContext,
+      isMobile,
     };
   },
 };
