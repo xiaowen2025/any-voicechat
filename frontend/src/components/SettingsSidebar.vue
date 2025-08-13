@@ -21,7 +21,7 @@
           <v-btn
             v-if="isMobile"
             icon
-            @click="$emit('update:modelValue', false)"
+            @click="$emit('close')"
             title="Close"
           >
             <v-icon>mdi-close</v-icon>
@@ -57,7 +57,7 @@ export default {
   props: {
     modelValue: Boolean,
   },
-  emits: ["update:modelValue", "toggle-settings"],
+  emits: ["update:modelValue", "toggle-settings", "close"],
   components: {
     DocumentViewer,
   },
