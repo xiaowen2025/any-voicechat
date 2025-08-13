@@ -14,9 +14,14 @@
     ></div>
     <!-- You can add navigation links here later -->
     <v-list-item class="my-2">
-      <v-row align="center">
+      <v-row align="center" no-gutters>
         <v-col>
           <span class="font-weight-bold">Context</span>
+        </v-col>
+        <v-col cols="auto">
+          <v-btn icon @click.stop="$emit('update:modelValue', false)" title="Close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
         </v-col>
       </v-row>
     </v-list-item>
@@ -32,12 +37,9 @@
       ></context-viewer>
     </v-expansion-panels>
     <template v-slot:append>
-      <div class="pa-2 d-flex justify-space-between align-center">
+      <div class="pa-2 d-flex justify-start align-center">
         <v-btn icon @click="$emit('toggle-settings')" title="Settings">
           <v-icon>mdi-cog</v-icon>
-        </v-btn>
-        <v-btn icon @click="$emit('update:modelValue', false)" title="Close">
-          <v-icon>mdi-close</v-icon>
         </v-btn>
       </div>
     </template>
@@ -48,17 +50,18 @@
 import ContextViewer from "./ContextViewer.vue";
 import { useSettings } from "../composables/useSettings";
 import { useResizableDrawer } from "../composables/useResizableDrawer";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 
-defineProps({
+const props = defineProps({
   modelValue: Boolean,
+  isMobile: Boolean,
 });
 
 defineEmits(["update:modelValue", "toggle-settings"]);
 
 const { settings, updateSettings } = useSettings();
 const context = computed(() => settings.value?.context_dict || {});
-const { drawerWidth, startResize, isMobile } = useResizableDrawer(500);
+const { drawerWidth, startResize } = useResizableDrawer(500);
 
 const panel = ref([]);
 
@@ -78,9 +81,22 @@ function updateContext(name, content) {
   }
 }
 
+function expandAllPanels() {
+    if (context.value) {
+        panel.value = Object.keys(context.value).map((_, index) => index);
+    }
+}
+
+watch(() => props.isMobile, (newIsMobile) => {
+    if (!newIsMobile) {
+        expandAllPanels();
+    }
+});
+
+
 onMounted(() => {
-  if (context.value && !isMobile.value) {
-    panel.value = Object.keys(context.value).map((_, index) => index);
+  if (context.value && !props.isMobile) {
+    expandAllPanels();
   }
 });
 </script>
