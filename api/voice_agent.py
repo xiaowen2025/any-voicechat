@@ -41,5 +41,6 @@ def create_agent(settings: Settings):
     )
 
     logging.info(f"Creating agent with context: {final_instruction}")
-    os.environ["GEMINI_API_KEY"] = settings.gemini_api_key
+    if settings.gemini_api_key:
+        os.environ["GEMINI_API_KEY"] = settings.gemini_api_key
     return create_live_agent(final_instruction)

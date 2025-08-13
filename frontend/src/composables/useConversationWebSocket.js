@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { useSettings } from './useSettings';
+import { useApiKey } from './useApiKey';
 
 export function useConversationWebSocket() {
   const websocket = ref(null);
@@ -12,6 +13,7 @@ export function useConversationWebSocket() {
   const conversationFinished = ref(false);
   const currentMessageId = ref(null);
   const { settings } = useSettings();
+  const { isApiKeySet } = useApiKey();
 
   let playAudioCallback = null;
   let stopPlaybackCallback = null;
@@ -79,16 +81,26 @@ export function useConversationWebSocket() {
       }
     };
 
-    websocket.value.onclose = () => {
-      console.log('WebSocket connection closed');
-      messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection closed.' });
+    websocket.value.onclose = (event) => {
+      console.log('WebSocket connection closed:', event);
+      // A close event with code 1006 means the connection was terminated abnormally.
+      // If the API key isn't set, it's the likely cause.
+      if (event.code === 1006 && !isApiKeySet.value) {
+        messages.value.push({
+          id: Date.now(),
+          sender: 'system',
+          text: 'Connection failed. Please set your Gemini API key in the settings.',
+        });
+      } else {
+        messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection closed.' });
+      }
       conversationStarted.value = false;
       isConnecting.value = false;
     };
 
     websocket.value.onerror = (error) => {
       console.error('WebSocket error:', error);
-      messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection error.' });
+      messages.value.push({ id: Date.now(), sender: 'system', text: 'An error occurred with the connection.' });
       conversationStarted.value = false;
       isConnecting.value = false;
     };

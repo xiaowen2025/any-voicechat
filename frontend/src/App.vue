@@ -46,7 +46,6 @@
                   :conversation-finished="conversationFinished"
                   :is-connecting="isConnecting"
                   :is-analysing="isAnalysing"
-                  :is-api-key-set="isApiKeySet"
                   @toggle-conversation="toggleConversation"
                   @analyse="analyseConversation"
                 />
@@ -82,6 +81,7 @@ import { useThemeManager } from './composables/useThemeManager';
 import { useSettings } from './composables/useSettings';
 import { useSnackbar } from './composables/useSnackbar';
 import { useApi } from './composables/useApi';
+import { useApiKey } from './composables/useApiKey';
 
 // --- Reactive State ---
 const showAppsGallery = ref(false);
@@ -90,6 +90,7 @@ const appName = ref(cachedSettings.app_name || 'App');
 const { settings, loadSettings, updateSettings } = useSettings();
 const snackbar = useSnackbar();
 const { getAppSettings } = useApi();
+const { setApiKey } = useApiKey();
 
 
 // Theme
@@ -109,7 +110,6 @@ const isMobile = computed(() => mobile.value);
 // Component State
 const showSettings = ref(!isMobile.value);
 const isSettingsWindowVisible = ref(false);
-const isApiKeySet = ref(false);
 const isAnalysing = ref(false);
 
 // Composables
@@ -217,34 +217,6 @@ async function startConversation() {
 function stopConversation() {
   stopAudio();
   disconnect();
-}
-
-async function setApiKey() {
-  const apiKey = localStorage.getItem("geminiApiKey");
-  if (apiKey) {
-    try {
-      const response = await fetch('/api/set_api_key', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ key: apiKey }),
-      });
-      const data = await response.json();
-      if (data.status === 'success') {
-        isApiKeySet.value = true;
-        console.log('API key set successfully');
-      } else {
-        isApiKeySet.value = false;
-        console.error('Failed to set API key:', data.message);
-      }
-    } catch (error) {
-      isApiKeySet.value = false;
-      console.error('Error setting API key:', error);
-    }
-  } else {
-    isApiKeySet.value = false;
-  }
 }
 
 // --- Lifecycle Hooks ---

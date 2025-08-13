@@ -1,83 +1,36 @@
 <template>
-  <v-card-actions class="pa-4 justify-center flex-column">
+  <div class="d-flex flex-column align-center justify-center">
     <v-btn
-      v-if="!showAnalyseButton"
-      @click="$emit('toggle-conversation')"
-      :color="conversationStarted ? 'red' : 'primary'"
-      :disabled="isConnecting || !isApiKeySet"
+      :disabled="isConnecting || isAnalysing"
       :loading="isConnecting"
-      variant="elevated"
+      :color="conversationStarted ? 'error' : 'primary'"
+      @click="$emit('toggle-conversation')"
+      icon
       size="x-large"
-      fab
+      class="mb-2"
     >
-      <v-icon>{{ conversationStarted ? 'mdi-stop' : 'mdi-microphone' }}</v-icon>
-      
-      <template v-slot:loader>
-        <v-progress-circular indeterminate size="24" width="2"></v-progress-circular>
-      </template>
-
+      <v-icon size="x-large">{{ conversationStarted ? 'mdi-stop' : 'mdi-microphone' }}</v-icon>
     </v-btn>
-
-    <v-alert
-      v-if="!isApiKeySet && !showAnalyseButton"
-      type="info"
-      variant="tonal"
-      class="mt-4"
-      dense
-    >
-      Please set your Gemini API key in the settings to begin.
-    </v-alert>
-
     <v-btn
-      v-if="showAnalyseButton"
-      @click="$emit('analyse')"
+      v-if="conversationFinished"
+      :disabled="isAnalysing"
       :loading="isAnalysing"
-      color="primary"
-      variant="tonal"
-      size="large"
-      rounded="lg"
-      class="font-weight-bold"
+      @click="$emit('analyse')"
+      color="secondary"
+      class="mt-2"
     >
-      <template v-slot:prepend>
-        <v-icon>mdi-chart-bubble</v-icon>
-      </template>
       Analyse
     </v-btn>
-  </v-card-actions>
+  </div>
 </template>
 
-<script>
-export default {
-  props: {
-    conversationStarted: {
-      type: Boolean,
-      required: true,
-    },
-    conversationFinished: {
-      type: Boolean,
-      required: true,
-    },
-    isConnecting: {
-      type: Boolean,
-      required: true,
-    },
-    isAnalysing: {
-      type: Boolean,
-      required: true,
-    },
-    isApiKeySet: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  emits: ['toggle-conversation', 'analyse'],
-  computed: {
-    showAnalyseButton() {
-      return this.conversationFinished;
-    }
-  },
-};
-</script>
+<script setup>
+defineProps({
+  conversationStarted: Boolean,
+  conversationFinished: Boolean,
+  isConnecting: Boolean,
+  isAnalysing: Boolean,
+});
 
-<style scoped>
-</style>
+defineEmits(['toggle-conversation', 'analyse']);
+</script>
