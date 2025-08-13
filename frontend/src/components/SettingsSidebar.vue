@@ -2,8 +2,9 @@
   <v-navigation-drawer
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
-    :width="drawerWidth"
+    :width="isMobile ? '80%' : drawerWidth"
     :class="{ 'resizable-drawer': !isMobile }"
+    :temporary="isMobile"
     app
   >
     <div
@@ -21,14 +22,14 @@
     </v-list-item>
     <v-divider></v-divider>
     <v-expansion-panels v-model="panel" multiple>
-      <document-viewer
+      <context-viewer
         v-for="(item, name, index) in context"
         :key="name"
         :doc-name="name"
         :title="formatTitle(name)"
         :content="item.value || item.default_value"
         @update:content="updateContext(name, $event)"
-      ></document-viewer>
+      ></context-viewer>
     </v-expansion-panels>
     <template v-slot:append>
       <div class="pa-2 d-flex justify-space-between align-center">
@@ -43,61 +44,45 @@
   </v-navigation-drawer>
 </template>
 
-<script>
-import DocumentViewer from "./DocumentViewer.vue";
+<script setup>
+import ContextViewer from "./ContextViewer.vue";
 import { useSettings } from "../composables/useSettings";
 import { useResizableDrawer } from "../composables/useResizableDrawer";
 import { onMounted, ref, computed } from "vue";
 
-export default {
-  name: "SettingsSidebar",
-  props: {
-    modelValue: Boolean,
-  },
-  emits: ["update:modelValue", "toggle-settings"],
-  components: {
-    DocumentViewer,
-  },
-  setup(props, { emit }) {
-    const { settings, updateSettings } = useSettings();
-    const context = computed(() => settings.value?.context_dict || {});
-    const { drawerWidth, startResize, isMobile } = useResizableDrawer(500);
+defineProps({
+  modelValue: Boolean,
+});
 
-    const panel = ref([]);
+defineEmits(["update:modelValue", "toggle-settings"]);
 
-    function formatTitle(name) {
-      if (!name) return "";
-      const words = name.split("_");
-      return words
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-    }
+const { settings, updateSettings } = useSettings();
+const context = computed(() => settings.value?.context_dict || {});
+const { drawerWidth, startResize, isMobile } = useResizableDrawer(500);
 
-    function updateContext(name, content) {
-      const newSettings = { ...settings.value };
-      if (newSettings.context_dict && newSettings.context_dict[name]) {
-        newSettings.context_dict[name].value = content;
-        updateSettings(newSettings);
-      }
-    }
+const panel = ref([]);
 
-    onMounted(() => {
-      if (context.value && !isMobile.value) {
-        panel.value = Object.keys(context.value).map((_, index) => index);
-      }
-    });
+function formatTitle(name) {
+  if (!name) return "";
+  const words = name.split("_");
+  return words
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
-    return {
-      drawerWidth,
-      panel,
-      context,
-      formatTitle,
-      startResize,
-      updateContext,
-      isMobile,
-    };
-  },
-};
+function updateContext(name, content) {
+  const newSettings = { ...settings.value };
+  if (newSettings.context_dict && newSettings.context_dict[name]) {
+    newSettings.context_dict[name].value = content;
+    updateSettings(newSettings);
+  }
+}
+
+onMounted(() => {
+  if (context.value && !isMobile.value) {
+    panel.value = Object.keys(context.value).map((_, index) => index);
+  }
+});
 </script>
 
 <style scoped>

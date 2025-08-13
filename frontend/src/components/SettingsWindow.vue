@@ -1,5 +1,10 @@
 <template>
-  <v-dialog :model-value="props.modelValue" @update:model-value="emit('update:modelValue', $event)" max-width="600px">
+  <v-dialog
+    :model-value="props.modelValue"
+    @update:model-value="emit('update:modelValue', $event)"
+    max-width="600px"
+    :fullscreen="isMobile"
+  >
     <v-card>
       <v-card-title>
         <span class="headline">Settings</span>
@@ -66,10 +71,21 @@
         </v-window>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" text @click="copySettings">Copy Settings</v-btn>
-        <v-spacer></v-spacer>
         <v-btn text @click="emit('update:modelValue', false)">Close</v-btn>
-        <v-btn text @click="triggerFileUpload">Import Settings</v-btn>
+        <v-spacer></v-spacer>
+        <v-menu location="top">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" text>More</v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="copySettings">
+              <v-list-item-title>Copy Settings</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="triggerFileUpload">
+              <v-list-item-title>Import Settings</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <input type="file" ref="fileInput" @change="handleFileUpload" accept=".json" style="display: none" />
         <v-btn color="primary" variant="elevated" @click="saveSettings">Save</v-btn>
       </v-card-actions>
@@ -83,6 +99,21 @@ import { useSettings } from '../composables/useSettings';
 import { useSnackbar } from '../composables/useSnackbar';
 import { themes } from "../themes";
 import { useApi } from "../composables/useApi";
+import { useDisplay } from 'vuetify';
+
+const { mobile: isMobile } = useDisplay();
+
+const languages = [
+  { text: 'English (US)', value: 'en-US' },
+  { text: 'Chinese (Simplified)', value: 'zh-CN' },
+  { text: 'German', value: 'de-DE' },
+  { text: 'French', value: 'fr-FR' },
+  { text: 'Hindi', value: 'hi-IN' },
+  { text: 'Japanese', value: 'ja-JP' },
+  { text: 'Spanish', value: 'es-ES' },
+  { text: 'Portuguese', value: 'pt-BR' },
+  { text: 'Russian', value: 'ru-RU' },
+];
 
 const props = defineProps({
   modelValue: Boolean,
@@ -103,18 +134,6 @@ const geminiApiKey = ref("");
 const apiKeyEdited = ref(false);
 const showGeminiApiKey = ref(false);
 const themeNames = Object.keys(themes);
-
-const languages = ref([
-  { text: 'English (US)', value: 'en-US' },
-  { text: 'Chinese (Simplified)', value: 'zh-CN' },
-  { text: 'German', value: 'de-DE' },
-  { text: 'French', value: 'fr-FR' },
-  { text: 'Hindi', value: 'hi-IN' },
-  { text: 'Japanese', value: 'ja-JP' },
-  { text: 'Spanish', value: 'es-ES' },
-  { text: 'Portuguese', value: 'pt-BR' },
-  { text: 'Russian', value: 'ru-RU' },
-]);
 
 watch(() => props.modelValue, (newValue) => {
   if (newValue) {
