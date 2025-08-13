@@ -2,12 +2,18 @@ import { ref, computed } from 'vue';
 import { useDisplay } from 'vuetify';
 
 export function useResizableDrawer(defaultWidth = 500) {
-  const drawerWidth = ref(defaultWidth);
   const { mobile } = useDisplay();
   const isMobile = computed(() => mobile.value);
+  const desktopWidth = ref(defaultWidth);
+
+  const drawerWidth = computed(() => {
+    return isMobile.value ? '100vw' : desktopWidth.value;
+  });
 
   function doResize(event) {
-    drawerWidth.value = event.clientX;
+    if (!isMobile.value) {
+      desktopWidth.value = event.clientX;
+    }
   }
 
   function stopResize() {
