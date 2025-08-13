@@ -18,6 +18,14 @@
           <span class="font-weight-bold">Context</span>
         </v-col>
         <v-col class="d-flex justify-end">
+          <v-btn
+            v-if="isMobile"
+            icon
+            @click="$emit('update:modelValue', false)"
+            title="Close"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
           <v-btn icon @click="$emit('toggle-settings')" title="Settings">
             <v-icon>mdi-cog</v-icon>
           </v-btn>
