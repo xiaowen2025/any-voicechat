@@ -45,13 +45,22 @@
               </v-row>
             </v-container>
             <v-container>
-              <gemini-api-key-manager
-                :gemini-api-key="geminiApiKey"
-                :api-key-edited="apiKeyEdited"
-                @update:gemini-api-key="geminiApiKey = $event"
-                @update:api-key-edited="apiKeyEdited = $event"
-                @save-api-key="saveGeminiApiKey"
-              ></gemini-api-key-manager>
+              <v-text-field
+                v-model="geminiApiKey"
+                :type="showGeminiApiKey ? 'text' : 'password'"
+                label="Gemini API Key"
+                outlined
+                dense
+                class="mb-2"
+                @focus="apiKeyEdited = true"
+              >
+                <template v-slot:append-inner>
+                  <v-icon @click="showGeminiApiKey = !showGeminiApiKey">
+                    {{ showGeminiApiKey ? 'mdi-eye-off' : 'mdi-eye' }}
+                  </v-icon>
+                </template>
+              </v-text-field>
+              <v-btn v-if="apiKeyEdited" @click="saveGeminiApiKey" class="mb-4" size="large" rounded="lg">Save API Key</v-btn>
             </v-container>
           </v-window-item>
         </v-window>
@@ -72,7 +81,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { useSettings } from '../composables/useSettings';
 import { useSnackbar } from '../composables/useSnackbar';
-import GeminiApiKeyManager from "./GeminiApiKeyManager.vue";
 import { themes } from "../themes";
 import { useApi } from "../composables/useApi";
 
@@ -93,6 +101,7 @@ const fileInput = ref(null);
 const tab = ref('appAgent');
 const geminiApiKey = ref("");
 const apiKeyEdited = ref(false);
+const showGeminiApiKey = ref(false);
 const themeNames = Object.keys(themes);
 
 const languages = ref([

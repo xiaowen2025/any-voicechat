@@ -19,28 +19,28 @@ export function useSettings() {
           settings.value = data;
         } else {
           console.error('Error fetching settings:', data.error);
-          return;
+          settings.value = {}; // Initialize to avoid errors
         }
       } catch (error) {
         console.error('Error fetching settings:', error);
-        return;
+        settings.value = {}; // Initialize to avoid errors
       }
     }
 
-    // After loading settings, also load the Gemini API key from local storage
-    const geminiApiKey = localStorage.getItem('geminiApiKey');
-    if (geminiApiKey) {
-      settings.value = { ...settings.value, gemini_api_key: geminiApiKey };
+    // One-time migration for geminiApiKey from localStorage
+    if (settings.value && !settings.value.gemini_api_key) {
+      const oldApiKey = localStorage.getItem('geminiApiKey');
+      if (oldApiKey) {
+        settings.value.gemini_api_key = oldApiKey;
+        localStorage.setItem('settings', JSON.stringify(settings.value));
+        localStorage.removeItem('geminiApiKey');
+      }
     }
-    localStorage.setItem('settings', JSON.stringify(settings.value));
   }
 
   async function updateSettings(newSettings) {
     settings.value = newSettings;
     localStorage.setItem('settings', JSON.stringify(newSettings));
-    if (newSettings.gemini_api_key) {
-      localStorage.setItem('geminiApiKey', newSettings.gemini_api_key);
-    }
   }
 
   return {
