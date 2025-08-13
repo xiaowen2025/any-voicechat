@@ -6,7 +6,7 @@ export function useConversationWebSocket() {
   const websocket = ref(null);
   const messages = ref([]);
   const notes = ref('');
-  const currentAvatar = ref('/assets/avatar_story_architect.png');
+  const currentAvatar = ref('/assets/avatar_language_pal.png');
   const analysis = ref(null);
   const isConnecting = ref(false);
   const conversationStarted = ref(false);

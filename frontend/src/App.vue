@@ -5,7 +5,6 @@
       :permanent="!isMobile"
       :temporary="isMobile"
       @toggle-settings="isSettingsWindowVisible = !isSettingsWindowVisible"
-      @close="showSettings = false"
     />
     <settings-window
       v-model="isSettingsWindowVisible"

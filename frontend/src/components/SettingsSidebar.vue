@@ -35,7 +35,7 @@
         <v-btn icon @click="$emit('toggle-settings')" title="Settings">
           <v-icon>mdi-cog</v-icon>
         </v-btn>
-        <v-btn icon @click="$emit('close')" title="Close">
+        <v-btn icon @click="$emit('update:modelValue', false)" title="Close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </div>
@@ -54,7 +54,7 @@ export default {
   props: {
     modelValue: Boolean,
   },
-  emits: ["update:modelValue", "toggle-settings", "close"],
+  emits: ["update:modelValue", "toggle-settings"],
   components: {
     DocumentViewer,
   },
@@ -82,7 +82,7 @@ export default {
     }
 
     onMounted(() => {
-      if (context.value) {
+      if (context.value && !isMobile.value) {
         panel.value = Object.keys(context.value).map((_, index) => index);
       }
     });

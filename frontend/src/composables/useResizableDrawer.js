@@ -7,7 +7,7 @@ export function useResizableDrawer(defaultWidth = 500) {
   const desktopWidth = ref(defaultWidth);
 
   const drawerWidth = computed(() => {
-    return isMobile.value ? '100vw' : desktopWidth.value;
+    return isMobile.value ? '80vw' : desktopWidth.value;
   });
 
   function doResize(event) {
