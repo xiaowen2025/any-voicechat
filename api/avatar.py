@@ -1,4 +1,5 @@
 import base64
+from typing import Optional
 from google import genai
 import os
 from google.genai import types
@@ -14,13 +15,14 @@ router = APIRouter()
 
 class AvatarRequest(BaseModel):
     settings: Settings
+    api_key: Optional[str] = None
 
-def generate_image(prompt: str, api_key: str) -> dict:
-    if not api_key:
-        raise ApiKeyError("Gemini API key is not provided.")
-
+def generate_image(prompt: str, api_key: Optional[str] = None) -> dict:
     try:
-        client = genai.Client(api_key=api_key)
+        if api_key:
+            client = genai.Client(api_key=api_key)
+        else:
+            client = genai.Client()
 
         model = "gemini-2.0-flash-preview-image-generation"
 
