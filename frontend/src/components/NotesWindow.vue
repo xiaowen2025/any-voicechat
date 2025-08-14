@@ -17,7 +17,10 @@
           </v-window-item>
         </v-window>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="hasContent">
+        <v-btn icon @click="copyContent">
+          <v-icon>mdi-content-copy</v-icon>
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn icon @click="resetData">
           <v-icon>mdi-restore</v-icon>
@@ -38,6 +41,10 @@ const { notes, analysis } = storeToRefs(conversationStore);
 const md = new MarkdownIt();
 const tab = ref('transcription');
 
+const hasContent = computed(() => {
+  return notes.value && notes.value.length > 0;
+});
+
 const renderedMarkdown = computed(() => {
   return md.render(notes.value);
 });
@@ -48,6 +55,13 @@ const renderedAnalysis = computed(() => {
   }
   return 'No analysis available yet.';
 });
+
+function copyContent() {
+  const contentToCopy = tab.value === 'transcription' ? notes.value : analysis.value;
+  if (contentToCopy) {
+    navigator.clipboard.writeText(contentToCopy);
+  }
+}
 
 function resetData() {
   notes.value = '';

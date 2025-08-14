@@ -21,7 +21,17 @@
               <v-textarea label="Agent Description" v-model="editableSettings.agent_description"></v-textarea>
               <v-textarea label="Goal Description" v-model="editableSettings.goal_description"></v-textarea>
               <v-textarea label="Analyse Instruction" v-model="editableSettings.analyse_instruction"></v-textarea>
-              <v-select label="Voice" v-model="editableSettings.voice_name" :items="['Puck', 'Leda']"></v-select>
+              <v-select
+                label="Voice"
+                v-model="editableSettings.voice_name"
+                :items="voices"
+                item-title="name"
+                item-value="name"
+              >
+                <template v-slot:item="{ props, item }">
+                  <v-list-item v-bind="props" :subtitle="item.raw.description"></v-list-item>
+                </template>
+              </v-select>
               <v-select label="Language Code" v-model="editableSettings.language_code" :items="languages" item-title="text" item-value="value"></v-select>
             </v-container>
           </v-window-item>
@@ -115,6 +125,17 @@ const languages = [
   { text: 'Spanish', value: 'es-ES' },
   { text: 'Portuguese', value: 'pt-BR' },
   { text: 'Russian', value: 'ru-RU' },
+];
+
+const voices = [
+  { name: 'Puck', description: 'upbeat' },
+  { name: 'Charon', description: 'informative' },
+  { name: 'Kore', description: 'Firm' },
+  { name: 'Fenrir', description: 'Excitable' },
+  { name: 'Aoede', description: 'Breezy' },
+  { name: 'Leda', description: 'Youthful' },
+  { name: 'Orus', description: 'Firm' },
+  { name: 'Zephyr', description: 'Bright' },
 ];
 
 const props = defineProps({
