@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column align-center justify-center pa-3">
-    <v-avatar class="mb-4 w-100" style="max-width: 400px; height: auto; cursor: pointer;" rounded="lg" @click="openAvatarEditor">
+    <v-avatar class="agent-avatar mb-4 w-100" rounded="lg" @click="openAvatarEditor">
       <v-img :src="currentAvatar" aspect-ratio="1.33" contain></v-img>
     </v-avatar>
     <canvas ref="visualizer" width="125" height="50"></canvas>
@@ -100,3 +100,11 @@ onBeforeUnmount(() => {
   stopVisualizer();
 });
 </script>
+
+<style lang="scss" scoped>
+.agent-avatar {
+  max-width: 400px;
+  height: auto;
+  cursor: pointer;
+}
+</style>

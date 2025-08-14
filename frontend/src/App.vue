@@ -211,18 +211,3 @@ onBeforeUnmount(() => {
   stopConversation();
 });
 </script>
-
-<style>
-body {
-  font-family: 'Inter', sans-serif;
-}
-
-.v-app-bar-title {
-  font-weight: 600;
-}
-
-pre {
-  white-space: pre-wrap;
-  font-family: inherit;
-}
-</style>

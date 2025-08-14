@@ -3,6 +3,7 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import vuetify from './plugins/vuetify';
 import { useSettingsStore } from './stores/settings';
+import './styles/main.scss';
 
 async function initializeApp() {
   const app = createApp(App);
