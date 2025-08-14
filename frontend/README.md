@@ -37,14 +37,3 @@ Below is a summary of the key directories and files in the `frontend` directory,
 
 ## Libraries  
 - **Pinia** as a centralized state management library
-
-## Refactor Suggestions
-
-### 2. Component-Based Styling
-
-The current styling is a mix of global styles and component-specific styles. This can lead to CSS conflicts and make it difficult to maintain the UI.
-
-**Suggestion:**
-
--   Adopt a more component-based styling approach. Use the `scoped` attribute in Vue components to ensure that styles are only applied to the current component.
--   For global styles, use a more organized approach, such as a dedicated `styles` directory with separate files for variables, mixins, and base styles.

@@ -1,7 +1,8 @@
 import logging
+import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from api import api_key, analyse, avatar, apps
@@ -60,12 +61,33 @@ app.include_router(websocket.router)
 app.include_router(avatar.router)
 app.include_router(apps.router)
 
-app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
+# Serve the frontend
+app.mount('/assets', StaticFiles(directory='frontend/dist/assets'), name='assets')
+
+@app.get("/{full_path:path}")
+async def catch_all(request: Request, full_path: str):
+    """
+    Catch-all route to serve the index.html file for any non-API routes.
+    """
+    # Check if the file exists in the static directory
+    static_file_path = os.path.join('frontend/dist', full_path)
+    if os.path.isfile(static_file_path):
+        return FileResponse(static_file_path)
+    
+    # If not a file, serve the index.html for SPA routing
+    index_path = os.path.join('frontend/dist', 'index.html')
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    
+    # This should ideally not be reached if index.html exists
+    return JSONResponse(
+        status_code=404,
+        content={"message": "Frontend not found. Please build the frontend first."},
+    )
 
 
 def main():
     import uvicorn
-    import os
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
 

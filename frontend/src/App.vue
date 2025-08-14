@@ -134,6 +134,10 @@ async function handleAppSelection(appId) {
       currentAvatar.value = newAvatar;
       localStorage.setItem('userAvatar', newAvatar);
       showAppsGallery.value = false;
+
+      // Update the URL
+      const newUrl = `/apps/${appId}`;
+      window.history.pushState({}, '', newUrl);
     }
   } catch (error) {
     console.error('Error loading app:', error);
@@ -197,7 +201,19 @@ function stopConversation() {
 // --- Lifecycle Hooks ---
 
 onMounted(async () => {
-  loadSettings();
+  const path = window.location.pathname;
+  const appMatch = path.match(/^\/apps\/([a-zA-Z0-9_-]+)/);
+
+  if (appMatch) {
+    const appId = appMatch[1];
+    await handleAppSelection(appId);
+  } else if (path === '/apps') {
+    showAppsGallery.value = true;
+    showSettings.value = false;
+  } else {
+    loadSettings();
+  }
+
   const savedAvatar = localStorage.getItem('userAvatar');
   if (savedAvatar) {
     currentAvatar.value = savedAvatar;
@@ -211,3 +227,18 @@ onBeforeUnmount(() => {
   stopConversation();
 });
 </script>
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.v-app-bar-title {
+  font-weight: 600;
+}
+
+pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+</style>
