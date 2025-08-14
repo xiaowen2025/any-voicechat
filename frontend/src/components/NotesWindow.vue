@@ -1,19 +1,23 @@
 <template>
   <div class="notes-window">
     <v-card>
-      <v-tabs v-model="tab" bg-color="secondary">
+      <v-tabs v-model="activeTab" bg-color="secondary">
         <v-tab value="transcription"><v-icon>mdi-text-box-outline</v-icon></v-tab>
         <v-tab value="analysis"><v-icon>mdi-thought-bubble-outline</v-icon></v-tab>
       </v-tabs>
 
       <v-card-text>
-        <v-window v-model="tab">
+        <v-window v-model="activeTab">
           <v-window-item value="transcription">
             <div class="notes-content" v-html="renderedMarkdown"></div>
           </v-window-item>
 
           <v-window-item value="analysis">
-            <div class="notes-content" v-html="renderedAnalysis"></div>
+            <div
+              class="notes-content"
+              :class="{ 'shimmer': isAnalysing && !analysis }"
+              v-html="renderedAnalysis"
+            ></div>
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -31,15 +35,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import MarkdownIt from 'markdown-it';
 import { storeToRefs } from 'pinia';
 import { useConversationStore } from '../stores/conversation';
 
 const conversationStore = useConversationStore();
-const { notes, analysis } = storeToRefs(conversationStore);
+const { notes, analysis, isAnalysing, activeTab } = storeToRefs(conversationStore);
 const md = new MarkdownIt();
-const tab = ref('transcription');
 
 const hasContent = computed(() => {
   return notes.value && notes.value.length > 0;
@@ -50,6 +53,13 @@ const renderedMarkdown = computed(() => {
 });
 
 const renderedAnalysis = computed(() => {
+  if (isAnalysing.value && !analysis.value) {
+    return `
+      <div class="placeholder-line"></div>
+      <div class="placeholder-line"></div>
+      <div class="placeholder-line"></div>
+    `;
+  }
   if (analysis.value) {
     return md.render(analysis.value);
   }
@@ -57,7 +67,7 @@ const renderedAnalysis = computed(() => {
 });
 
 function copyContent() {
-  const contentToCopy = tab.value === 'transcription' ? notes.value : analysis.value;
+  const contentToCopy = activeTab.value === 'transcription' ? notes.value : analysis.value;
   if (contentToCopy) {
     navigator.clipboard.writeText(contentToCopy);
   }
@@ -79,5 +89,23 @@ function resetData() {
   line-height: 1.6;
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+.shimmer .placeholder-line {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  height: 1.2rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 </style>
