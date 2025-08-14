@@ -55,7 +55,7 @@ function resetData() {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .notes-window {
   margin: 2px 0;
 }
