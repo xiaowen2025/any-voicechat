@@ -7,6 +7,8 @@
 
 Try it here: https://vox-hub.onrender.com/
 
+<img src="docs/imgs/gif.gif" width="700"/>
+
 ## Features
 
 *   **Live Transcriptoin:** Get real-time transcription of your conversation.
