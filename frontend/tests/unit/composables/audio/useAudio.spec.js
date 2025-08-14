@@ -3,7 +3,7 @@ import {
   base64ToArray,
   arrayBufferToBase64,
   convertFloat32ToPCM,
-} from '../../../src/utils/audio';
+} from '../../../../src/composables/audio/utils.js';
 
 describe('audio utils', () => {
   describe('base64ToArray and arrayBufferToBase64', () => {
@@ -32,7 +32,7 @@ describe('audio utils', () => {
   });
 });
 
-import { useAudio } from '../../../src/composables/useAudio';
+import { useAudio } from '../../../../src/composables/audio/useAudio';
 import { ref } from 'vue';
 import { vi } from 'vitest';
 

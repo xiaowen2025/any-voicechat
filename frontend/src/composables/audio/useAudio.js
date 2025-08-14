@@ -3,7 +3,7 @@ import {
   base64ToArray,
   arrayBufferToBase64,
   convertFloat32ToPCM,
-} from '../utils/audio';
+} from './utils.js';
 
 /**
  * @module useAudio

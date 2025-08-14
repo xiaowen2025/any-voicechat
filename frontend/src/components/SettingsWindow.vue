@@ -99,7 +99,7 @@ import { storeToRefs } from 'pinia';
 import { useSettingsStore } from '../stores/settings';
 import { useSnackbar } from '../composables/useSnackbar';
 import { themes } from "../themes";
-import { useApi } from "../composables/useApi";
+import { useApi } from "../services/useApi";
 import { useDisplay } from 'vuetify';
 
 const { mobile: isMobile } = useDisplay();
