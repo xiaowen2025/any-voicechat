@@ -1,21 +1,18 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { useTheme } from 'vuetify';
 
 export const useSettingsStore = defineStore('settings', () => {
   const settings = ref(null);
   const currentTheme = ref(localStorage.getItem('theme') || 'Default');
   const darkMode = ref(localStorage.getItem('darkMode') === 'true');
 
-  function setTheme(newTheme) {
-    const theme = useTheme();
+  function setTheme(theme, newTheme) {
     currentTheme.value = newTheme;
     localStorage.setItem('theme', newTheme);
     theme.global.name.value = darkMode.value ? `${newTheme}Dark` : newTheme;
   }
 
-  function setDarkMode(isDark) {
-    const theme = useTheme();
+  function setDarkMode(theme, isDark) {
     darkMode.value = isDark;
     localStorage.setItem('darkMode', isDark);
     theme.global.name.value = isDark ? `${currentTheme.value}Dark` : currentTheme.value;

@@ -78,7 +78,7 @@ const {
 const { connect, disconnect } = conversationStore;
 
 const { settings, currentTheme, darkMode } = storeToRefs(settingsStore);
-const { loadSettings, updateSettings, setTheme, setDarkMode } = settingsStore;
+const { loadSettings, updateSettings } = settingsStore;
 
 const { setApiKey } = userStore;
 
