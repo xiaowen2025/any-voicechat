@@ -1,9 +1,9 @@
-# Vox Hub: Echo Your Ideas.
+# Vox Hub: Echo Your Ideas
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/versions/3.12/)
+[![Vue.js](https://img.shields.io/badge/vue.js-3.x-green.svg)](https://vuejs.org/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-**Vox Hub** is a versatile voice chat application.  
 
 Try it here: https://vox-hub.onrender.com/
 
