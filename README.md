@@ -14,22 +14,19 @@ Try it here: https://vox-hub.onrender.com/
 *   **Customizable Avatars:**  Generate a unique AI avatar with a single click, tailored to your chosen scenario.
 *   **Configurable Scenarios:** Easily customize the agent's role, personality, and context by editing a single JSON file. Explore different use cases in the `app_examples/` directory.
 
-## Example Applications
-
-![gallery](docs/imgs/apps-gallery.png)
-
 ### Live Transcriptoin
-![](docs/imgs/app-language.png)
+<img src="docs/imgs/app-language.png" width="700"/>
 
 ### Post-Conversation Summry/Analysis
-![](docs/imgs/func-analysis.png)
+<img src="docs/imgs/func-analysis.png" width="700"/>
 
 ### Customizable Avatars
-![](docs/imgs/func-avatar.png)
+<img src="docs/imgs/func-avatar.png" width="700"/>
 
 ### Configurable Scenarios
-![](docs/imgs/func-context.png)  
+<img src="docs/imgs/func-context.png" width="700"/>     
 
+<img src="docs/imgs/func-settings.png" width="700"/>  
 
 ## Getting Started
 
