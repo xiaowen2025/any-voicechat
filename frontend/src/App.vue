@@ -70,12 +70,13 @@ const {
   messages,
   notes,
   analysis,
+  isAnalysing,
   isConnecting,
   conversationStarted,
   conversationFinished,
   currentAvatar,
 } = storeToRefs(conversationStore);
-const { connect, disconnect } = conversationStore;
+const { connect, disconnect, setActiveTab } = conversationStore;
 
 const { settings, currentTheme, darkMode } = storeToRefs(settingsStore);
 const { loadSettings, updateSettings } = settingsStore;
@@ -98,7 +99,6 @@ const isMobile = computed(() => mobile.value);
 // Component State
 const showSettings = ref(!isMobile.value);
 const isSettingsWindowVisible = ref(false);
-const isAnalysing = ref(false);
 
 // Composables
 const audioWebsocket = ref(null);
@@ -147,6 +147,7 @@ function handleAppSelection(appId) {
 
 async function analyseConversation() {
   isAnalysing.value = true;
+  setActiveTab('analysis');
   try {
     console.log('Sending notes for analysis:', notes.value);
     const response = await fetch('/api/analyse', {

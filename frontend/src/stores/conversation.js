@@ -9,6 +9,8 @@ export const useConversationStore = defineStore('conversation', () => {
   const notes = ref('');
   const currentAvatar = ref('/assets/avatar_language_pal.png');
   const analysis = ref(null);
+  const isAnalysing = ref(false);
+  const activeTab = ref('transcription');
   const isConnecting = ref(false);
   const conversationStarted = ref(false);
   const conversationFinished = ref(false);
@@ -29,6 +31,8 @@ export const useConversationStore = defineStore('conversation', () => {
     currentMessageId.value = null;
     notes.value = '';
     analysis.value = null;
+    isAnalysing.value = false;
+    activeTab.value = 'transcription';
 
     const userId = Math.floor(Math.random() * 1000);
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -118,16 +122,23 @@ export const useConversationStore = defineStore('conversation', () => {
     conversationFinished.value = true;
   };
 
+  const setActiveTab = (tabName) => {
+    activeTab.value = tabName;
+  };
+
   return {
     websocket,
     messages,
     notes,
     analysis,
+    isAnalysing,
+    activeTab,
     isConnecting,
     conversationStarted,
     conversationFinished,
     currentAvatar,
     connect,
     disconnect,
+    setActiveTab,
   };
 });

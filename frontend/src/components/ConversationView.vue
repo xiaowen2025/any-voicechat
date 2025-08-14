@@ -8,14 +8,13 @@
               :analyser-node="analyserNode"
               :conversation-started="conversationStarted"
             />
-            <notes-window />
+            <notes-window v-if="notes && notes.length > 0"/>
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center justify-center">
             <control-buttons
               :conversation-started="conversationStarted"
               :conversation-finished="conversationFinished"
               :is-connecting="isConnecting"
-              :is-analysing="isAnalysing"
               @toggle-conversation="$emit('toggle-conversation')"
               @analyse="$emit('analyse')"
             />
@@ -35,6 +34,7 @@ import { useConversationStore } from '../stores/conversation';
 
 const conversationStore = useConversationStore();
 const {
+  notes,
   isConnecting,
   conversationStarted,
   conversationFinished,
@@ -42,7 +42,6 @@ const {
 
 defineProps({
   analyserNode: Object,
-  isAnalysing: Boolean,
 });
 
 defineEmits(['toggle-conversation', 'analyse']);
