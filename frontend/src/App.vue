@@ -125,7 +125,7 @@ watch(settings, (newSettings) => {
 
 // --- Functions ---
 
-async function handleAppSelection(appId) {
+async function loadApp(appId) {
   try {
     const newSettings = await getAppSettings(appId);
     if (newSettings) {
@@ -134,14 +134,15 @@ async function handleAppSelection(appId) {
       currentAvatar.value = newAvatar;
       localStorage.setItem('userAvatar', newAvatar);
       showAppsGallery.value = false;
-
-      // Update the URL
-      const newUrl = `/apps/${appId}`;
-      window.history.pushState({}, '', newUrl);
     }
   } catch (error) {
     console.error('Error loading app:', error);
   }
+}
+
+function handleAppSelection(appId) {
+  const newUrl = `/apps/${appId}`;
+  window.location.assign(newUrl);
 }
 
 async function analyseConversation() {
@@ -206,7 +207,7 @@ onMounted(async () => {
 
   if (appMatch) {
     const appId = appMatch[1];
-    await handleAppSelection(appId);
+    await loadApp(appId);
   } else if (path === '/apps') {
     showAppsGallery.value = true;
     showSettings.value = false;
