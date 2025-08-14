@@ -18,17 +18,17 @@ Try it here: https://vox-hub.onrender.com/
 
 ![gallery](docs/imgs/apps-gallery.png)
 
-### Language Pal
-![Language Pal](docs/imgs/app-language.png)
+### Live Transcriptoin
+![](docs/imgs/app-language.png)
 
-### Comfort Chat
-![Comfort Chat](docs/imgs/app-listen.png)
+### Post-Conversation Summry/Analysis
+![](docs/imgs/func-analysis.png)
 
-### Story Architect
-![Story Architect](docs/imgs/app-story.png)
+### Customizable Avatars
+![](docs/imgs/func-avatar.png)
 
-### Interview Simulator
-![Interview Simulator](docs/imgs/app-interview.png)  
+### Configurable Scenarios
+![](docs/imgs/func-context.png)  
 
 
 ## Getting Started
