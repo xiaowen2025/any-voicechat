@@ -67,7 +67,7 @@
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import imageCompression from 'browser-image-compression';
-import { useSettings } from '@/composables/useSettings';
+import { useSettingsStore } from '@/stores/settings';
 import { useSnackbar } from '@/composables/useSnackbar';
 
 export default {
@@ -82,10 +82,10 @@ export default {
   },
   emits: ['update:modelValue', 'avatar-saved'],
   setup() {
-    const { settings } = useSettings();
+    const settingsStore = useSettingsStore();
     const { showSnackbar } = useSnackbar();
     return {
-      settings,
+      settings: settingsStore.settings,
       showSnackbar,
     };
   },

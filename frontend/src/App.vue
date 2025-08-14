@@ -7,10 +7,6 @@
     />
     <settings-window
       v-model="isSettingsWindowVisible"
-      :selected-theme="selectedTheme"
-      :is-dark-mode="isDarkMode"
-      @theme-changed="changeTheme"
-      @dark-mode-toggled="toggleDarkMode"
       @api-key-updated="updateApiKeyStatus"
     />
     <v-app-bar>
@@ -52,36 +48,47 @@
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue';
 import { useDisplay } from 'vuetify';
+import { storeToRefs } from 'pinia';
 import ConversationView from './components/ConversationView.vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import SettingsWindow from './components/SettingsWindow.vue';
 import AppsGallery from './components/AppsGallery.vue';
-import { useAudio } from './composables/useAudio';
-import { useSharedConversation } from './composables/useSharedConversation';
-import { useThemeManager } from './composables/useThemeManager';
-import { useSettings } from './composables/useSettings';
+import { useAudio } from './composables/audio/useAudio';
 import { useSnackbar } from './composables/useSnackbar';
-import { useApi } from './composables/useApi';
-import { useApiKey } from './composables/useApiKey';
+import { useApi } from './services/useApi';
+import { useConversationStore } from './stores/conversation';
+import { useSettingsStore } from './stores/settings';
+import { useUserStore } from './stores/user';
+
+// --- Stores ---
+const conversationStore = useConversationStore();
+const settingsStore = useSettingsStore();
+const userStore = useUserStore();
+
+const {
+  websocket,
+  messages,
+  notes,
+  analysis,
+  isConnecting,
+  conversationStarted,
+  conversationFinished,
+  currentAvatar,
+} = storeToRefs(conversationStore);
+const { connect, disconnect } = conversationStore;
+
+const { settings, currentTheme, darkMode } = storeToRefs(settingsStore);
+const { loadSettings, updateSettings, setTheme, setDarkMode } = settingsStore;
+
+const { setApiKey } = userStore;
 
 // --- Reactive State ---
 const showAppsGallery = ref(false);
-const cachedSettings = JSON.parse(localStorage.getItem('settings') || '{}');
-const appName = ref(cachedSettings.app_name || 'App');
-const { settings, loadSettings, updateSettings } = useSettings();
+const appName = ref(settings.value?.app_name || 'App');
 const snackbar = useSnackbar();
 const { getAppSettings } = useApi();
-const { setApiKey } = useApiKey();
-
 
 // Theme
-const {
-  selectedTheme,
-  isDarkMode,
-  changeTheme,
-  toggleDarkMode,
-  initTheme,
-} = useThemeManager();
 const isThemeLoaded = ref(false);
 
 // Display
@@ -103,19 +110,6 @@ const {
   stopPlayback,
 } = useAudio(audioWebsocket);
 
-const {
-  websocket,
-  messages,
-  notes,
-  analysis,
-  isConnecting,
-  conversationStarted,
-  conversationFinished,
-  currentAvatar,
-  connect,
-  disconnect,
-} = useSharedConversation();
-
 // --- Watchers ---
 
 watch(websocket, (newWebsocketInstance) => {
@@ -131,7 +125,7 @@ watch(settings, (newSettings) => {
 
 // --- Functions ---
 
-async function handleAppSelection(appId) {
+async function loadApp(appId) {
   try {
     const newSettings = await getAppSettings(appId);
     if (newSettings) {
@@ -140,10 +134,15 @@ async function handleAppSelection(appId) {
       currentAvatar.value = newAvatar;
       localStorage.setItem('userAvatar', newAvatar);
       showAppsGallery.value = false;
-    } 
+    }
   } catch (error) {
     console.error('Error loading app:', error);
   }
+}
+
+function handleAppSelection(appId) {
+  const newUrl = `/apps/${appId}`;
+  window.location.assign(newUrl);
 }
 
 async function analyseConversation() {
@@ -203,13 +202,24 @@ function stopConversation() {
 // --- Lifecycle Hooks ---
 
 onMounted(async () => {
-  loadSettings();
+  const path = window.location.pathname;
+  const appMatch = path.match(/^\/apps\/([a-zA-Z0-9_-]+)/);
+
+  if (appMatch) {
+    const appId = appMatch[1];
+    await loadApp(appId);
+  } else if (path === '/apps') {
+    showAppsGallery.value = true;
+    showSettings.value = false;
+  } else {
+    loadSettings();
+  }
+
   const savedAvatar = localStorage.getItem('userAvatar');
   if (savedAvatar) {
     currentAvatar.value = savedAvatar;
   }
   setApiKey();
-  initTheme();
   await nextTick();
   isThemeLoaded.value = true;
 });

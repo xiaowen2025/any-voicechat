@@ -1,9 +1,25 @@
+import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useTheme } from 'vuetify';
 
-// Create a single, shared state for settings
-const settings = ref(null);
+export const useSettingsStore = defineStore('settings', () => {
+  const settings = ref(null);
+  const currentTheme = ref(localStorage.getItem('theme') || 'Default');
+  const darkMode = ref(localStorage.getItem('darkMode') === 'true');
 
-export function useSettings() {
+  function setTheme(newTheme) {
+    const theme = useTheme();
+    currentTheme.value = newTheme;
+    localStorage.setItem('theme', newTheme);
+    theme.global.name.value = darkMode.value ? `${newTheme}Dark` : newTheme;
+  }
+
+  function setDarkMode(isDark) {
+    const theme = useTheme();
+    darkMode.value = isDark;
+    localStorage.setItem('darkMode', isDark);
+    theme.global.name.value = isDark ? `${currentTheme.value}Dark` : currentTheme.value;
+  }
 
   async function loadSettings(forceRefresh = false) {
     const cachedSettings = localStorage.getItem('settings');
@@ -45,7 +61,11 @@ export function useSettings() {
 
   return {
     settings,
+    currentTheme,
+    darkMode,
     loadSettings,
     updateSettings,
+    setTheme,
+    setDarkMode,
   };
-}
+});

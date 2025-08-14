@@ -30,9 +30,11 @@
 <script setup>
 import { ref, computed } from 'vue';
 import MarkdownIt from 'markdown-it';
-import { useSharedConversation } from '../composables/useSharedConversation';
+import { storeToRefs } from 'pinia';
+import { useConversationStore } from '../stores/conversation';
 
-const { notes, analysis } = useSharedConversation();
+const conversationStore = useConversationStore();
+const { notes, analysis } = storeToRefs(conversationStore);
 const md = new MarkdownIt();
 const tab = ref('transcription');
 
@@ -53,7 +55,7 @@ function resetData() {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .notes-window {
   margin: 2px 0;
 }

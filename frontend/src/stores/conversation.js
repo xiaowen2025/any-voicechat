@@ -1,8 +1,9 @@
+import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { useSettings } from './useSettings';
-import { useApiKey } from './useApiKey';
+import { useSettingsStore } from './settings';
+import { useUserStore } from './user';
 
-export function useConversationWebSocket() {
+export const useConversationStore = defineStore('conversation', () => {
   const websocket = ref(null);
   const messages = ref([]);
   const notes = ref('');
@@ -12,13 +13,14 @@ export function useConversationWebSocket() {
   const conversationStarted = ref(false);
   const conversationFinished = ref(false);
   const currentMessageId = ref(null);
-  const { settings } = useSettings();
-  const { isApiKeySet } = useApiKey();
 
   let playAudioCallback = null;
   let stopPlaybackCallback = null;
 
   const connect = (playAudio, stopPlayback) => {
+    const settingsStore = useSettingsStore();
+    const userStore = useUserStore();
+
     playAudioCallback = playAudio;
     stopPlaybackCallback = stopPlayback;
 
@@ -36,8 +38,8 @@ export function useConversationWebSocket() {
 
     websocket.value.onopen = () => {
       console.log('WebSocket connection established');
-      if (settings.value) {
-        websocket.value.send(JSON.stringify(settings.value));
+      if (settingsStore.settings) {
+        websocket.value.send(JSON.stringify(settingsStore.settings));
         console.log('Settings sent to server');
       }
       messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection established. You can start speaking.' });
@@ -85,7 +87,7 @@ export function useConversationWebSocket() {
       console.log('WebSocket connection closed:', event);
       // A close event with code 1006 means the connection was terminated abnormally.
       // If the API key isn't set, it's the likely cause.
-      if (event.code === 1006 && !isApiKeySet.value) {
+      if (event.code === 1006 && !userStore.isApiKeySet) {
         messages.value.push({
           id: Date.now(),
           sender: 'system',
@@ -128,5 +130,4 @@ export function useConversationWebSocket() {
     connect,
     disconnect,
   };
-}
-
+});

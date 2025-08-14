@@ -1,7 +1,9 @@
-import { useSettings } from './useSettings';
+import { useSettingsStore } from '@/stores/settings';
+import { useConversationStore } from '@/stores/conversation';
 
 export function useApi() {
-  const { settings, updateSettings } = useSettings();
+  const settingsStore = useSettingsStore();
+  const conversationStore = useConversationStore();
 
   async function getAppSettings(appId) {
     try {
@@ -9,6 +11,8 @@ export function useApi() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      conversationStore.notes = '';
+      conversationStore.analysis = null;
       return await response.json();
     } catch (error) {
       console.error(`Error fetching app settings: ${error}`);
@@ -29,8 +33,8 @@ export function useApi() {
       if (result.status === 'success') {
         localStorage.setItem('geminiApiKey', apiKey);
         // Also update the settings object
-        const newSettings = { ...settings.value, gemini_api_key: apiKey };
-        updateSettings(newSettings);
+        const newSettings = { ...settingsStore.settings, gemini_api_key: apiKey };
+        settingsStore.updateSettings(newSettings);
         alert('API Key saved successfully!');
         return true;
       } else {

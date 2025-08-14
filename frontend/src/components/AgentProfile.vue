@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column align-center justify-center pa-3">
-    <v-avatar class="mb-4 w-100" style="max-width: 400px; height: auto; cursor: pointer;" rounded="lg" @click="openAvatarEditor">
+    <v-avatar class="agent-avatar mb-4 w-100" rounded="lg" @click="openAvatarEditor">
       <v-img :src="currentAvatar" aspect-ratio="1.33" contain></v-img>
     </v-avatar>
     <canvas ref="visualizer" width="125" height="50"></canvas>
@@ -10,8 +10,9 @@
 
 <script setup>
 import { ref, watch, onBeforeUnmount } from 'vue';
+import { storeToRefs } from 'pinia';
 import AvatarEditor from './AvatarEditor.vue';
-import { useSharedConversation } from '../composables/useSharedConversation';
+import { useConversationStore } from '../stores/conversation';
 
 const props = defineProps({
   analyserNode: {
@@ -24,7 +25,8 @@ const props = defineProps({
   },
 });
 
-const { currentAvatar } = useSharedConversation();
+const conversationStore = useConversationStore();
+const { currentAvatar } = storeToRefs(conversationStore);
 const visualizerAnimationId = ref(null);
 const avatarEditorDialog = ref(false);
 const visualizer = ref(null);
@@ -98,3 +100,11 @@ onBeforeUnmount(() => {
   stopVisualizer();
 });
 </script>
+
+<style lang="scss" scoped>
+.agent-avatar {
+  max-width: 400px;
+  height: auto;
+  cursor: pointer;
+}
+</style>

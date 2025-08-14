@@ -1,7 +1,9 @@
 # Frontend Documentation
 
 This document provides a comprehensive overview of the frontend architecture, detailing the purpose of each file and directory. It also includes recommendations for future refactoring to enhance maintainability and scalability.
-
+```
+(cd frontend && npm install && npm run build)
+```
 ## Folder Structure
 
 Below is a summary of the key directories and files in the `frontend` directory, along with their functions:
@@ -33,41 +35,5 @@ Below is a summary of the key directories and files in the `frontend` directory,
 -   `vite.config.js`: This file is used to configure Vite, the build tool used for the project.
 -   `vitest.config.js`: This file is used to configure Vitest, the test runner used for the project.
 
-## Refactor Suggestions
-
-Based on best practices, here are some suggestions for refactoring the frontend codebase:
-
-### 1. State Management with Pinia
-
-The current state management is handled through a combination of `localStorage` and component-level state. This can become difficult to manage as the application grows.
-
-**Suggestion:**
-
--   Introduce **Pinia** as a centralized state management library. Pinia is the officially recommended state management library for Vue 3 and offers a simple and intuitive API.
--   Create separate stores for different domains of the application, such as `settings`, `user`, and `conversation`. This will make the state more predictable and easier to debug.
-
-### 2. Component-Based Styling
-
-The current styling is a mix of global styles and component-specific styles. This can lead to CSS conflicts and make it difficult to maintain the UI.
-
-**Suggestion:**
-
--   Adopt a more component-based styling approach. Use the `scoped` attribute in Vue components to ensure that styles are only applied to the current component.
--   For global styles, use a more organized approach, such as a dedicated `styles` directory with separate files for variables, mixins, and base styles.
-
-### 3. Improved Code Organization
-
-The `composables` directory is a good start for organizing reusable logic, but it can be further improved.
-
-**Suggestion:**
-
--   Group related composables into subdirectories. For example, all composables related to audio could be placed in a `composables/audio` directory.
--   Consider creating a `services` directory for API calls and other external services. This will help to separate the business logic from the UI components.
-
-### 4. Consistent Naming Conventions
-
-The naming of some files and components is inconsistent.
-
-**Suggestion:**
-
--   Establish and follow a consistent naming convention for all files, components, and variables. For example, all components should be named in `PascalCase` and all composables should start with `use`.
+## Libraries  
+- **Pinia** as a centralized state management library

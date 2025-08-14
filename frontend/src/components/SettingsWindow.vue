@@ -30,19 +30,19 @@
               <v-row align="center">
                 <v-col>
                   <v-select
-                    :model-value="selectedTheme"
+                    :model-value="currentTheme"
                     :items="themeNames"
                     label="Theme"
                     dense
                     outlined
                     hide-details
-                    @update:model-value="emit('theme-changed', $event)"
+                    @update:model-value="setTheme($event)"
                   ></v-select>
                 </v-col>
                 <v-col>
                   <v-switch
-                    :model-value="isDarkMode"
-                    @update:model-value="emit('dark-mode-toggled', $event)"
+                    :model-value="darkMode"
+                    @update:model-value="setDarkMode($event)"
                     label="Dark Mode"
                     hide-details
                   ></v-switch>
@@ -95,10 +95,11 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { useSettings } from '../composables/useSettings';
+import { storeToRefs } from 'pinia';
+import { useSettingsStore } from '../stores/settings';
 import { useSnackbar } from '../composables/useSnackbar';
 import { themes } from "../themes";
-import { useApi } from "../composables/useApi";
+import { useApi } from "../services/useApi";
 import { useDisplay } from 'vuetify';
 
 const { mobile: isMobile } = useDisplay();
@@ -117,13 +118,13 @@ const languages = [
 
 const props = defineProps({
   modelValue: Boolean,
-  selectedTheme: String,
-  isDarkMode: Boolean,
 });
 
-const emit = defineEmits(['update:modelValue', 'api-key-updated', 'theme-changed', 'dark-mode-toggled']);
+const emit = defineEmits(['update:modelValue', 'api-key-updated']);
 
-const { settings, updateSettings } = useSettings();
+const settingsStore = useSettingsStore();
+const { settings, currentTheme, darkMode } = storeToRefs(settingsStore);
+const { updateSettings, setTheme, setDarkMode } = settingsStore;
 const { showSnackbar } = useSnackbar();
 const { saveGeminiApiKey: saveKey } = useApi();
 
