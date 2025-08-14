@@ -1,7 +1,9 @@
 import { useSettingsStore } from '@/stores/settings';
+import { useConversationStore } from '@/stores/conversation';
 
 export function useApi() {
   const settingsStore = useSettingsStore();
+  const conversationStore = useConversationStore();
 
   async function getAppSettings(appId) {
     try {
@@ -9,6 +11,8 @@ export function useApi() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      conversationStore.notes = '';
+      conversationStore.analysis = null;
       return await response.json();
     } catch (error) {
       console.error(`Error fetching app settings: ${error}`);
