@@ -10,8 +10,8 @@ Try it here: https://vox-hub.onrender.com/
 ## Features
 
 *   **Live Transcriptoin:** Get real-time transcription of your conversation.
-*   **Post-Conversation Analysis:** Receive a comprehensive analysis of the entire conversation in a clean, easy-to-read markdown format.
-*   **Customizable Avatars:** Generate a unique AI avatar with a single click, tailored to your chosen scenario.
+*   **Post-Conversation Analysis:** Receive a Summary or Analysis of the entire conversation.
+*   **Customizable Avatars:**  Generate a unique AI avatar with a single click, tailored to your chosen scenario.
 *   **Configurable Scenarios:** Easily customize the agent's role, personality, and context by editing a single JSON file. Explore different use cases in the `app_examples/` directory.
 
 ## Example Applications
