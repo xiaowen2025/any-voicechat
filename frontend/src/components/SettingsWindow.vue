@@ -36,13 +36,13 @@
                     dense
                     outlined
                     hide-details
-                    @update:model-value="setTheme($event)"
+                    @update:model-value="setTheme(theme, $event)"
                   ></v-select>
                 </v-col>
                 <v-col>
                   <v-switch
                     :model-value="darkMode"
-                    @update:model-value="setDarkMode($event)"
+                    @update:model-value="setDarkMode(theme, $event)"
                     label="Dark Mode"
                     hide-details
                   ></v-switch>
@@ -100,9 +100,10 @@ import { useSettingsStore } from '../stores/settings';
 import { useSnackbar } from '../composables/useSnackbar';
 import { themes } from "../themes";
 import { useApi } from "../services/useApi";
-import { useDisplay } from 'vuetify';
+import { useDisplay, useTheme } from 'vuetify';
 
 const { mobile: isMobile } = useDisplay();
+const theme = useTheme();
 
 const languages = [
   { text: 'English (US)', value: 'en-US' },
