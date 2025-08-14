@@ -48,12 +48,3 @@ The current styling is a mix of global styles and component-specific styles. Thi
 
 -   Adopt a more component-based styling approach. Use the `scoped` attribute in Vue components to ensure that styles are only applied to the current component.
 -   For global styles, use a more organized approach, such as a dedicated `styles` directory with separate files for variables, mixins, and base styles.
-
-### 3. Improved Code Organization
-
-The `composables` directory is a good start for organizing reusable logic, but it can be further improved.
-
-**Suggestion:**
-
--   Group related composables into subdirectories. For example, all composables related to audio could be placed in a `composables/audio` directory.
--   Consider creating a `services` directory for API calls and other external services. This will help to separate the business logic from the UI components.
