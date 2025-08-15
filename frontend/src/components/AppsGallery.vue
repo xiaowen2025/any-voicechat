@@ -32,7 +32,7 @@
           class="d-flex flex-column fill-height align-center justify-center"
           @click="emit('add-new-app')"
         >
-          <v-icon size="256">mdi-plus</v-icon>
+          <v-icon size="128">mdi-plus</v-icon>
           <v-card-title>New</v-card-title>
         </v-card>
       </v-col>
