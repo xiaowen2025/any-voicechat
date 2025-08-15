@@ -26,6 +26,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     live_events, live_request_queue = await start_agent_session(
         user_id_str,
         settings=settings,
+        websocket=websocket,
         is_audio=(is_audio == "true")
     )
 

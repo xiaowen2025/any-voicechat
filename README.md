@@ -9,10 +9,10 @@ Try it here: https://vox-hub.onrender.com/
 
 <img src="docs/imgs/gif.gif" width="700"/>
 
-# Vox: Explore Instant App  
+# Vox: The best Voice Agent
 
-- create new settings draft in one sentence
-- adjust settings during conversation
+Vox is a self-adapting voice agent that begins with a single-sentence operational blueprint and continuously reshapes its settings in real time, adapting to the user’s tone, context, and evolving needs throughout the conversation.
+
 
 ## Features
 
