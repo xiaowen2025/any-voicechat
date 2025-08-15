@@ -95,7 +95,7 @@
         <v-spacer></v-spacer>
         <v-menu location="top">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" text>More</v-btn>
+            <v-btn v-bind="props" text ref="moreButton">More</v-btn>
           </template>
           <v-list>
             <v-list-item @click="copySettings">
@@ -150,9 +150,11 @@ const voices = [
 
 const props = defineProps({
   modelValue: Boolean,
+  openMoreMenu: Boolean,
 });
 
 const emit = defineEmits(['update:modelValue', 'api-key-updated']);
+const moreButton = ref(null);
 
 const settingsStore = useSettingsStore();
 const { settings, currentTheme, darkMode } = storeToRefs(settingsStore);

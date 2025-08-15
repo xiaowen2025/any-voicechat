@@ -22,6 +22,20 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col
+        cols="12"
+        sm="6"
+        md="4"
+        lg="3"
+      >
+        <v-card
+          class="d-flex flex-column fill-height align-center justify-center"
+          @click="emit('add-new-app')"
+        >
+          <v-icon size="256">mdi-plus</v-icon>
+          <v-card-title>New</v-card-title>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -30,7 +44,7 @@
 import { ref, onMounted, defineEmits } from 'vue';
 
 const apps = ref([]);
-const emit = defineEmits(['app-selected', 'close']);
+const emit = defineEmits(['app-selected', 'close', 'add-new-app']);
 
 async function fetchApps() {
   try {

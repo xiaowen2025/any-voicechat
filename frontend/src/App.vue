@@ -23,6 +23,7 @@
         v-if="showAppsGallery"
         @app-selected="handleAppSelection"
         @close="showAppsGallery = false"
+        @add-new-app="handleAddNewApp"
       />
       <conversation-view
         v-else
@@ -155,6 +156,11 @@ async function loadApp(appId) {
 function handleAppSelection(appId) {
   const newUrl = `/apps/${appId}`;
   window.location.assign(newUrl);
+}
+
+function handleAddNewApp() {
+  showAppsGallery.value = false;
+  isSettingsWindowVisible.value = true;
 }
 
 async function analyseConversation() {
