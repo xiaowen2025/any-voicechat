@@ -18,14 +18,17 @@
         <v-col>
           <span class="font-weight-bold">Context</span>
         </v-col>
-        <v-col cols="auto">
-          <v-btn icon @click.stop="$emit('update:modelValue', false)" title="Close">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-col>
       </v-row>
     </v-list-item>
     <v-divider></v-divider>
+    <v-list-item>
+      <v-switch
+        :model-value="searchToolEnabled"
+        @update:model-value="toggleSearchTool"
+        label="Enable Search Tool"
+        color="primary"
+      ></v-switch>
+    </v-list-item>
     <v-expansion-panels v-model="panel" multiple>
       <context-viewer
         v-for="(item, name, index) in context"
@@ -37,10 +40,19 @@
       ></context-viewer>
     </v-expansion-panels>
     <template v-slot:append>
-      <div class="pa-2 d-flex justify-start align-center">
-        <v-btn icon @click="$emit('toggle-settings')" title="Settings">
-          <v-icon>mdi-cog</v-icon>
-        </v-btn>
+      <div class="pa-2">
+        <v-row>
+          <v-col>
+            <v-btn icon @click="$emit('toggle-settings')" title="Settings">
+              <v-icon>mdi-cog</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="d-flex justify-end">
+            <v-btn icon @click.stop="$emit('update:modelValue', false)" title="Close">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
     </template>
   </v-navigation-drawer>
@@ -67,6 +79,13 @@ const context = computed(() => settings.value?.context_dict || {});
 const { drawerWidth, startResize } = useResizableDrawer(500);
 
 const panel = ref([]);
+
+const searchToolEnabled = computed(() => settings.value?.search_tool || false);
+
+function toggleSearchTool(value) {
+  const newSettings = { ...settings.value, search_tool: value };
+  updateSettings(newSettings);
+}
 
 function formatTitle(name) {
   if (!name) return "";
@@ -117,5 +136,15 @@ onMounted(() => {
   height: 100%;
   cursor: col-resize;
   z-index: 10;
+}
+
+:deep(.v-list-item-title),
+:deep(.v-label),
+:deep(.v-expansion-panel-title__text) {
+  font-size: 1.1rem !important;
+}
+
+.font-weight-bold {
+    font-size: 1.2rem !important;
 }
 </style>

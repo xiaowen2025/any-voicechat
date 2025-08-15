@@ -9,13 +9,17 @@ Try it here: https://vox-hub.onrender.com/
 
 <img src="docs/imgs/gif.gif" width="700"/>
 
+# Vox: Explore Instant App  
+
+- create new settings draft in one sentence
+- adjust settings during conversation
+
 ## Features
 
 *   **Live Transcription:** Get real-time transcription of your conversation.
 *   **Post-Conversation Analysis:** Receive a Summary or Analysis of the entire conversation.
-*   **Customizable Avatars:**  Generate a unique AI avatar with a single click, tailored to your chosen scenario.
+*   **Customizable Agent:** Easily customize the conversation scenarios, generate a unique AI avatar with a single click.
 *   **Internet Search:** Grant the agent the ability to search online for real-time information.
-*   **Configurable Scenarios:** Easily customize the agent's role, personality, and context by editing a single JSON file. Explore different use cases in the `app_settings/` directory.
 
 ### Live Transcription
 <img src="docs/imgs/1-init.png" width="700"/>
