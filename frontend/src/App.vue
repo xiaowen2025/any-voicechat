@@ -69,6 +69,9 @@ import { useConversationStore } from './stores/conversation';
 import { useSettingsStore } from './stores/settings';
 import { useUserStore } from './stores/user';
 
+// --- Constants ---
+const default_app_id = 'language_pal';
+
 // --- Stores ---
 const conversationStore = useConversationStore();
 const settingsStore = useSettingsStore();
@@ -222,7 +225,7 @@ onMounted(() => {
     showAppsGallery.value = true;
     showSettings.value = false;
   } else {
-    loadSettings();
+    window.location.assign(`/apps/${default_app_id}`);
   }
 
   const savedAvatar = localStorage.getItem('userAvatar');

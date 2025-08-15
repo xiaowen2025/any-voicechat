@@ -18,26 +18,10 @@ export const useSettingsStore = defineStore('settings', () => {
     theme.global.name.value = isDark ? `${currentTheme.value}Dark` : currentTheme.value;
   }
 
-  async function loadSettings(forceRefresh = false) {
+  async function loadSettings() {
     const cachedSettings = localStorage.getItem('settings');
-    if (cachedSettings && !forceRefresh) {
+    if (cachedSettings) {
       settings.value = JSON.parse(cachedSettings);
-    } else {
-      try {
-        const response = await fetch('/api/apps/language_pal/settings', {
-          method: 'GET',
-        });
-        const data = await response.json();
-        if (response.ok) {
-          settings.value = data;
-        } else {
-          console.error('Error fetching settings:', data.error);
-          settings.value = {}; // Initialize to avoid errors
-        }
-      } catch (error) {
-        console.error('Error fetching settings:', error);
-        settings.value = {}; // Initialize to avoid errors
-      }
     }
 
     // One-time migration for geminiApiKey from localStorage
