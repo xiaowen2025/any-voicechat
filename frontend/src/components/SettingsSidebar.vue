@@ -18,6 +18,9 @@
         <v-col>
           <span class="font-weight-bold">Context</span>
         </v-col>
+        <v-col class="d-flex justify-end">
+          <v-btn icon="mdi-plus" size="small" variant="text" @click="addContext"></v-btn>
+        </v-col>
       </v-row>
     </v-list-item>
     <v-divider></v-divider>
@@ -31,12 +34,14 @@
     </v-list-item>
     <v-expansion-panels v-model="panel" multiple>
       <context-viewer
-        v-for="(item, name, index) in context"
+        v-for="(item, name) in context"
         :key="name"
         :doc-name="name"
         :title="formatTitle(name)"
         :content="item.value || item.default_value"
-        @update:content="updateContext(name, $event)"
+        @update:content="updateContextContent(name, $event)"
+        @update:docName="updateContextDocName"
+        @remove="removeContext"
       ></context-viewer>
     </v-expansion-panels>
     <template v-slot:append>
@@ -95,12 +100,48 @@ function formatTitle(name) {
     .join(" ");
 }
 
-function updateContext(name, content) {
+function updateContextContent(name, content) {
   const newSettings = { ...settings.value };
   if (newSettings.context_dict && newSettings.context_dict[name]) {
     newSettings.context_dict[name].value = content;
     updateSettings(newSettings);
   }
+}
+
+function updateContextDocName({ oldDocName, newDocName }) {
+  const newSettings = { ...settings.value };
+  if (newSettings.context_dict && newSettings.context_dict[oldDocName] && !newSettings.context_dict[newDocName]) {
+    const newContextDict = { ...newSettings.context_dict };
+    newContextDict[newDocName] = newContextDict[oldDocName];
+    delete newContextDict[oldDocName];
+    newSettings.context_dict = newContextDict;
+    updateSettings(newSettings);
+  }
+}
+
+function removeContext(name) {
+  const newSettings = { ...settings.value };
+  if (newSettings.context_dict && newSettings.context_dict[name]) {
+    const newContextDict = { ...newSettings.context_dict };
+    delete newContextDict[name];
+    newSettings.context_dict = newContextDict;
+    updateSettings(newSettings);
+  }
+}
+
+function addContext() {
+  const newSettings = { ...settings.value };
+  if (!newSettings.context_dict) {
+    newSettings.context_dict = {};
+  }
+  let newDocName = "new_context";
+  let counter = 1;
+  while (newSettings.context_dict[newDocName]) {
+    newDocName = `new_context_${counter}`;
+    counter++;
+  }
+  newSettings.context_dict[newDocName] = { value: "", default_value: "" };
+  updateSettings(newSettings);
 }
 
 function expandAllPanels() {

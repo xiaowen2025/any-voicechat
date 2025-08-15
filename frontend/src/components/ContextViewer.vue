@@ -1,6 +1,25 @@
 <template>
   <v-expansion-panel>
-    <v-expansion-panel-title class="font-weight-bold">{{ title }}</v-expansion-panel-title>
+    <v-expansion-panel-title class="font-weight-bold">
+      <div v-if="!titleEditing" class="d-flex align-center" style="width: 100%;">
+        <span class="editable-title">{{ title }}</span>
+        <v-spacer></v-spacer>
+        <v-btn icon="mdi-pencil" size="small" variant="text" @click.stop="startTitleEdit"></v-btn>
+        <v-btn icon="mdi-delete" size="small" variant="text" @click.stop="remove"></v-btn>
+      </div>
+      <div v-else class="d-flex align-center" style="width: 100%;">
+        <v-text-field
+          v-model="editableTitle"
+          dense
+          hide-details
+          autofocus
+          @keyup.enter="saveTitle"
+          @keyup.esc="cancelTitleEdit"
+        ></v-text-field>
+        <v-btn icon="mdi-check" size="small" variant="text" @click.stop="saveTitle"></v-btn>
+        <v-btn icon="mdi-close" size="small" variant="text" @click.stop="cancelTitleEdit"></v-btn>
+      </div>
+    </v-expansion-panel-title>
     <v-expansion-panel-text>
       <div v-if="!editing" @click="editing = true" class="editable-content">
         <div v-html="renderedMarkdown"></div>
@@ -34,10 +53,13 @@ export default {
       required: true,
     },
   },
+  emits: ['update:content', 'update:docName', 'remove'],
   data() {
     return {
       editableContent: this.content,
       editing: false,
+      titleEditing: false,
+      editableTitle: this.title,
     };
   },
   computed: {
@@ -49,6 +71,11 @@ export default {
     content(newContent) {
       this.editableContent = newContent;
     },
+    title(newTitle) {
+      if (!this.titleEditing) {
+        this.editableTitle = newTitle;
+      }
+    }
   },
   methods: {
     save() {
@@ -59,6 +86,25 @@ export default {
       this.editableContent = this.content;
       this.editing = false;
     },
+    startTitleEdit() {
+      this.editableTitle = this.title;
+      this.titleEditing = true;
+    },
+    saveTitle() {
+      const newDocName = this.editableTitle.trim().replace(/\s+/g, '_').toLowerCase();
+      const oldDocName = this.docName;
+      if (newDocName && newDocName !== oldDocName) {
+        this.$emit('update:docName', { oldDocName, newDocName });
+      }
+      this.titleEditing = false;
+    },
+    cancelTitleEdit() {
+      this.titleEditing = false;
+      this.editableTitle = this.title;
+    },
+    remove() {
+      this.$emit('remove', this.docName);
+    },
   },
 };
 </script>
@@ -66,5 +112,9 @@ export default {
 <style scoped>
 .editable-content {
   cursor: pointer;
+}
+.editable-title {
+  cursor: pointer;
+  flex-grow: 1;
 }
 </style>
