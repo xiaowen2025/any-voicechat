@@ -50,7 +50,7 @@ export function useAudio(websocket, onAudioData) {
     // Start audio recorder
     audioRecorderContext.value = new AudioContext({ sampleRate: 16000 });
     await audioRecorderContext.value.audioWorklet.addModule('/pcm-recorder-processor.js');
-    micStream.value = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 } });
+    micStream.value = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, channelCount: 1 } });
     const source = audioRecorderContext.value.createMediaStreamSource(micStream.value);
     audioRecorderNode.value = new AudioWorkletNode(audioRecorderContext.value, 'pcm-recorder-processor');
     
