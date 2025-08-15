@@ -11,13 +11,36 @@
     >
       <v-icon size="x-large">{{ buttonIcon }}</v-icon>
     </v-btn>
+    <div v-if="isMobile && showReminder" class="d-flex align-center">
+      <p class="text-caption mr-2">On mobile device, please use earphones.</p>
+      <v-btn icon small @click="dismissReminder">
+        <v-icon small>mdi-close</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useConversationStore } from '../stores/conversation';
+import { useDisplay } from 'vuetify';
+
+// Mobile detection
+const { mobile: isMobile } = useDisplay();
+
+const showReminder = ref(false);
+
+onMounted(() => {
+  if (localStorage.getItem('hideEarphoneReminder') !== 'true') {
+    showReminder.value = true;
+  }
+});
+
+const dismissReminder = () => {
+  localStorage.setItem('hideEarphoneReminder', 'true');
+  showReminder.value = false;
+};
 
 const conversationStore = useConversationStore();
 const {
