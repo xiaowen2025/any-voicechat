@@ -7,7 +7,7 @@ load_dotenv()
 
 
 DEFAULT_SETTINGS_FILE_PATH = "api/default_settings.json"
-APP_EXAMPLES_PATH = "app_examples"
+APP_SETTINGS_PATH = "app_settings"
 LIVE_MODEL_NAME = "gemini-2.5-flash-live-preview"
 IMAGE_MODEL_NAME = "gemini-2.0-flash-preview-image-generation"
 
