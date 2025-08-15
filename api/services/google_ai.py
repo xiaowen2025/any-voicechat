@@ -18,6 +18,6 @@ def create_live_agent(
         model=LIVE_MODEL_NAME,
         description="Voice Agent",
         instruction=instruction,
-        tools=[tools],
+        tools=tools,
     )
     return agent
