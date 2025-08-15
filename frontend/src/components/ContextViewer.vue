@@ -2,10 +2,12 @@
   <v-expansion-panel>
     <v-expansion-panel-title class="font-weight-bold">
       <div v-if="!titleEditing" class="d-flex align-center" style="width: 100%;">
-        <span class="editable-title">{{ title }}</span>
+        <span :class="{ 'editable-title': isEditing }" @click.stop="startTitleEdit">{{ title }}</span>
         <v-spacer></v-spacer>
-        <v-btn icon="mdi-pencil" size="small" variant="text" @click.stop="startTitleEdit"></v-btn>
-        <v-btn icon="mdi-delete" size="small" variant="text" @click.stop="remove"></v-btn>
+        <template v-if="isEditing">
+          <v-btn icon="mdi-pencil" size="small" variant="text" @click.stop="startTitleEdit"></v-btn>
+          <v-btn icon="mdi-delete" size="small" variant="text" @click.stop="remove"></v-btn>
+        </template>
       </div>
       <div v-else class="d-flex align-center" style="width: 100%;">
         <v-text-field
@@ -52,6 +54,10 @@ export default {
       type: String,
       required: true,
     },
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['update:content', 'update:docName', 'remove'],
   data() {
@@ -75,6 +81,11 @@ export default {
       if (!this.titleEditing) {
         this.editableTitle = newTitle;
       }
+    },
+    isEditing(newVal) {
+      if (!newVal) {
+        this.titleEditing = false;
+      }
     }
   },
   methods: {
@@ -87,6 +98,7 @@ export default {
       this.editing = false;
     },
     startTitleEdit() {
+      if (!this.isEditing) return;
       this.editableTitle = this.title;
       this.titleEditing = true;
     },

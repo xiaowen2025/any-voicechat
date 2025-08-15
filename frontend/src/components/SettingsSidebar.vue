@@ -19,7 +19,12 @@
           <span class="font-weight-bold">Context</span>
         </v-col>
         <v-col class="d-flex justify-end">
-          <v-btn icon="mdi-plus" size="small" variant="text" @click="addContext"></v-btn>
+          <v-btn
+            :icon="isEditingContext ? 'mdi-check' : 'mdi-pencil'"
+            size="small"
+            variant="text"
+            @click="isEditingContext = !isEditingContext"
+          ></v-btn>
         </v-col>
       </v-row>
     </v-list-item>
@@ -39,11 +44,15 @@
         :doc-name="name"
         :title="formatTitle(name)"
         :content="item.value || item.default_value"
+        :is-editing="isEditingContext"
         @update:content="updateContextContent(name, $event)"
         @update:docName="updateContextDocName"
         @remove="removeContext"
       ></context-viewer>
     </v-expansion-panels>
+    <div v-if="isEditingContext" class="pa-2">
+        <v-btn block @click="addContext">Add New Context</v-btn>
+    </div>
     <template v-slot:append>
       <div class="pa-2">
         <v-row>
@@ -84,6 +93,7 @@ const context = computed(() => settings.value?.context_dict || {});
 const { drawerWidth, startResize } = useResizableDrawer(500);
 
 const panel = ref([]);
+const isEditingContext = ref(false);
 
 const searchToolEnabled = computed(() => settings.value?.search_tool || false);
 
