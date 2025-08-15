@@ -1,5 +1,5 @@
 <template>
-  <v-app v-if="isThemeLoaded">
+  <v-app>
     <settings-sidebar
       :model-value="showSettings"
       @update:model-value="showSettings = $event"
@@ -42,6 +42,13 @@
     >
       {{ snackbar.message.value }}
     </v-snackbar>
+    <v-overlay
+      :model-value="!isThemeLoaded"
+      class="align-center justify-center"
+      persistent
+    >
+      <v-progress-circular indeterminate size="64" />
+    </v-overlay>
   </v-app>
 </template>
 
@@ -49,10 +56,12 @@
 import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue';
 import { useDisplay } from 'vuetify';
 import { storeToRefs } from 'pinia';
-import ConversationView from './components/ConversationView.vue';
+import { defineAsyncComponent } from 'vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import SettingsWindow from './components/SettingsWindow.vue';
-import AppsGallery from './components/AppsGallery.vue';
+
+const ConversationView = defineAsyncComponent(() => import('./components/ConversationView.vue'));
+const AppsGallery = defineAsyncComponent(() => import('./components/AppsGallery.vue'));
 import { useAudio } from './composables/audio/useAudio';
 import { useSnackbar } from './composables/useSnackbar';
 import { useApi } from './services/useApi';
@@ -202,13 +211,13 @@ function stopConversation() {
 
 // --- Lifecycle Hooks ---
 
-onMounted(async () => {
+onMounted(() => {
   const path = window.location.pathname;
   const appMatch = path.match(/^\/apps\/([a-zA-Z0-9_-]+)/);
 
   if (appMatch) {
     const appId = appMatch[1];
-    await loadApp(appId);
+    loadApp(appId);
   } else if (path === '/apps') {
     showAppsGallery.value = true;
     showSettings.value = false;
@@ -221,8 +230,9 @@ onMounted(async () => {
     currentAvatar.value = savedAvatar;
   }
   setApiKey();
-  await nextTick();
-  isThemeLoaded.value = true;
+  nextTick().then(() => {
+    isThemeLoaded.value = true;
+  });
 });
 
 onBeforeUnmount(() => {
