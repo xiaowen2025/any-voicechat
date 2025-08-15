@@ -14,10 +14,11 @@ Try it here: https://vox-hub.onrender.com/
 *   **Live Transcription:** Get real-time transcription of your conversation.
 *   **Post-Conversation Analysis:** Receive a Summary or Analysis of the entire conversation.
 *   **Customizable Avatars:**  Generate a unique AI avatar with a single click, tailored to your chosen scenario.
-*   **Configurable Scenarios:** Easily customize the agent's role, personality, and context by editing a single JSON file. Explore different use cases in the `app_examples/` directory.
+*   **Internet Search:** Grant the agent the ability to search online for real-time information.
+*   **Configurable Scenarios:** Easily customize the agent's role, personality, and context by editing a single JSON file. Explore different use cases in the `app_settings/` directory.
 
 ### Live Transcription
-<img src="docs/imgs/app-language.png" width="700"/>
+<img src="docs/imgs/1-init.png" width="700"/>
 
 ### Post-Conversation Analysis
 <img src="docs/imgs/func-analysis.png" width="700"/>
@@ -29,6 +30,9 @@ Try it here: https://vox-hub.onrender.com/
 <img src="docs/imgs/func-context.png" width="700"/>     
 
 <img src="docs/imgs/func-settings.png" width="700"/>  
+
+### Internet Search
+<img src="docs/imgs/func-search.png" width="700"/>
 
 ## Getting Started
 
@@ -44,7 +48,7 @@ Follow these steps to get Vox Hub up and running on your local machine.
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/vox-hub.git
+    git clone https://github.com/xiaowen2025/vox-hub.git
     cd vox-hub
     ```
 
@@ -71,7 +75,7 @@ Follow these steps to get Vox Hub up and running on your local machine.
 
 ## Configuration
 
-To customize the AI agent, you can modify the JSON configuration files located in the `app_examples/` directory. These files allow you to define the agent's personality, role, and the context of the conversation.
+To customize the AI agent, you can modify the JSON configuration files located in the `app_settings/` directory. These files allow you to define the agent's personality, role, and the context of the conversation.
 
 For example, to start a new chat with the "Story Architect" persona, you can use the `story_architect.json` file.
 
