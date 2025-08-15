@@ -21,6 +21,7 @@ class Settings(BaseModel):
     voice_name: str
     language_code: str
     gemini_api_key: Optional[str] = None
+    search_tool: Optional[bool] = False
 
 
 def load_default_settings():

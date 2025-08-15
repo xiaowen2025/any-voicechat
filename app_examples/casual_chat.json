@@ -10,5 +10,6 @@
   "goal_description": "To help the user feel heard, understand their emotions more clearly, and reduce their stress by providing a safe and supportive space to talk.",
   "analyse_instruction": "Summarize the user's core feeling and offer a simple, reassuring thought or a gentle question for reflection. Keep it easy to understand and short.",
   "voice_name": "Leda",
-  "language_code": "en-US"
+  "language_code": "en-US",
+  "search_tool": true
 }

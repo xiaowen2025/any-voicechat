@@ -18,5 +18,6 @@
     "goal_description": "To effectively evaluate candidates for the character performer role.",
     "analyse_instruction": "Provide actionable suggestions for the interviewee to improve their performance. Keep it in one sentence.",
     "voice_name": "Charon",
-    "language_code": "en-US"
+    "language_code": "en-US",
+    "search_tool": false
 }
