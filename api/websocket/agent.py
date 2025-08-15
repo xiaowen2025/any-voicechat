@@ -16,7 +16,7 @@ from api.websocket.messaging import UpdateContextMessage
 
 async def start_agent_session(user_id, settings, websocket, is_audio=False):
     async def edit_context_dict(context_dict: dict) -> dict:
-        """Updates the context dictionary and informs the client via WebSocket.
+        """Updates the context dictionary, it is allowed to add new items or remove existing ones.
 
         Args:
             context_dict (dict): The new context dictionary.
