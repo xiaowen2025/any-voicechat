@@ -33,6 +33,7 @@
                 </template>
               </v-select>
               <v-select label="Language Code" v-model="editableSettings.language_code" :items="languages" item-title="text" item-value="value"></v-select>
+              <v-switch v-model="editableSettings.search_tool" label="Enable Search Tool"></v-switch>
             </v-container>
           </v-window-item>
           <v-window-item value="general">

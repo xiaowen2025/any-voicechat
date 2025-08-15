@@ -11,7 +11,6 @@ api/
 ├── api_key.py
 ├── apps.py
 ├── avatar.py
-├── default_settings.json
 ├── main.py
 ├── services/
 │   ├── __init__.py
@@ -40,9 +39,6 @@ api/
 
 ### `api/avatar.py`
 # This file contains the logic for generating an avatar image. The `/api/avatar/generate` endpoint uses a generative AI model to create an image based on the agent's description and context.
-
-### `api/default_settings.json`
-# A JSON file containing the default settings for the application.
 
 ### `api/settings.py`
 # This file defines the `Settings` Pydantic model, which is used for type hinting and validation of application settings. It also contains constants for file paths and model names.
