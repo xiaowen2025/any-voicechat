@@ -3,14 +3,17 @@
     <v-avatar class="agent-avatar mb-4 w-100" rounded="lg" @click="openAvatarEditor">
       <v-img :src="currentAvatar" aspect-ratio="1.33" contain></v-img>
     </v-avatar>
-    <canvas ref="visualizer" width="125" height="50"></canvas>
+    <div ref="visualizer" class="visualizer"></div>
     <AvatarEditor v-model="avatarEditorDialog" @avatar-saved="onAvatarSaved" />
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onBeforeUnmount } from 'vue';
+import { ref, watch, onBeforeUnmount, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import WaveSurfer from 'wavesurfer.js';
+import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
+import { useTheme } from 'vuetify';
 import AvatarEditor from './AvatarEditor.vue';
 import { useConversationStore } from '../stores/conversation';
 
@@ -25,11 +28,15 @@ const props = defineProps({
   },
 });
 
+const theme = useTheme();
 const conversationStore = useConversationStore();
 const { currentAvatar } = storeToRefs(conversationStore);
-const visualizerAnimationId = ref(null);
 const avatarEditorDialog = ref(false);
 const visualizer = ref(null);
+const wavesurfer = ref(null);
+const record = ref(null);
+
+const primaryColor = computed(() => theme.current.value.colors.primary);
 
 function openAvatarEditor() {
   avatarEditorDialog.value = true;
@@ -41,63 +48,62 @@ function onAvatarSaved(newAvatar) {
   avatarEditorDialog.value = false;
 }
 
-function drawVisualizer() {
-  const canvas = visualizer.value;
-  if (!canvas || !props.analyserNode) return;
-  const canvasCtx = canvas.getContext('2d');
-  const bufferLength = props.analyserNode.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+const initializeVisualizer = () => {
+  if (!visualizer.value) return;
 
-  const draw = () => {
-    if (!props.conversationStarted) {
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-      return;
-    }
-    visualizerAnimationId.value = requestAnimationFrame(draw);
-    props.analyserNode.getByteFrequencyData(dataArray);
-    canvasCtx.fillStyle = 'rgb(240, 240, 240)';
-    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-    const barWidth = (canvas.width / bufferLength) * 2.5;
-    let barHeight;
-    let x = 0;
-    for (let i = 0; i < bufferLength; i++) {
-      barHeight = dataArray[i] / 2;
-      canvasCtx.fillStyle = `rgb(66, 165, 245)`;
-      canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
-    }
-  };
-  draw();
-}
+  wavesurfer.value = WaveSurfer.create({
+    container: visualizer.value,
+    waveColor: primaryColor.value,
+    progressColor: primaryColor.value,
+    height: 60,
+    barWidth: 2,
+    barGap: 3,
+    barRadius: 2,
+    cursorWidth: 0,
+  });
 
-function stopVisualizer() {
-  if (visualizerAnimationId.value) {
-    cancelAnimationFrame(visualizerAnimationId.value);
-    visualizerAnimationId.value = null;
-    const canvas = visualizer.value;
-    if (canvas) {
-      const canvasCtx = canvas.getContext('2d');
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+  record.value = wavesurfer.value.registerPlugin(RecordPlugin.create());
+
+  record.value.on('record-start', () => {
+    console.log('Recording started');
+  });
+
+  record.value.on('record-end', () => {
+    console.log('Recording stopped');
+  });
+
+  record.value.startMic();
+};
+
+const destroyVisualizer = () => {
+  if (record.value) {
+    record.value.stopMic();
   }
-}
+  if (wavesurfer.value) {
+    wavesurfer.value.destroy();
+    wavesurfer.value = null;
+  }
+};
 
 watch(() => props.conversationStarted, (newValue) => {
   if (newValue) {
-    drawVisualizer();
+    initializeVisualizer();
   } else {
-    stopVisualizer();
+    destroyVisualizer();
   }
 });
 
-watch(() => props.analyserNode, (newNode) => {
-  if (props.conversationStarted && newNode) {
-    drawVisualizer();
+watch(primaryColor, () => {
+  if (wavesurfer.value) {
+    wavesurfer.value.setOptions({
+      waveColor: primaryColor.value,
+      progressColor: primaryColor.value,
+    });
   }
 });
 
 onBeforeUnmount(() => {
-  stopVisualizer();
+  destroyVisualizer();
 });
 </script>
 
@@ -106,5 +112,11 @@ onBeforeUnmount(() => {
   max-width: 400px;
   height: auto;
   cursor: pointer;
+}
+
+.visualizer {
+  width: 125px;
+  height: 50px;
+  margin-bottom: 1rem;
 }
 </style>

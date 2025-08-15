@@ -1,11 +1,18 @@
 import asyncio
 import base64
 import json
+from typing import Any, Dict
 from google.genai.types import (
     Part,
     Content,
     Blob,
 )
+from pydantic import BaseModel, Field
+
+
+class UpdateContextMessage(BaseModel):
+    type: str = Field(default="context_updated", frozen=True)
+    context_dict: Dict[str, Any]
 
 
 async def agent_to_client_messaging(websocket, live_events):
@@ -19,7 +26,7 @@ async def agent_to_client_messaging(websocket, live_events):
                     "turn_complete": event.turn_complete,
                     "interrupted": event.interrupted,
                 }
-                await websocket.send_text(json.dumps(message))
+                await websocket.send_json(message)
                 # print(f"[AGENT TO CLIENT]: {message}")
                 continue
 
@@ -39,7 +46,7 @@ async def agent_to_client_messaging(websocket, live_events):
                         "mime_type": "audio/pcm",
                         "data": base64.b64encode(audio_data).decode("ascii")
                     }
-                    await websocket.send_text(json.dumps(message))
+                    await websocket.send_json(message)
                     # print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
                     continue
             # User message transcription
@@ -49,7 +56,7 @@ async def agent_to_client_messaging(websocket, live_events):
                         "text": part.text
                     }
                 }
-                await websocket.send_text(json.dumps(message))
+                await websocket.send_json(message)
                 # print(f"[AGENT TO CLIENT]: input_transcription: {event}")
 
             # Agent message transcription
@@ -59,7 +66,7 @@ async def agent_to_client_messaging(websocket, live_events):
                         "text": part.text
                     }
                 }
-                await websocket.send_text(json.dumps(message))
+                await websocket.send_json(message)
                 # print(f"[AGENT TO CLIENT]: output_transcription: {event}")
 
 

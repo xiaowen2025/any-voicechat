@@ -1,28 +1,46 @@
+import json
 from google.genai.types import (
     SpeechConfig,
     VoiceConfig,
     PrebuiltVoiceConfig,
 )
-
 from google.adk.runners import InMemoryRunner
 from google.adk.agents import LiveRequestQueue
 from google.adk.agents.run_config import RunConfig
+from google.adk.tools import google_search
 
 
 from api.voice_agent import create_agent
+from api.websocket.messaging import UpdateContextMessage
 
 
-async def start_agent_session(user_id, settings, is_audio=False):
-    app_name = settings["app_name"]
+async def start_agent_session(user_id, settings, websocket, is_audio=False):
+    async def edit_context_dict(context_dict: dict) -> dict:
+        """Updates the context dictionary, it is allowed to add new items or remove existing ones.
+
+        Args:
+            context_dict (dict): The new context dictionary.
+        """
+        update_context_message = UpdateContextMessage(context_dict=context_dict)
+        await websocket.send_json(update_context_message.model_dump())
+        return {}
+
+    tools = [edit_context_dict]
+    if settings.get("search_tool"):
+        tools.append(google_search)
+
     # Create a Runner
     runner = InMemoryRunner(
-        app_name=app_name,
-        agent=create_agent(settings),
+        app_name=settings["app_name"],
+        agent=create_agent(
+            settings,
+            tools=tools
+        ),
     )
 
     # Create a Session
     session = await runner.session_service.create_session(
-        app_name=app_name,
+        app_name=settings["app_name"],
         user_id=user_id,  # Replace with actual user ID
     )
 

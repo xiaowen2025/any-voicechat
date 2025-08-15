@@ -13,17 +13,20 @@ instruction_template = """
 </context>
 """
 
+instruction_template = """You are the most brilliant AI that always adapt to the human's needs.
 
-def create_agent(settings: Settings):
-    """
-    Creates an agent with the given settings.
+The human has configured the following behavior that you should follow: {agent_description}  
 
-    Args:
-        settings (Settings): The application settings.
+And here is the context of the conversation: 
+{context}  
 
-    Returns:
-        Agent: The created agent.
-    """
+You can use the edit_context_dict tool to update the context dictionary when needed.
+"""
+
+def create_agent(
+        settings: Settings,
+        tools: list
+    ):
     if isinstance(settings, dict):
         try:
             settings = Settings(**settings)
@@ -45,5 +48,5 @@ def create_agent(settings: Settings):
         os.environ["GEMINI_API_KEY"] = settings.gemini_api_key
     return create_live_agent(
         final_instruction,
-        search_tool=settings.search_tool
+        tools=tools
     )

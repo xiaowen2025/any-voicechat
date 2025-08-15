@@ -23,6 +23,7 @@
         v-if="showAppsGallery"
         @app-selected="handleAppSelection"
         @close="showAppsGallery = false"
+        @add-new-app="handleAddNewApp"
       />
       <conversation-view
         v-else
@@ -68,6 +69,9 @@ import { useApi } from './services/useApi';
 import { useConversationStore } from './stores/conversation';
 import { useSettingsStore } from './stores/settings';
 import { useUserStore } from './stores/user';
+
+// --- Constants ---
+const default_app_id = 'language_pal';
 
 // --- Stores ---
 const conversationStore = useConversationStore();
@@ -154,6 +158,11 @@ function handleAppSelection(appId) {
   window.location.assign(newUrl);
 }
 
+function handleAddNewApp() {
+  showAppsGallery.value = false;
+  isSettingsWindowVisible.value = true;
+}
+
 async function analyseConversation() {
   isAnalysing.value = true;
   setActiveTab('analysis');
@@ -222,7 +231,7 @@ onMounted(() => {
     showAppsGallery.value = true;
     showSettings.value = false;
   } else {
-    loadSettings();
+    window.location.assign(`/apps/${default_app_id}`);
   }
 
   const savedAvatar = localStorage.getItem('userAvatar');

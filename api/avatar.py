@@ -81,7 +81,8 @@ def generate_image(prompt: str, api_key: Optional[str] = None) -> dict:
 
 @router.post("/api/avatar/generate")
 async def generate_avatar(req: AvatarRequest):
-    prompt = f"Design a minimalist cartoon avatar for {req.settings.agent_description}. Considering the context: {req.settings.context_dict}"
+    prompt = f"Design a minimalist cartoon avatar based on the role description: {req.settings.agent_description}. Considering the context: {req.settings.context_dict}"
+    print(f"Generating avatar with prompt: {prompt}")
     return generate_image(prompt, api_key=req.settings.gemini_api_key)
 
 

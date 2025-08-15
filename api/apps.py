@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from api.settings import APP_EXAMPLES_PATH
+from api.settings import APP_SETTINGS_PATH
 from .exceptions import AppNotFoundError, MalformedAppConfigError
 
 router = APIRouter()
@@ -14,7 +14,7 @@ async def get_app_settings(app_id: str):
     """
     Retrieves the settings for a specific app.
     """
-    filepath = os.path.join(APP_EXAMPLES_PATH, f"{app_id}.json")
+    filepath = os.path.join(APP_SETTINGS_PATH, f"{app_id}.json")
     if not os.path.exists(filepath):
         raise AppNotFoundError(f"App with id '{app_id}' not found.")
 
@@ -36,10 +36,10 @@ async def get_apps():
     """
     apps = []
     try:
-        app_files = [f for f in os.listdir(APP_EXAMPLES_PATH) if f.endswith(".json")]
+        app_files = [f for f in os.listdir(APP_SETTINGS_PATH) if f.endswith(".json")]
 
         for i, filename in enumerate(app_files):
-            filepath = os.path.join(APP_EXAMPLES_PATH, filename)
+            filepath = os.path.join(APP_SETTINGS_PATH, filename)
             try:
                 with open(filepath, "r") as f:
                     data = json.load(f)

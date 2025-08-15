@@ -4,6 +4,7 @@ import { useSettingsStore } from './settings';
 import { useUserStore } from './user';
 
 export const useConversationStore = defineStore('conversation', () => {
+  const settingsStore = useSettingsStore();
   const websocket = ref(null);
   const messages = ref([]);
   const notes = ref('');
@@ -54,6 +55,11 @@ export const useConversationStore = defineStore('conversation', () => {
     websocket.value.onmessage = (event) => {
       const message = JSON.parse(event.data);
       console.log("[AGENT TO CLIENT] ", message);
+
+      if (message.type === 'context_updated') {
+        settingsStore.updateContext(message.context_dict);
+        return;
+      }
 
       if (message.turn_complete) {
         currentMessageId.value = null;

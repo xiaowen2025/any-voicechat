@@ -18,29 +18,55 @@
         <v-col>
           <span class="font-weight-bold">Context</span>
         </v-col>
-        <v-col cols="auto">
-          <v-btn icon @click.stop="$emit('update:modelValue', false)" title="Close">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+        <v-col class="d-flex justify-end">
+          <v-btn
+            :icon="isEditingContext ? 'mdi-check' : 'mdi-pencil'"
+            size="small"
+            variant="text"
+            @click="isEditingContext = !isEditingContext"
+          ></v-btn>
         </v-col>
       </v-row>
     </v-list-item>
     <v-divider></v-divider>
+    <v-list-item>
+      <v-switch
+        :model-value="searchToolEnabled"
+        @update:model-value="toggleSearchTool"
+        label="Enable Web Search"
+        color="primary"
+      ></v-switch>
+    </v-list-item>
     <v-expansion-panels v-model="panel" multiple>
       <context-viewer
-        v-for="(item, name, index) in context"
+        v-for="(item, name) in context"
         :key="name"
         :doc-name="name"
         :title="formatTitle(name)"
         :content="item.value || item.default_value"
-        @update:content="updateContext(name, $event)"
+        :is-editing="isEditingContext"
+        @update:content="updateContextContent(name, $event)"
+        @update:docName="updateContextDocName"
+        @remove="removeContext"
       ></context-viewer>
     </v-expansion-panels>
+    <div v-if="isEditingContext" class="pa-2">
+        <v-btn block @click="addContext">Add New Context</v-btn>
+    </div>
     <template v-slot:append>
-      <div class="pa-2 d-flex justify-start align-center">
-        <v-btn icon @click="$emit('toggle-settings')" title="Settings">
-          <v-icon>mdi-cog</v-icon>
-        </v-btn>
+      <div class="pa-2">
+        <v-row>
+          <v-col>
+            <v-btn icon @click="$emit('toggle-settings')" title="Settings">
+              <v-icon>mdi-cog</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="d-flex justify-end">
+            <v-btn icon @click.stop="$emit('update:modelValue', false)" title="Close">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
     </template>
   </v-navigation-drawer>
@@ -67,6 +93,14 @@ const context = computed(() => settings.value?.context_dict || {});
 const { drawerWidth, startResize } = useResizableDrawer(500);
 
 const panel = ref([]);
+const isEditingContext = ref(false);
+
+const searchToolEnabled = computed(() => settings.value?.search_tool || false);
+
+function toggleSearchTool(value) {
+  const newSettings = { ...settings.value, search_tool: value };
+  updateSettings(newSettings);
+}
 
 function formatTitle(name) {
   if (!name) return "";
@@ -76,12 +110,48 @@ function formatTitle(name) {
     .join(" ");
 }
 
-function updateContext(name, content) {
+function updateContextContent(name, content) {
   const newSettings = { ...settings.value };
   if (newSettings.context_dict && newSettings.context_dict[name]) {
     newSettings.context_dict[name].value = content;
     updateSettings(newSettings);
   }
+}
+
+function updateContextDocName({ oldDocName, newDocName }) {
+  const newSettings = { ...settings.value };
+  if (newSettings.context_dict && newSettings.context_dict[oldDocName] && !newSettings.context_dict[newDocName]) {
+    const newContextDict = { ...newSettings.context_dict };
+    newContextDict[newDocName] = newContextDict[oldDocName];
+    delete newContextDict[oldDocName];
+    newSettings.context_dict = newContextDict;
+    updateSettings(newSettings);
+  }
+}
+
+function removeContext(name) {
+  const newSettings = { ...settings.value };
+  if (newSettings.context_dict && newSettings.context_dict[name]) {
+    const newContextDict = { ...newSettings.context_dict };
+    delete newContextDict[name];
+    newSettings.context_dict = newContextDict;
+    updateSettings(newSettings);
+  }
+}
+
+function addContext() {
+  const newSettings = { ...settings.value };
+  if (!newSettings.context_dict) {
+    newSettings.context_dict = {};
+  }
+  let newDocName = "new_context";
+  let counter = 1;
+  while (newSettings.context_dict[newDocName]) {
+    newDocName = `new_context_${counter}`;
+    counter++;
+  }
+  newSettings.context_dict[newDocName] = { value: "", default_value: "" };
+  updateSettings(newSettings);
 }
 
 function expandAllPanels() {
@@ -117,5 +187,15 @@ onMounted(() => {
   height: 100%;
   cursor: col-resize;
   z-index: 10;
+}
+
+:deep(.v-list-item-title),
+:deep(.v-label),
+:deep(.v-expansion-panel-title__text) {
+  font-size: 1.1rem !important;
+}
+
+.font-weight-bold {
+    font-size: 1.2rem !important;
 }
 </style>

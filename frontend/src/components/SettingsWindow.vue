@@ -77,6 +77,16 @@
               </v-text-field>
               <v-btn v-if="apiKeyEdited" @click="saveGeminiApiKey" class="mb-4" size="large" rounded="lg">Save API Key</v-btn>
             </v-container>
+            <v-container>
+              <v-list>
+                <v-list-item
+                  prepend-icon="mdi-github"
+                  title="Check on GitHub"
+                  href="https://github.com/xiaowen2025/Vox-Hub"
+                  target="_blank"
+                ></v-list-item>
+              </v-list>
+            </v-container>
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -85,7 +95,7 @@
         <v-spacer></v-spacer>
         <v-menu location="top">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" text>More</v-btn>
+            <v-btn v-bind="props" text ref="moreButton">More</v-btn>
           </template>
           <v-list>
             <v-list-item @click="copySettings">
@@ -140,9 +150,11 @@ const voices = [
 
 const props = defineProps({
   modelValue: Boolean,
+  openMoreMenu: Boolean,
 });
 
 const emit = defineEmits(['update:modelValue', 'api-key-updated']);
+const moreButton = ref(null);
 
 const settingsStore = useSettingsStore();
 const { settings, currentTheme, darkMode } = storeToRefs(settingsStore);
