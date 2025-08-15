@@ -23,7 +23,7 @@ async def start_agent_session(user_id, settings, websocket, is_audio=False):
         """
         update_context_message = UpdateContextMessage(context_dict=context_dict)
         await websocket.send_json(update_context_message.model_dump())
-        return {"status": "Context updated successfully."}
+        return {}
 
     tools = [edit_context_dict]
     if settings.get("search_tool"):
