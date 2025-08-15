@@ -57,7 +57,7 @@ export const useConversationStore = defineStore('conversation', () => {
       console.log("[AGENT TO CLIENT] ", message);
 
       if (message.type === 'context_updated') {
-        settingsStore.updateSettings(message.context_dict);
+        settingsStore.updateContext(message.context_dict);
         return;
       }
 

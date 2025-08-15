@@ -25,7 +25,7 @@
       <v-switch
         :model-value="searchToolEnabled"
         @update:model-value="toggleSearchTool"
-        label="Enable Search Tool"
+        label="Enable Web Search"
         color="primary"
       ></v-switch>
     </v-list-item>

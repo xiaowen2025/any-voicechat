@@ -40,12 +40,26 @@ export const useSettingsStore = defineStore('settings', () => {
     localStorage.setItem('settings', JSON.stringify(newSettings));
   }
 
+  async function updateContext(newContextDict) {
+    if (settings.value && settings.value.context_dict) {
+      const newContext = { ...settings.value.context_dict };
+      for (const key in newContextDict) {
+        if (Object.prototype.hasOwnProperty.call(newContext, key)) {
+          newContext[key].value = newContextDict[key];
+        }
+      }
+      settings.value = { ...settings.value, context_dict: newContext };
+      localStorage.setItem('settings', JSON.stringify(settings.value));
+    }
+  }
+
   return {
     settings,
     currentTheme,
     darkMode,
     loadSettings,
     updateSettings,
+    updateContext,
     setTheme,
     setDarkMode,
   };
