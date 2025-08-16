@@ -21,9 +21,14 @@ def test_generate_avatar_success(mock_genai_client):
 
     request_body = {
         "settings": {
-            "gemini_api_key": "fake_key",
+            "app_name": "test_app",
             "agent_description": "A test agent",
-            "context_dict": {"role": "user"}
+            "context_dict": {"context": {"role": "user"}},
+            "goal_description": "Test goal",
+            "analyse_instruction": "Test instruction",
+            "voice_name": "Test voice",
+            "language_code": "en-US",
+            "gemini_api_key": "fake_key"
         }
     }
 
@@ -40,9 +45,14 @@ def test_generate_avatar_api_key_error(mock_genai_client):
 
     request_body = {
         "settings": {
-            "gemini_api_key": "invalid_key",
+            "app_name": "test_app",
             "agent_description": "A test agent",
-            "context_dict": {"role": "user"}
+            "context_dict": {"context": {"role": "user"}},
+            "goal_description": "Test goal",
+            "analyse_instruction": "Test instruction",
+            "voice_name": "Test voice",
+            "language_code": "en-US",
+            "gemini_api_key": "invalid_key"
         }
     }
 
@@ -59,9 +69,14 @@ def test_generate_avatar_image_generation_error(mock_genai_client):
 
     request_body = {
         "settings": {
-            "gemini_api_key": "valid_key",
+            "app_name": "test_app",
             "agent_description": "A test agent",
-            "context_dict": {"role": "user"}
+            "context_dict": {"context": {"role": "user"}},
+            "goal_description": "Test goal",
+            "analyse_instruction": "Test instruction",
+            "voice_name": "Test voice",
+            "language_code": "en-US",
+            "gemini_api_key": "valid_key"
         }
     }
 

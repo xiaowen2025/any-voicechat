@@ -16,9 +16,14 @@ def test_post_analyse(mock_analysis_service):
     request_body = {
         "notes": "These are test notes.",
         "settings": {
-            "gemini_api_key": "test_key",
-            "context_dict": {"role": "user"},
-            "agent_description": "A test agent"
+            "app_name": "test_app",
+            "agent_description": "A test agent",
+            "context_dict": {"context": {"role": "user"}},
+            "goal_description": "Test goal",
+            "analyse_instruction": "Test instruction",
+            "voice_name": "Test voice",
+            "language_code": "en-US",
+            "gemini_api_key": "test_key"
         }
     }
 
