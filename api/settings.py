@@ -17,6 +17,7 @@ class GlobalSettings(BaseSettings):
     app_settings_path: str = "app_settings"
     live_model_name: str = "gemini-2.5-flash-live-preview"
     image_model_name: str = "gemini-2.0-flash-preview-image-generation"
+    analyse_model_name: str = "gemini-2.5-flash"
 
     class Config:
         env_file = ".env"

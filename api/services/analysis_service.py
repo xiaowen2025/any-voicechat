@@ -1,6 +1,7 @@
 from google import genai
 from api.settings import AppSettings, settings
 
+
 def analyse_notes(app_settings: AppSettings, notes: str) -> str:
     """
     Analyzes the notes using the Gemini AI model.
@@ -26,15 +27,16 @@ def analyse_notes(app_settings: AppSettings, notes: str) -> str:
         if v.get("value")
     }
     if app_settings.gemini_api_key:
-        genai.configure(api_key=app_settings.gemini_api_key)
-    client = genai.Client(vertexai=False)
+        client = genai.Client(api_key=app_settings.gemini_api_key)
+    else:
+        client = genai.Client()
     final_instruction = instruction_template.format(
         analyse_instruction=app_settings.analyse_instruction,
         context=context,
         notes=notes,
     )
     response = client.models.generate_content(
-        model=settings.live_model_name,
+        model=settings.analyse_model_name,
         contents=[final_instruction],
     )
     return response.text

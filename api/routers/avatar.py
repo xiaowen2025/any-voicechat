@@ -8,13 +8,13 @@ from google.api_core import exceptions as google_exceptions
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from ..settings import Settings
+from ..settings import AppSettings
 from ..exceptions import ApiKeyError, ImageGenerationError
 
 router = APIRouter()
 
 class AvatarRequest(BaseModel):
-    settings: Settings
+    settings: AppSettings
     api_key: Optional[str] = None
 
 def generate_image(prompt: str, api_key: Optional[str] = None) -> dict:

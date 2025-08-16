@@ -61,8 +61,8 @@ async def agent_to_client_messaging(websocket, live_events):
             # If the turn complete or interrupted, send it
             if event.turn_complete or event.interrupted:
                 message = AgentTurnCompleteMessage(
-                    turn_complete=event.turn_complete,
-                    interrupted=event.interrupted,
+                    turn_complete=event.turn_complete is True,
+                    interrupted=event.interrupted is True,
                 )
                 await websocket.send_json(message.model_dump())
                 continue

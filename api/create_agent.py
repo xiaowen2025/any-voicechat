@@ -1,6 +1,6 @@
 import logging
 import os
-import google.generativeai as genai
+from google import genai
 from api.services.agent_service import create_gemini_live_agent
 from api.settings import AppSettings
 
@@ -38,10 +38,8 @@ def create_agent(
 
     logging.info(f"Creating agent with context: {final_instruction}")
     if app_settings.gemini_api_key:
-        genai.configure(api_key=app_settings.gemini_api_key)
+        os.environ["GOOGLE_API_KEY"] = app_settings.gemini_api_key
     return create_gemini_live_agent(
         final_instruction,
-        tools=tools,
-        name=app_settings.app_name,
-        description=app_settings.agent_description,
+        tools=tools
     )
