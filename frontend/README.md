@@ -3,6 +3,7 @@
 This document provides a comprehensive overview of the frontend architecture, detailing the purpose of each file and directory. It also includes recommendations for future refactoring to enhance maintainability and scalability.
 ```
 (cd frontend && npm install && npm run build)
+(cd frontend && npm install && npm run test:unit)
 ```
 ## Folder Structure
 

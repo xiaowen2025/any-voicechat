@@ -1,29 +1,12 @@
-# Frontend Decoupling and Testing Strategy
+# Frontend Testing Strategy
 
-This document outlines the investigation and solution for decoupling the frontend from the backend to make it fully testable.
+Run tests:  
 
-## 1. The Problem: Tightly Coupled Frontend
+```bash
+(cd frontend && npm install && npm run test:unit)
+```
 
-The frontend was making direct API calls to the backend using `fetch` in the `src/services/useApi.js` composable. The Vite development server was configured to proxy requests from `/api` to a live backend running on `localhost:8000`.
-
-This setup had several disadvantages:
-
-*   **Difficult to Test:** Unit and component tests that relied on API data could not be run without a running backend.
-*   **Brittle Tests:** Tests could fail due to backend issues, network problems, or data inconsistencies, making them unreliable.
-*   **Slow Tests:** Network requests make tests slow.
-*   **Difficult Development:** Frontend developers needed to run the backend to work on components that fetched data.
-
-## 2. The Investigation: Identifying the Coupling
-
-The investigation process involved the following steps:
-
-1.  **`ls -F frontend/`**: Revealed a standard Vue project structure with `package.json`, `vite.config.js`, and a `src` directory.
-2.  **`read_file("frontend/package.json")`**: Showed the use of `vite`, `vitest`, and `vue`.
-3.  **`read_file("frontend/vite.config.js")`**: The `server.proxy` configuration confirmed that `/api` requests were being forwarded to `http://localhost:8000`. This was the primary source of the coupling.
-4.  **`ls -F frontend/src`**: The directory structure suggested that API calls would likely be in a `services` directory.
-5.  **`read_file("frontend/src/services/useApi.js")`**: This file contained the `fetch` calls to the backend, confirming how the frontend was making API requests.
-
-## 3. The Solution: Mock Service Worker (msw)
+## Mock Service Worker (msw)
 
 To decouple the frontend from the backend for testing, we introduced **Mock Service Worker (`msw`)**. `msw` is an API mocking library that uses a Service Worker to intercept outgoing requests from the browser.
 
