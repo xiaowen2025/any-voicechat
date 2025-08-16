@@ -7,78 +7,96 @@ This document provides an overview of the `api/` directory, its structure, and t
 ```
 api/
 ├── __init__.py
-├── analyse.py
-├── api_key.py
-├── apps.py
-├── avatar.py
+├── create_agent.py
+├── exceptions.py
 ├── main.py
+├── routers/
+│   ├── analyse.py
+│   ├── api_key.py
+│   ├── apps.py
+│   └── avatar.py
 ├── services/
 │   ├── __init__.py
-│   └── google_ai.py
+│   ├── agent_service.py
+│   ├── analysis_service.py
+│   └── app_service.py
 ├── settings.py
-├── voice_agent.py
 └── websocket/
-    ├── agent.py
+    ├── __init__.py
     ├── connection.py
-    └── messaging.py
+    ├── messaging.py
+    └── session.py
 ```
 
 ## File Descriptions
 
 ### `api/main.py`
-# This is the main entry point of the FastAPI application. It initializes the FastAPI app, includes all the API routers from other files, and mounts the static frontend files.
+This is the main entry point of the FastAPI application. It initializes the FastAPI app, includes all the API routers from other files, mounts the static frontend files, and sets up centralized exception handling.
 
-### `api/analyse.py`
-# This file defines the `/api/analyse` endpoint, which uses the Gemini AI model to analyze notes provided in the request.
+### `api/create_agent.py`
+This file is responsible for creating a Gemini AI agent instance. It formats the agent's instructions and context before creating the agent using the `agent_service`.
 
-### `api/api_key.py`
-# This file provides endpoints for verifying and setting the Gemini API key. It includes `/api/verify_api_key` and `/api/set_api_key`.
-
-### `api/apps.py`
-# This file handles retrieving app configurations. It has endpoints to get a list of all available apps (`/api/apps`) and to get the settings for a specific app (`/api/apps/{app_id}/settings`).
-
-### `api/avatar.py`
-# This file contains the logic for generating an avatar image. The `/api/avatar/generate` endpoint uses a generative AI model to create an image based on the agent's description and context.
+### `api/exceptions.py`
+This file defines custom exception classes for the application, such as `ApiKeyError`, `ImageGenerationError`, `AppNotFoundError`, and `MalformedAppConfigError`. This allows for more specific error handling in `main.py`.
 
 ### `api/settings.py`
-# This file defines the `Settings` Pydantic model, which is used for type hinting and validation of application settings. It also contains constants for file paths and model names.
+This file defines Pydantic models for application settings, used for type hinting and validation. It includes `AppSettings` for agent configuration.
 
-### `api/voice_agent.py`
-# This file is responsible for creating a "live agent" instance. It formats the agent's instructions and context before creating the agent using the `google_ai` service.
+### `api/routers/`
+This directory contains the API routers for different endpoints.
 
-### `api/services/__init__.py`
-# An empty file that marks the `services` directory as a Python package.
+#### `api/routers/analyse.py`
+This file defines the `/api/analyse` endpoint, which uses the `analysis_service` to analyze notes with the Gemini AI model.
 
-### `api/services/google_ai.py`
-# This service file contains a function to create a Google AI agent instance with a specified model and instructions.
+#### `api/routers/api_key.py`
+This file provides endpoints for verifying and setting the Gemini API key. It includes `/api/verify_api_key` and `/api/set_api_key`.
 
-### `api/websocket/agent.py`
-# This file handles the agent session for a websocket connection. It creates a runner, a session, and a request queue for the agent.
+#### `api/routers/apps.py`
+This file handles retrieving app configurations. It has endpoints to get a list of all available apps (`/api/apps`) and to get the settings for a specific app (`/api/apps/{app_id}/settings`), using the `app_service`.
 
-### `api/websocket/connection.py`
-# This file manages the websocket lifecycle. It defines the main websocket endpoint (`/ws/{user_id}`), handles client connections and disconnections, and orchestrates the communication between the client and the agent.
+#### `api/routers/avatar.py`
+This file contains the logic for generating an avatar image. The `/api/avatar/generate` endpoint uses a generative AI model to create an image based on the agent's description and context.
 
-### `api/websocket/messaging.py`
-# This file contains the logic for exchanging messages between the client and the agent over the websocket. It handles both incoming and outgoing messages, including text and audio data.
+### `api/services/`
+This directory contains services that encapsulate business logic.
+
+#### `api/services/agent_service.py`
+This service contains a function to create a Google AI agent instance with a specified model and instructions.
+
+#### `api/services/analysis_service.py`
+This service contains the logic for analyzing notes with the Gemini AI model.
+
+#### `api/services/app_service.py`
+This service handles the logic for managing and retrieving application configurations from JSON files.
+
+### `api/websocket/`
+This directory contains the logic for handling websocket connections.
+
+#### `api/websocket/connection.py`
+This file manages the websocket lifecycle. It defines the main websocket endpoint (`/ws/{user_id}`), handles client connections and disconnections, and orchestrates the communication between the client and the agent.
+
+#### `api/websocket/messaging.py`
+This file contains the logic for exchanging messages between the client and the agent over the websocket. It handles both incoming and outgoing messages, including text and audio data.
+
+#### `api/websocket/session.py`
+This file handles the agent session for a websocket connection. It creates a runner, a session, and a request queue for the agent.
 
 ## Refactoring Suggestions
 
 Based on a review of the codebase, here are some suggestions for refactoring and improvement:
 
 ### 1. Centralized Configuration and Secrets Management
-- **API Key Handling**: The current implementation in `api/api_key.py` sets the Gemini API key as an environment variable. This is not a secure practice for production environments.
+- **API Key Handling**: The current implementation in `api/routers/api_key.py` and `api/create_agent.py` sets the Gemini API key as an environment variable. This is not a secure practice for production environments.
   - **Suggestion**: Use a dedicated secrets management tool (e.g., HashiCorp Vault, AWS Secrets Manager) to store sensitive information like API keys. For local development, `python-dotenv` is a good option, but the key should not be hardcoded or passed around in environment variables in production.
 - **Hardcoded Values**: Model names and other settings are hardcoded in `api/settings.py`.
   - **Suggestion**: Move these settings to a configuration file (e.g., `config.yaml`, `.env`) and use a library like `pydantic-settings` to load them. This makes the application more configurable without changing the code.
 
-### 2. Improved Error Handling
-- **Specific Exceptions**: The error handling in `api/avatar.py` and `api/apps.py` is very generic.
-  - **Suggestion**: Create custom exception classes for different types of errors (e.g., `ApiKeyError`, `ImageGenerationError`). This will make the error handling more specific and easier to debug. Log the full error for internal review while returning a user-friendly message to the client.
+### 2. Improved Error Handling in Websockets
+- **Generic Exception Handling**: The websocket error handling in `api/websocket/connection.py` is very generic.
+  - **Suggestion**: Implement more specific error handling for different types of websocket errors (e.g., `SessionCreationError`, `MessageHandlingError`). This will make the websocket communication more robust and easier to debug.
 
 ### 3. Code Structure and Reusability
-- **Code Duplication**: The logic for preparing the `context` dictionary is duplicated in `api/analyse.py` and `api/voice_agent.py`.
+- **Code Duplication**: The logic for preparing the `context` dictionary is duplicated in `api/create_agent.py` and `api/services/analysis_service.py`.
   - **Suggestion**: Create a helper function (e.g., in a `utils.py` file) to extract and format the context from the settings. This will reduce code duplication and improve maintainability.
-- **Missing `__init__.py`**: The `api/websocket` directory is missing an `__init__.py` file.
-  - **Suggestion**: Add an empty `__init__.py` file to the `api/websocket` directory to ensure it is treated as a Python package.
-- **Refactor Large Functions**: Functions like `generate_image` in `api/avatar.py` and the messaging functions in `api/websocket/messaging.py` are doing too much.
+- **Refactor Large Functions**: Functions like `generate_image` in `api/routers/avatar.py` and the messaging functions in `api/websocket/messaging.py` are doing too much.
   - **Suggestion**: Break down these large functions into smaller, single-responsibility functions. For example, in `generate_image`, you could have separate functions for creating the client, preparing the request, and processing the response.
