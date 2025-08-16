@@ -8,6 +8,8 @@ name = "vox-hub"
 version = "0.1.0"
 scripts = {api = "api.main:main"}
 
+requires-python = ">=3.12"
+
 dependencies = [
     "google-genai==1.29.0",
     "google-adk==1.8.0",

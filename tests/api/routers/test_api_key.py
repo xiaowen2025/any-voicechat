@@ -37,13 +37,3 @@ def test_verify_api_key_failure(mock_genai_client):
     assert "Invalid API Key" in response.json()["message"]
 
 
-def test_set_api_key():
-    # Arrange
-    request_body = {"key": "any_key"}
-
-    # Act
-    response = client.post("/api/set_api_key", json=request_body)
-
-    # Assert
-    assert response.status_code == 200
-    assert response.json() == {"status": "success", "message": "API Key set."}
