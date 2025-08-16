@@ -14,6 +14,7 @@ from api.exceptions import (
     AppNotFoundError,
     MalformedAppConfigError,
 )
+from api.settings import settings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

@@ -1,13 +1,51 @@
 import asyncio
 import base64
 import json
+import logging
 from typing import Any, Dict
 from google.genai.types import (
     Part,
     Content,
     Blob,
 )
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
+from api.settings import AppSettings
+
+logger = logging.getLogger(__name__)
+
+class SettingsMessage(BaseModel):
+    type: str = Field(default="settings", frozen=True)
+    settings: AppSettings
+
+
+class TextMessage(BaseModel):
+    type: str = Field(default="text", frozen=True)
+    mime_type: str = "text/plain"
+    data: str
+
+
+class AudioMessage(BaseModel):
+    type: str = Field(default="audio", frozen=True)
+    mime_type: str = "audio/pcm"
+    data: str
+
+
+class AgentTextMessage(BaseModel):
+    output_transcription: Dict[str, str]
+
+
+class AgentAudioMessage(BaseModel):
+    mime_type: str = "audio/pcm"
+    data: str
+
+
+class AgentTurnCompleteMessage(BaseModel):
+    turn_complete: bool
+    interrupted: bool
+
+
+class AgentInputTranscriptionMessage(BaseModel):
+    input_transcription: Dict[str, str]
 
 
 class UpdateContextMessage(BaseModel):
@@ -22,12 +60,11 @@ async def agent_to_client_messaging(websocket, live_events):
 
             # If the turn complete or interrupted, send it
             if event.turn_complete or event.interrupted:
-                message = {
-                    "turn_complete": event.turn_complete,
-                    "interrupted": event.interrupted,
-                }
-                await websocket.send_json(message)
-                # print(f"[AGENT TO CLIENT]: {message}")
+                message = AgentTurnCompleteMessage(
+                    turn_complete=event.turn_complete,
+                    interrupted=event.interrupted,
+                )
+                await websocket.send_json(message.model_dump())
                 continue
 
             # Read the Content and its first Part
@@ -42,52 +79,49 @@ async def agent_to_client_messaging(websocket, live_events):
             if is_audio:
                 audio_data = part.inline_data and part.inline_data.data
                 if audio_data:
-                    message = {
-                        "mime_type": "audio/pcm",
-                        "data": base64.b64encode(audio_data).decode("ascii")
-                    }
-                    await websocket.send_json(message)
-                    # print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
+                    message = AgentAudioMessage(
+                        data=base64.b64encode(audio_data).decode("ascii")
+                    )
+                    await websocket.send_json(message.model_dump())
                     continue
             # User message transcription
             if event.content.role == "user" and part.text:
-                message = {
-                    "input_transcription": {
-                        "text": part.text
-                    }
-                }
-                await websocket.send_json(message)
-                # print(f"[AGENT TO CLIENT]: input_transcription: {event}")
+                message = AgentInputTranscriptionMessage(
+                    input_transcription={"text": part.text}
+                )
+                await websocket.send_json(message.model_dump())
 
             # Agent message transcription
             elif event.content.role == "model" and part.text and event.partial:
-                message = {
-                    "output_transcription": {
-                        "text": part.text
-                    }
-                }
-                await websocket.send_json(message)
-                # print(f"[AGENT TO CLIENT]: output_transcription: {event}")
+                message = AgentTextMessage(
+                    output_transcription={"text": part.text}
+                )
+                await websocket.send_json(message.model_dump())
 
 
 async def client_to_agent_messaging(websocket, live_request_queue):
     """Client to agent communication"""
     while True:
-        # Decode JSON message
         message_json = await websocket.receive_text()
-        message = json.loads(message_json)
-        mime_type = message["mime_type"]
-        data = message["data"]
+        try:
+            message_data = json.loads(message_json)
+            message_type = message_data.get("type")
 
-        # Send the message to the agent
-        if mime_type == "text/plain":
-            # Send a text message
-            content = Content(role="user", parts=[Part.from_text(text=data)])
-            live_request_queue.send_content(content=content)
-            print(f"[CLIENT TO AGENT]: {data}")
-        elif mime_type == "audio/pcm":
-            # Send an audio data
-            decoded_data = base64.b64decode(data)
-            live_request_queue.send_realtime(Blob(data=decoded_data, mime_type=mime_type))
-        else:
-            raise ValueError(f"Mime type not supported: {mime_type}")
+            if message_type == "text":
+                message = TextMessage(**message_data)
+                content = Content(role="user", parts=[Part.from_text(text=message.data)])
+                live_request_queue.send_content(content=content)
+            elif message_type == "audio":
+                message = AudioMessage(**message_data)
+                decoded_data = base64.b64decode(message.data)
+                live_request_queue.send_realtime(Blob(data=decoded_data, mime_type=message.mime_type))
+            # The settings message is handled in the connection setup, so we ignore it here.
+            elif message_type == "settings":
+                pass
+            else:
+                logger.warning(f"Unsupported message type: {message_type}")
+
+        except (ValidationError, json.JSONDecodeError) as e:
+            logger.error(f"Error processing message: {e}")
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}", exc_info=True)

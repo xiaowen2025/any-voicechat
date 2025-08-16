@@ -1,57 +1,19 @@
-from google import genai
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 
-
-from api.settings import Settings
-
+from api.settings import AppSettings
+from api.services import analysis_service
 
 router = APIRouter()
 
 class AnalyseRequest(BaseModel):
     notes: str
-    settings: Optional[Settings] = None
-
-
-def analyse(settings: Settings, notes: str) -> str:
-    """
-    Analyzes the notes using the Gemini AI model.
-
-    Args:
-        settings (Settings): The application settings.
-        notes (str): The notes to be analyzed.
-
-    Returns:
-        str: The analysis text.
-    """
-    instruction_template = """
-    Task:
-    {analyse_instruction}
-    Context:
-    {context}
-    Transcription (message after "You" is what the user said):
-    {notes}
-    """
-    context = {
-        k: v["value"]
-        for k, v in settings.context_dict.items()
-        if v.get("value")
-    }
-    client = genai.Client(vertexai=False)
-    final_instruction = instruction_template.format(
-        analyse_instruction=settings.analyse_instruction,
-        context=context,
-        notes=notes,
-    )
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=[final_instruction],
-    )
-    return response.text
-
+    settings: Optional[AppSettings] = None
 
 @router.post("/api/analyse")
-async def post_analyse(request: AnalyseRequest):
-    analysis_result = analyse(request.settings, request.notes)
+async def post_analyse(
+    request: AnalyseRequest,
+):
+    analysis_result = analysis_service.analyse_notes(request.settings, request.notes)
     return {"message": "Analysis complete", "analysis": analysis_result}
