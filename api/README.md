@@ -1,43 +1,62 @@
 # API Documentation
 
-## Backend Stack
+## Core Stacks
 
-The backend of this application is built with a modern Python stack, prioritizing performance, developer efficiency, and scalability. The key technologies used are:
+The API is built on a modern Python stack, leveraging several powerful libraries and frameworks.
 
-- **FastAPI**: A high-performance web framework for building APIs with Python. It's chosen for its speed, automatic interactive documentation (via Swagger UI and ReDoc), and its use of standard Python type hints for data validation.
+### FastAPI
 
-- **`google-genai`**: The Python SDK for Google's generative AI models. Used for avatar generation and conversation analysis.  
+-   **Role**: The web framework used to build the API, responsible for routing, request handling, and response generation.
+-   **Why**: Asynchronous operations, easy-to-use support for WebSockets.
 
-- **`google-adk`**: Google Agent Development Kit (ADK) for building streaming agent service.
+### `google-genai`
 
-- **WebSockets**: The `websockets` library is used for real-time, bidirectional communication between the client and the server. This is essential for features that require instant updates, such as live chat or notifications.
+-   **Role**: The Python SDK for Google's generative AI models, used here for avatar generation.
+-   **Why**: Balancing Cost and Performance
 
-- **Pydantic**: A library for data validation and settings management using Python type annotations. FastAPI is built on top of Pydantic, and it's used throughout the application to ensure that data conforms to the expected schema.
+### `google-adk`
 
-- **Pytest**: A popular testing framework for Python. It's used to write and run the automated tests for the backend, ensuring code quality and reliability.
+-   **Role**: The Google Agent Development Kit (ADK), used to build the streaming agent service.
+-   **Why**: Bi-streaming support
 
-## Folder Structure
+### WebSockets
+
+-   **Role**: Used for real-time, bidirectional communication, which is essential for the live agent feature.
+-   **Why**: Web standard for real-time communication.
+
+## Structure
+
+The API is organized into several directories, each with a specific responsibility. This modular structure makes the codebase easier to understand, maintain, and extend.
+
+### File Tree
 
 ```
 api/
-├── __init__.py
-├── create_agent.py
-├── exceptions.py
-├── main.py
-├── routers/
-│   ├── analyse.py
-│   ├── api_key.py
-│   ├── apps.py
-│   └── avatar.py
-├── services/
+├── __init__.py                # Makes the 'api' directory a Python package.
+├── API_DOCUMENTATION.md       # This documentation file.
+├── README.md                  # General information about the API.
+├── create_agent.py            # Script to create and configure agents.
+├── exceptions.py              # Defines custom exception classes for the application.
+├── main.py                    # The main entry point for the FastAPI application.
+├── settings.py                # Application settings and configuration management.
+├── utils.py                   # Utility functions used across the application.
+│
+├── routers/                   # Contains the API's route handlers.
 │   ├── __init__.py
-│   ├── agent_service.py
-│   ├── analysis_service.py
-│   └── app_service.py
-├── settings.py
-└── websocket/
+│   ├── analyse.py             # Routes for conversation analysis.
+│   ├── api_key.py             # Routes for managing API keys.
+│   ├── apps.py                # Routes for managing applications.
+│   └── avatar.py              # Routes for generating avatars.
+│
+├── services/                  # Contains the business logic of the application.
+│   ├── __init__.py
+│   ├── agent_service.py       # Service for creating and managing AI agents.
+│   ├── analysis_service.py    # Service for handling conversation analysis.
+│   └── app_service.py         # Service for managing applications.
+│
+└── websocket/                 # Handles WebSocket connections for real-time communication.
     ├── __init__.py
-    ├── connection.py
-    ├── messaging.py
-    └── session.py
+    ├── connection.py          # Manages the WebSocket connection lifecycle.
+    ├── messaging.py           # Handles messaging between the client and the agent.
+    └── session.py             # Manages the agent session over WebSockets.
 ```
