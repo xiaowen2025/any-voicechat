@@ -3,6 +3,7 @@ import os
 from google import genai
 from api.services.agent_service import create_gemini_live_agent
 from api.settings import AppSettings
+from api.utils import get_context
 
 instruction_template = """You are the most brilliant AI that always adapt to the human's needs.
 
@@ -25,11 +26,7 @@ def create_agent(
             app_settings = AppSettings(**app_settings)
         except Exception as e:
             raise ValueError(f"Invalid settings format: {e}")
-    context = {
-        k: v["value"]
-        for k, v in app_settings.context_dict.items()
-        if v.get("value")
-    }
+    context = get_context(app_settings)
     final_instruction = instruction_template.format(
         agent_description=app_settings.agent_description,
         goal_description=app_settings.goal_description,

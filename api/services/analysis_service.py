@@ -1,5 +1,6 @@
 from google import genai
 from api.settings import AppSettings, settings
+from api.utils import get_context
 
 
 def analyse_notes(app_settings: AppSettings, notes: str) -> str:
@@ -21,11 +22,7 @@ def analyse_notes(app_settings: AppSettings, notes: str) -> str:
     Transcription (message after "You" is what the user said):
     {notes}
     """
-    context = {
-        k: v["value"]
-        for k, v in app_settings.context_dict.items()
-        if v.get("value")
-    }
+    context = get_context(app_settings)
     if app_settings.gemini_api_key:
         client = genai.Client(api_key=app_settings.gemini_api_key)
     else:
