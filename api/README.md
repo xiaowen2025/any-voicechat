@@ -1,6 +1,20 @@
 # API Documentation
 
-This document provides an overview of the `api/` directory, its structure, and the purpose of each file. It also includes refactoring suggestions for improving the codebase.
+## Backend Stack
+
+The backend of this application is built with a modern Python stack, prioritizing performance, developer efficiency, and scalability. The key technologies used are:
+
+- **FastAPI**: A high-performance web framework for building APIs with Python. It's chosen for its speed, automatic interactive documentation (via Swagger UI and ReDoc), and its use of standard Python type hints for data validation.
+
+- **`google-genai`**: The Python SDK for Google's generative AI models. Used for avatar generation and conversation analysis.  
+
+- **`google-adk`**: Google Agent Development Kit (ADK) for building streaming agent service.
+
+- **WebSockets**: The `websockets` library is used for real-time, bidirectional communication between the client and the server. This is essential for features that require instant updates, such as live chat or notifications.
+
+- **Pydantic**: A library for data validation and settings management using Python type annotations. FastAPI is built on top of Pydantic, and it's used throughout the application to ensure that data conforms to the expected schema.
+
+- **Pytest**: A popular testing framework for Python. It's used to write and run the automated tests for the backend, ensuring code quality and reliability.
 
 ## Folder Structure
 

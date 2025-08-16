@@ -1,6 +1,37 @@
-# Frontend Documentation
+# Frontend 
 
-This document provides a comprehensive overview of the frontend architecture, detailing the purpose of each file and directory. It also includes recommendations for future refactoring to enhance maintainability and scalability.
+## Core Frontend Stack
+
+The frontend is built on a modern, Vue-based stack. Here are the core technologies used:
+
+- **[Vue 3](https://vuejs.org/)**: The progressive JavaScript framework used for building the user interface. We use the Composition API with `<script setup>` syntax for better organization and code reuse.
+
+- **[Vite](https://vitejs.dev/)**: The build tool and development server. Vite provides a faster and leaner development experience compared to other bundlers like Webpack.
+
+- **[Vuetify 3](https://vuetifyjs.com/)**: A Material Design component framework for Vue. It provides a rich set of pre-built UI components, which helps in rapid development.
+
+- **[Pinia](https://pinia.vuejs.org/)**: The official state management library for Vue.js. It's used to manage the application's global state in a centralized and predictable way.
+
+- **[Vitest](https://vitest.dev/)**: A fast and simple testing framework for Vite projects. It's used for writing and running unit tests for our components, stores, and composables.  
+
+## State Management
+
+We use **[Pinia](https://pinia.vuejs.org/)** for state management. Pinia provides a simple and intuitive API for managing global state. The stores are located in the `src/stores` directory. Each store is responsible for a specific domain of the application's state:
+
+- **`conversation.js`**: Manages the state related to the conversation with the AI agent. This includes:
+  - The list of messages in the conversation.
+  - The user's notes.
+  - The analysis of the conversation.
+  - The state of the WebSocket connection.
+  - Whether the conversation is in progress, finished, or being analyzed.
+
+- **`settings.js`**: Manages the application's settings. This includes:
+  - The current theme (light/dark mode and color scheme).
+  - The settings for the currently selected app (e.g., agent's name, persona).
+
+- **`user.js`**: Manages user-specific data. This includes:
+  - The user's API key for accessing the backend services.
+
 
 ## Folder Structure
 
@@ -122,12 +153,98 @@ describe('useApi', () => {
 
 This test runs without a backend, is fast, and is reliable.
 
-# Refactor Plan
 
-Component Organization: The frontend/src/components/ directory is currently flat. As more components are added, you might consider creating subdirectories to group related components. For example, SettingsSidebar.vue and SettingsWindow.vue could be moved into a components/settings/ directory.
+## Stack Examples  
 
-State Management with Pinia: The conversation.js store is quite large and manages a lot of different states (WebSocket connection, messages, notes, analysis). If this store continues to grow, it could become difficult to manage. Consider splitting it into smaller, more focused stores. For example, you could have a separate store for managing the WebSocket connection.
+- **[Vue 3](https://vuejs.org/)**: The progressive JavaScript framework for building the user interface. We use the Composition API with `<script setup>` syntax for better organization and code reuse.
 
-API Services: The useApi.js service currently handles different types of API calls. As you add more endpoints, this file could grow large. It might be beneficial to split it into multiple services based on the API resources they handle (e.g., an appService.js for app settings and a keyService.js for API key management).
+  *Example from `frontend/src/App.vue`*:
+  ```vue
+  <template>
+    <v-app>
+      <v-app-bar>
+        <v-toolbar-title>{{ appName }}</v-toolbar-title>
+      </v-app-bar>
+      <v-main>
+        <!-- ... -->
+      </v-main>
+    </v-app>
+  </template>
 
-Styling Structure: The styles directory is currently very simple. For a larger application, you might want to adopt a more structured approach for your CSS/SCSS, such as organizing styles by component or using a methodology like BEM (Block, Element, Modifier).
+  <script setup>
+  import { ref } from 'vue';
+  const appName = ref('My App');
+  </script>
+  ```
+
+- **[Vite](https://vitejs.dev/)**: The build tool and development server. It provides a faster and leaner development experience.
+
+  *Example from `frontend/vite.config.js`*:
+  ```javascript
+  import { defineConfig } from 'vite'
+  import vue from '@vitejs/plugin-vue'
+
+  export default defineConfig({
+    plugins: [
+      vue(),
+      // ... other plugins
+    ],
+  })
+  ```
+
+- **[Vuetify 3](https://vuetifyjs.com/)**: A Material Design component framework for Vue. It provides a rich set of pre-built UI components.
+
+  *Example from `frontend/src/App.vue`*:
+  ```vue
+  <v-btn icon @click="showAppsGallery = !showAppsGallery">
+    <v-icon>{{ showAppsGallery ? 'mdi-close' : 'mdi-apps' }}</v-icon>
+  </v-btn>
+  ```
+
+- **[Pinia](https://pinia.vuejs.org/)**: The official state management library for Vue.js.
+
+  *Defining a store in `frontend/src/stores/settings.js`*:
+  ```javascript
+  import { defineStore } from 'pinia';
+  import { ref } from 'vue';
+
+  export const useSettingsStore = defineStore('settings', () => {
+    const settings = ref(null);
+    // ...
+    return { settings };
+  });
+  ```
+
+  *Using the store in `frontend/src/App.vue`*:
+  ```javascript
+  import { useSettingsStore } from './stores/settings';
+  const settingsStore = useSettingsStore();
+  const { settings } = storeToRefs(settingsStore);
+  ```
+
+- **[SCSS/Sass](https://sass-lang.com/)**: A CSS preprocessor for more maintainable stylesheets.
+
+  *Global styles are imported in `frontend/src/main.js`*:
+  ```javascript
+  import './styles/main.scss';
+  ```
+
+- **[Vitest](https://vitest.dev/)**: A fast testing framework for Vite projects.
+
+  *Example from `frontend/tests/stores/settings.test.js`*:
+  ```javascript
+  import { describe, it, expect, beforeEach } from 'vitest';
+  import { setActivePinia, createPinia } from 'pinia';
+  import { useSettingsStore } from '../../src/stores/settings';
+
+  describe('useSettingsStore', () => {
+    beforeEach(() => {
+      setActivePinia(createPinia());
+    });
+
+    it('should have a null initial settings value', () => {
+      const store = useSettingsStore();
+      expect(store.settings).toBe(null);
+    });
+  });
+  ```
