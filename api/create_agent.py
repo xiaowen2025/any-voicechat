@@ -1,7 +1,6 @@
 import logging
 import os
-from google import genai
-from api.services.google_ai import create_live_agent
+from api.services.gemini_live_agent import gemini_live_agent
 from api.settings import Settings
 
 instruction_template = """
@@ -46,7 +45,7 @@ def create_agent(
     logging.info(f"Creating agent with context: {final_instruction}")
     if settings.gemini_api_key:
         os.environ["GEMINI_API_KEY"] = settings.gemini_api_key
-    return create_live_agent(
+    return gemini_live_agent(
         final_instruction,
         tools=tools
     )

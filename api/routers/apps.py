@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from api.settings import APP_SETTINGS_PATH
-from .exceptions import AppNotFoundError, MalformedAppConfigError
+from ..exceptions import AppNotFoundError, MalformedAppConfigError
 
 router = APIRouter()
 

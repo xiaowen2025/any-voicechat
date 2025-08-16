@@ -1,11 +1,12 @@
 import logging
 import os
+from api.routers import api_key, apps, avatar
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from api import api_key, analyse, avatar, apps
+from api.routers import analyse
 from api.websocket import connection as websocket
 from api.exceptions import (
     ApiKeyError,

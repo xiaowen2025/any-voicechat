@@ -15,7 +15,7 @@ def _verify_api_key(api_key: str):
     """Verifies the provided Gemini API key."""
     client = genai.Client(api_key=api_key)
     try:
-        response = client.models.generate_content(
+        client.models.generate_content(
             model='gemini-2.0-flash',
             contents='Response with 1 word only.',
             config=types.GenerateContentConfig(

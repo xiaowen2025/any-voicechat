@@ -9,8 +9,7 @@ from google.adk.agents import LiveRequestQueue
 from google.adk.agents.run_config import RunConfig
 from google.adk.tools import google_search
 
-
-from api.voice_agent import create_agent
+from api.create_agent import create_agent
 from api.websocket.messaging import UpdateContextMessage
 
 

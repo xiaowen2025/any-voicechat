@@ -8,8 +8,8 @@ from google.api_core import exceptions as google_exceptions
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from .settings import Settings
-from .exceptions import ApiKeyError, ImageGenerationError
+from ..settings import Settings
+from ..exceptions import ApiKeyError, ImageGenerationError
 
 router = APIRouter()
 
