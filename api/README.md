@@ -2,7 +2,7 @@
 
 ## Backend Stack
 
-## 2. Core Stacks
+## Core Stacks
 
 The API is built on a modern Python stack, leveraging several powerful libraries and frameworks.
 
@@ -62,10 +62,3 @@ api/
     ├── messaging.py           # Handles messaging between the client and the agent.
     └── session.py             # Manages the agent session over WebSockets.
 ```
-
-### Interconnections
-
--   **`main.py`**: This is the core of the application. It initializes the FastAPI app and includes the routers from the `routers/` directory. It also sets up exception handlers that catch custom exceptions defined in `exceptions.py`.
--   **`routers/`**: Each file in this directory defines a set of related API endpoints using FastAPI's `APIRouter`. These routers delegate the actual business logic to the services in the `services/` directory.
--   **`services/`**: This is where the main business logic resides. For example, `routers/avatar.py` calls functions in the `google-genai` library to generate an avatar, while `services/agent_service.py` creates AI agents using the `google-adk` library.
--   **`websocket/`**: This directory is dedicated to real-time communication. `websocket/connection.py` defines the WebSocket endpoint, and it uses `websocket/session.py` and `websocket/messaging.py` to manage the communication flow with the AI agent.
