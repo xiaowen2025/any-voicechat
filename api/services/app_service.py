@@ -1,45 +1,36 @@
 import os
 import json
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from typing import List, Dict, Any
 
-from api.settings import APP_SETTINGS_PATH
-from .exceptions import AppNotFoundError, MalformedAppConfigError
+from api.settings import settings
+from ..exceptions import AppNotFoundError, MalformedAppConfigError
 
-router = APIRouter()
-
-
-@router.get("/api/apps/{app_id}/settings")
-async def get_app_settings(app_id: str):
+def get_app_settings(app_id: str) -> Dict[str, Any]:
     """
     Retrieves the settings for a specific app.
     """
-    filepath = os.path.join(APP_SETTINGS_PATH, f"{app_id}.json")
+    filepath = os.path.join(settings.app_settings_path, f"{app_id}.json")
     if not os.path.exists(filepath):
         raise AppNotFoundError(f"App with id '{app_id}' not found.")
 
     try:
         with open(filepath, "r") as f:
-            settings = json.load(f)
-        return JSONResponse(content=settings)
+            app_settings = json.load(f)
+        return app_settings
     except json.JSONDecodeError:
         raise MalformedAppConfigError(f"The configuration file for app '{app_id}' is malformed.")
-    except Exception as e:
-        raise e
 
-
-@router.get("/api/apps")
-async def get_apps():
+def get_apps() -> List[Dict[str, Any]]:
     """
     Reads all app example JSON files, extracts key information,
     and returns a list of app configurations.
     """
     apps = []
     try:
-        app_files = [f for f in os.listdir(APP_SETTINGS_PATH) if f.endswith(".json")]
+        app_files = [f for f in os.listdir(settings.app_settings_path) if f.endswith(".json")]
 
-        for i, filename in enumerate(app_files):
-            filepath = os.path.join(APP_SETTINGS_PATH, filename)
+        for filename in app_files:
+            filepath = os.path.join(settings.app_settings_path, filename)
             try:
                 with open(filepath, "r") as f:
                     data = json.load(f)
@@ -52,7 +43,5 @@ async def get_apps():
                 raise MalformedAppConfigError(f"The configuration file '{filename}' is malformed.")
     except FileNotFoundError:
         raise AppNotFoundError("The apps directory was not found.")
-    except Exception as e:
-        raise e
 
     return apps

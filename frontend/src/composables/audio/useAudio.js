@@ -94,7 +94,7 @@ export function useAudio(websocket, onAudioData) {
     }
     
     const base64data = arrayBufferToBase64(combinedBuffer.buffer);
-    const message = { mime_type: "audio/pcm", data: base64data };
+    const message = { type: "audio", mime_type: "audio/pcm", data: base64data };
     websocket.value.send(JSON.stringify(message));
     
     audioBuffer.value = [];

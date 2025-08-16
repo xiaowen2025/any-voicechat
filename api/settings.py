@@ -1,18 +1,7 @@
-import json
-from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 from typing import Dict, Optional
-from dotenv import load_dotenv
 
-load_dotenv()
-
-
-DEFAULT_APP_ID = "language_pal"
-APP_SETTINGS_PATH = "app_settings"
-LIVE_MODEL_NAME = "gemini-2.5-flash-live-preview"
-IMAGE_MODEL_NAME = "gemini-2.0-flash-preview-image-generation"
-
-
-class Settings(BaseModel):
+class AppSettings(BaseSettings):
     app_name: str
     agent_description: str
     context_dict: Dict[str, dict]
@@ -22,3 +11,16 @@ class Settings(BaseModel):
     language_code: str
     gemini_api_key: Optional[str] = None
     search_tool: Optional[bool] = False
+
+class GlobalSettings(BaseSettings):
+    default_app_id: str = "language_pal"
+    app_settings_path: str = "app_settings"
+    live_model_name: str = "gemini-2.5-flash-live-preview"
+    image_model_name: str = "gemini-2.0-flash-preview-image-generation"
+    analyse_model_name: str = "gemini-2.5-flash"
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+settings = GlobalSettings()

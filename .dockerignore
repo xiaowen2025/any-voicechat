@@ -1,4 +1,6 @@
 docs/
+frontend/tests/
+tests/
 
 # Git
 .git

@@ -18,6 +18,12 @@ Try it here: https://vox-hub.onrender.com/
 *   **Always Up to Date:** Enable web search to pull the latest information from the internet.
 
 
+## Stacks
+
+- [Backend](./api/README.md)
+- [Frontend](./frontend/README.md)
+
+
 # Next: Vox
 
 Vox is a self-adapting voice agent that begins with a single-sentence operational blueprint and continuously reshapes its settings in real time, adapting to the user’s tone, context, and evolving needs throughout the conversation.
