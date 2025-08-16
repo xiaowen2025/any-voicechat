@@ -15,7 +15,7 @@ def export_openapi_schema():
     openapi_schema = app.openapi()
 
     # Define the output path for the openapi.json file
-    output_path = os.path.join(ROOT_DIR, "openapi.json")
+    output_path = os.path.join(ROOT_DIR, "docs", "api-docs", "openapi.json")
 
     # Write the schema to the file
     with open(output_path, "w") as f:
