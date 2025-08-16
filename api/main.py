@@ -63,6 +63,13 @@ app.include_router(websocket.router)
 app.include_router(avatar.router)
 app.include_router(apps.router)
 
+@app.api_route("/api/health", methods=["GET", "HEAD"])
+async def health_check():
+    """
+    Simple health check endpoint for GET and HEAD requests.
+    """
+    return {"status": "ok"}
+
 # Serve the frontend
 app.mount('/assets', StaticFiles(directory='frontend/dist/assets'), name='assets')
 

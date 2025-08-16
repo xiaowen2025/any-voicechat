@@ -1,7 +1,5 @@
 # API Documentation
 
-## Backend Stack
-
 ## Core Stacks
 
 The API is built on a modern Python stack, leveraging several powerful libraries and frameworks.
