@@ -1,16 +1,34 @@
 import asyncio
 import json
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+import asyncio
+import json
+
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
+from sqlalchemy.orm import Session
 
 from api.websocket.agent import start_agent_session
 from api.websocket.messaging import agent_to_client_messaging, client_to_agent_messaging
+from ..database import get_db
+from ..deps import get_current_user_from_token
 
 router = APIRouter()
 
 
 @router.websocket("/ws/{user_id}")
-async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
+async def websocket_endpoint(
+    websocket: WebSocket,
+    user_id: int,
+    is_audio: str,
+    token: str = Query(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        user = get_current_user_from_token(token, db)
+    except Exception as e:
+        await websocket.close(code=1008, reason=str(e))
+        return
+
     """Client websocket endpoint"""
     # Wait for client connection
     print(f"Client #{user_id} connected, audio mode: {is_audio}")

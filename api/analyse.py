@@ -1,13 +1,14 @@
 from google import genai
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
 
 
 from api.settings import Settings
+from .deps import get_current_user
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 class AnalyseRequest(BaseModel):
     notes: str

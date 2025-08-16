@@ -10,8 +10,10 @@ from pydantic import BaseModel
 
 from .settings import Settings
 from .exceptions import ApiKeyError, ImageGenerationError
+from .deps import get_current_user
+from fastapi import Depends
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 class AvatarRequest(BaseModel):
     settings: Settings

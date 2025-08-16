@@ -5,8 +5,10 @@ from fastapi.responses import JSONResponse
 
 from api.settings import APP_SETTINGS_PATH
 from .exceptions import AppNotFoundError, MalformedAppConfigError
+from .deps import get_current_user
+from fastapi import Depends
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @router.get("/api/apps/{app_id}/settings")

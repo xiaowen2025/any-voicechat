@@ -212,3 +212,6 @@ __marimo__/
 frontend/node_modules
 frontend/dist
 .uv_cache
+
+# Database files
+*.db

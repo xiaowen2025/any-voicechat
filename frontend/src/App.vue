@@ -1,55 +1,61 @@
 <template>
   <v-app>
-    <settings-sidebar
-      :model-value="showSettings"
-      @update:model-value="showSettings = $event"
-      @toggle-settings="isSettingsWindowVisible = !isSettingsWindowVisible"
-    />
-    <settings-window
-      v-model="isSettingsWindowVisible"
-      @api-key-updated="updateApiKeyStatus"
-    />
-    <v-app-bar>
-      <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{ appName }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon @click="showAppsGallery = !showAppsGallery">
-        <v-icon>{{ showAppsGallery ? 'mdi-close' : 'mdi-apps' }}</v-icon>
-      </v-btn>
-    </v-app-bar>
+    <template v-if="userStore.isLoggedIn">
+      <settings-sidebar
+        :model-value="showSettings"
+        @update:model-value="showSettings = $event"
+        @toggle-settings="isSettingsWindowVisible = !isSettingsWindowVisible"
+      />
+      <settings-window
+        v-model="isSettingsWindowVisible"
+        @api-key-updated="updateApiKeyStatus"
+      />
+      <v-app-bar>
+        <v-app-bar-nav-icon @click.stop="showSettings = !showSettings"></v-app-bar-nav-icon>
+        <v-toolbar-title>{{ appName }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="showAppsGallery = !showAppsGallery">
+          <v-icon>{{ showAppsGallery ? 'mdi-close' : 'mdi-apps' }}</v-icon>
+        </v-btn>
+      </v-app-bar>
 
-    <v-main>
-      <apps-gallery
-        v-if="showAppsGallery"
-        @app-selected="handleAppSelection"
-        @close="showAppsGallery = false"
-        @add-new-app="handleAddNewApp"
-      />
-      <conversation-view
-        v-else
-        :analyser-node="analyserNode"
-        :conversation-started="conversationStarted"
-        :conversation-finished="conversationFinished"
-        :is-connecting="isConnecting"
-        :is-analysing="isAnalysing"
-        @toggle-conversation="toggleConversation"
-        @analyse="analyseConversation"
-      />
-    </v-main>
-    <v-snackbar
-      v-model="snackbar.visible.value"
-      :color="snackbar.color.value"
-      timeout="3000"
-    >
-      {{ snackbar.message.value }}
-    </v-snackbar>
-    <v-overlay
-      :model-value="!isThemeLoaded"
-      class="align-center justify-center"
-      persistent
-    >
-      <v-progress-circular indeterminate size="64" />
-    </v-overlay>
+      <v-main>
+        <apps-gallery
+          v-if="showAppsGallery"
+          @app-selected="handleAppSelection"
+          @close="showAppsGallery = false"
+          @add-new-app="handleAddNewApp"
+        />
+        <conversation-view
+          v-else
+          :analyser-node="analyserNode"
+          :conversation-started="conversationStarted"
+          :conversation-finished="conversationFinished"
+          :is-connecting="isConnecting"
+          :is-analysing="isAnalysing"
+          @toggle-conversation="toggleConversation"
+          @analyse="analyseConversation"
+        />
+      </v-main>
+      <v-snackbar
+        v-model="snackbar.visible.value"
+        :color="snackbar.color.value"
+        timeout="3000"
+      >
+        {{ snackbar.message.value }}
+      </v-snackbar>
+      <v-overlay
+        :model-value="!isThemeLoaded"
+        class="align-center justify-center"
+        persistent
+      >
+        <v-progress-circular indeterminate size="64" />
+      </v-overlay>
+      <v-btn @click="userStore.logout()" class="logout-btn">Logout</v-btn>
+    </template>
+    <template v-else>
+      <Login />
+    </template>
   </v-app>
 </template>
 
@@ -60,6 +66,7 @@ import { storeToRefs } from 'pinia';
 import { defineAsyncComponent } from 'vue';
 import SettingsSidebar from './components/SettingsSidebar.vue';
 import SettingsWindow from './components/SettingsWindow.vue';
+import Login from './components/Login.vue';
 
 const ConversationView = defineAsyncComponent(() => import('./components/ConversationView.vue'));
 const AppsGallery = defineAsyncComponent(() => import('./components/AppsGallery.vue'));
@@ -221,27 +228,30 @@ function stopConversation() {
 // --- Lifecycle Hooks ---
 
 onMounted(() => {
-  const path = window.location.pathname;
-  const appMatch = path.match(/^\/apps\/([a-zA-Z0-9_-]+)/);
+  userStore.checkLoginStatus();
+  if (userStore.isLoggedIn) {
+    const path = window.location.pathname;
+    const appMatch = path.match(/^\/apps\/([a-zA-Z0-9_-]+)/);
 
-  if (appMatch) {
-    const appId = appMatch[1];
-    loadApp(appId);
-  } else if (path === '/apps') {
-    showAppsGallery.value = true;
-    showSettings.value = false;
-  } else {
-    window.location.assign(`/apps/${default_app_id}`);
-  }
+    if (appMatch) {
+      const appId = appMatch[1];
+      loadApp(appId);
+    } else if (path === '/apps') {
+      showAppsGallery.value = true;
+      showSettings.value = false;
+    } else {
+      window.location.assign(`/apps/${default_app_id}`);
+    }
 
-  const savedAvatar = localStorage.getItem('userAvatar');
-  if (savedAvatar) {
-    currentAvatar.value = savedAvatar;
+    const savedAvatar = localStorage.getItem('userAvatar');
+    if (savedAvatar) {
+      currentAvatar.value = savedAvatar;
+    }
+    setApiKey();
+    nextTick().then(() => {
+      isThemeLoaded.value = true;
+    });
   }
-  setApiKey();
-  nextTick().then(() => {
-    isThemeLoaded.value = true;
-  });
 });
 
 onBeforeUnmount(() => {

@@ -5,8 +5,11 @@ from pydantic import BaseModel
 from google import genai
 from google.genai import types
 
+from .deps import get_current_user
+from fastapi import Depends
+
 # Only run this block for Gemini Developer API
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 class ApiKey(BaseModel):
     key: str

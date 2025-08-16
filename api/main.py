@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from api import api_key, analyse, avatar, apps
+from api import api_key, analyse, avatar, apps, auth
 from api.websocket import connection as websocket
 from api.exceptions import (
     ApiKeyError,
@@ -13,6 +13,10 @@ from api.exceptions import (
     AppNotFoundError,
     MalformedAppConfigError,
 )
+from api.database import engine
+from api import models
+
+models.Base.metadata.create_all(bind=engine)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -56,6 +60,7 @@ async def malformed_app_config_error_handler(request: Request, exc: MalformedApp
     )
 
 app.include_router(analyse.router)
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(api_key.router)
 app.include_router(websocket.router)
 app.include_router(avatar.router)

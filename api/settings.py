@@ -1,10 +1,6 @@
-import json
-from pydantic import BaseModel
-from typing import Dict, Optional
-from dotenv import load_dotenv
-
-load_dotenv()
-
+import os
+from pydantic import BaseModel, Field
+from typing import Dict, Any, Optional
 
 DEFAULT_APP_ID = "language_pal"
 APP_SETTINGS_PATH = "app_settings"
@@ -22,3 +18,10 @@ class Settings(BaseModel):
     language_code: str
     gemini_api_key: Optional[str] = None
     search_tool: Optional[bool] = False
+
+class JWTSettings(BaseModel):
+    secret_key: str = os.getenv("JWT_SECRET_KEY", "a_very_secret_key")
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+
+jwt_settings = JWTSettings()
