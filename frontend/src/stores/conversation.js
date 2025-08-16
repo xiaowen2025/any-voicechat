@@ -44,7 +44,11 @@ export const useConversationStore = defineStore('conversation', () => {
     websocket.value.onopen = () => {
       console.log('WebSocket connection established');
       if (settingsStore.settings) {
-        websocket.value.send(JSON.stringify(settingsStore.settings));
+        const settingsMessage = {
+          type: 'settings',
+          settings: settingsStore.settings,
+        };
+        websocket.value.send(JSON.stringify(settingsMessage));
         console.log('Settings sent to server');
       }
       messages.value.push({ id: Date.now(), sender: 'system', text: 'Connection established. You can start speaking.' });
