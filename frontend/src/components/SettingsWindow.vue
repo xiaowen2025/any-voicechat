@@ -117,6 +117,7 @@
 import { ref, watch, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useSettingsStore } from '../stores/settings';
+import { useAppsStore } from '../stores/apps';
 import { useSnackbar } from '../composables/useSnackbar';
 import { themes } from "../themes";
 import { useApi } from "../services/useApi";
@@ -158,7 +159,12 @@ const moreButton = ref(null);
 
 const settingsStore = useSettingsStore();
 const { settings, currentTheme, darkMode } = storeToRefs(settingsStore);
-const { updateSettings, setTheme, setDarkMode } = settingsStore;
+const {
+  updateSettings,
+  saveSettings: save,
+  setTheme,
+  setDarkMode,
+} = settingsStore;
 const { showSnackbar } = useSnackbar();
 const { saveGeminiApiKey: saveKey } = useApi();
 
@@ -194,7 +200,7 @@ function handleFileUpload(event) {
       const currentSettings = settings.value || {};
       const finalSettings = { ...currentSettings, ...newSettings };
       finalSettings.context_dict = newSettings.context_dict || {};
-      updateSettings(finalSettings);
+      save(finalSettings);
       showSnackbar('Settings imported successfully.', 'success');
       emit('update:modelValue', false);
     } catch (error) {
@@ -207,7 +213,7 @@ function handleFileUpload(event) {
 
 function saveSettings() {
   if (editableSettings.value) {
-    updateSettings(editableSettings.value);
+    save(editableSettings.value);
     showSnackbar('Settings saved successfully.', 'success');
   }
   emit('update:modelValue', false);
@@ -227,7 +233,7 @@ async function saveGeminiApiKey() {
   const success = await saveKey(geminiApiKey.value);
   if (success) {
     editableSettings.value.gemini_api_key = geminiApiKey.value;
-    updateSettings(editableSettings.value);
+    save(editableSettings.value);
     emit("api-key-updated", !!geminiApiKey.value);
     apiKeyEdited.value = false;
   } else {
@@ -236,6 +242,9 @@ async function saveGeminiApiKey() {
 }
 
 onMounted(() => {
+  const appsStore = useAppsStore();
+  appsStore.fetchApps();
+
   if (settings.value?.gemini_api_key) {
     geminiApiKey.value = settings.value.gemini_api_key;
     apiKeyEdited.value = false;

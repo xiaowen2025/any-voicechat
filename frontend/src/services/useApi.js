@@ -48,7 +48,21 @@ export function useApi() {
     }
   }
 
+  async function getApps() {
+    try {
+      const response = await fetch('/api/apps');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Error fetching apps: ${error}`);
+      return [];
+    }
+  }
+
   return {
+    getApps,
     getAppSettings,
     saveGeminiApiKey,
   };

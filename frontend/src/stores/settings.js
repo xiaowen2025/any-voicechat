@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useAppsStore } from './apps';
 
 export const useSettingsStore = defineStore('settings', () => {
   const settings = ref(null);
@@ -40,6 +41,30 @@ export const useSettingsStore = defineStore('settings', () => {
     localStorage.setItem('settings', JSON.stringify(newSettings));
   }
 
+  async function saveSettings(newSettings) {
+    const appsStore = useAppsStore();
+    if (appsStore.apps.length === 0) {
+      await appsStore.fetchApps();
+    }
+    const predefinedAppIds = appsStore.apps.map((app) => app.id);
+
+    const toSnakeCase = (str) => str.replace(/\s+/g, '_').toLowerCase();
+
+    const baseId = toSnakeCase(newSettings.app_name);
+    let id = baseId;
+    let counter = 1;
+
+    const allLocalStorageKeys = Object.keys(localStorage);
+
+    while (predefinedAppIds.includes(id) || allLocalStorageKeys.includes(id)) {
+      id = `${baseId}_${counter}`;
+      counter++;
+    }
+
+    localStorage.setItem(id, JSON.stringify(newSettings));
+    settings.value = newSettings;
+  }
+
   async function updateContext(newContextDict) {
     if (settings.value && settings.value.context_dict) {
       const newContext = { ...settings.value.context_dict };
@@ -59,6 +84,7 @@ export const useSettingsStore = defineStore('settings', () => {
     darkMode,
     loadSettings,
     updateSettings,
+    saveSettings,
     updateContext,
     setTheme,
     setDarkMode,
