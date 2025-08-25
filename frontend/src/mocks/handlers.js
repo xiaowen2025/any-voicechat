@@ -1,6 +1,13 @@
 import { http, HttpResponse } from 'msw';
 
 export const handlers = [
+  http.get('/api/apps', () => {
+    return HttpResponse.json([
+      { id: 'test_app', name: 'Test App' },
+      { id: 'another_app', name: 'Another App' },
+    ]);
+  }),
+
   // Mock for getAppSettings
   http.get('/api/apps/:appId/settings', (req, res, ctx) => {
     const { appId } = req.params;

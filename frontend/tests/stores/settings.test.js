@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { useSettingsStore } from '../../src/stores/settings';
+import { useAppsStore } from '../../src/stores/apps';
 
 describe('useSettingsStore', () => {
   beforeEach(() => {
@@ -43,5 +44,15 @@ describe('useSettingsStore', () => {
 
     expect(store.settings.gemini_api_key).toBe('old-key');
     expect(localStorage.getItem('geminiApiKey')).toBe(null);
+  });
+
+  it('saveSettings should handle duplicated app names', async () => {
+    const store = useSettingsStore();
+    const newSettings = { app_name: 'Test App', agent_description: 'A test agent.' };
+    await store.saveSettings(newSettings);
+
+    const expectedId = 'test_app_1';
+    expect(localStorage.getItem(expectedId)).toEqual(JSON.stringify(newSettings));
+    expect(store.settings).toEqual(newSettings);
   });
 });
